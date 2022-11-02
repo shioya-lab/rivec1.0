@@ -6,26 +6,30 @@ LLVM := /llvm/build/
 SPIKE := spike
 PK := pk
 
-target = bin/jacobi-2d_vector.exe
+rvv_target = bin/rvv-test
+serial_target = bin/serial-test
 
 start:
 	mkdir -p bin; \
 	rm bin/*.*
-	
-serial:
-	${LLVM}/bin/clang++ -mepi -Wall --target=riscv64-unknown-elf -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
-	${LLVM}/bin/clang++ -mepi -Wall --target=riscv64-unknown-elf  -march=rv64g -O2 -o bin/jacobi-2d_serial.exe src/*.o -lm; \
+
+serial: $(serial_target)
+$(serial_target):
+	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
+	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -march=rv64g -O2 -o $(serial_target) src/*.o -lm; \
 	rm src/*.o; \
 	${LLVM}/bin/llvm-objdump --mattr=+v -ds  bin/jacobi-2d_serial.exe > bin/jacobi-2d_serial.dump
 
-vector:
+vector: $(rvv_target)
+$(rvv_target):
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o bin/jacobi-2d_vector.exe src/*.o -lm ; \
+	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(rvv_target) src/*.o -lm ; \
 	rm src/*.o ; \
 	${LLVM}/bin/llvm-objdump --mattr=+v -ds  bin/jacobi-2d_vector.exe > bin/jacobi-2d_vector.dump ; \
 
-runspike :
-	$(SPIKE) --isa=rv64gcv $(PK) $(target) 64 100 jacobi_2d.out
+SPIKE_OPTS = 64 100 jacobi_2d.out
+
+include ../runspike.mk
 
 host:
 	g++ -O2 -g -Wall -std=c99 -c -o  src/jacobi-2d.o  src/jacobi-2d.cpp ; \
