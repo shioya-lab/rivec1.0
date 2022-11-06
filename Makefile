@@ -2,79 +2,51 @@ BASE_DIR := $(shell pwd)
 
 APPLICATION_DIRS := _blackscholes _swaptions _streamcluster _canneal _particlefilter _pathfinder _jacobi-2d _matmul _axpy
 
-all: blackscholes swaptions streamcluster canneal particlefilter pathfinder jacobi-2d matmul axpy
+# all: blackscholes swaptions streamcluster canneal particlefilter pathfinder jacobi-2d matmul axpy
+all: swaptions streamcluster canneal particlefilter pathfinder jacobi-2d axpy
 
 blackscholes:
-	cd _blackscholes; 	\
-	make start;			\
-	make vector; 		\
-	make serial; 		\
-	make host;			\
-	make copy;
+	$(MAKE) -C _$@ runspike-v runspike-s
+	$(MAKE) -C _$@ runsniper-ooo-v runsniper-io-v runsniper-ooo-s runsniper-io-s
 
 swaptions:
-	cd _swaptions; 		\
-	make start;			\
-	make vector; 		\
-	make serial; 		\
-	make host;			\
-	make copy;
+	$(MAKE) -C _$@ runspike-v runspike-s
+	$(MAKE) -C _$@ runsniper-ooo-v runsniper-io-v runsniper-ooo-s runsniper-io-s
 
 streamcluster:
-	cd _streamcluster; 	\
-	make start;			\
-	make vector; 		\
-	make serial; 		\
-	make host;			\
-	make copy;
+	$(MAKE) -C _$@ runspike-v runspike-s
+	$(MAKE) -C _$@ runsniper-ooo-v runsniper-io-v runsniper-ooo-s runsniper-io-s
 
 canneal:
-	cd _canneal; 		\
-	make start;			\
-	make vector; 		\
-	make serial; 		\
-	make host;			\
-	make copy;
+	$(MAKE) -C _$@ runspike-v runspike-s
+	$(MAKE) -C _$@ runsniper-ooo-v runsniper-io-v runsniper-ooo-s runsniper-io-s
 
 particlefilter:
-	cd _particlefilter;	\
-	make start;			\
-	make vector; 		\
-	make serial; 		\
-	make host;			\
-	make copy;
+	$(MAKE) -C _$@ runspike-v runspike-s
+	$(MAKE) -C _$@ runsniper-ooo-v runsniper-io-v runsniper-ooo-s runsniper-io-s
 
 pathfinder:
-	cd _pathfinder;		\
-	make start;			\
-	make vector; 		\
-	make serial; 		\
-	make host;			\
-	make copy;
+	$(MAKE) -C _$@ runspike-v runspike-s
+	$(MAKE) -C _$@ runsniper-ooo-v runsniper-io-v runsniper-ooo-s runsniper-io-s
 
 jacobi-2d:
-	cd _jacobi-2d;		\
-	make start;			\
-	make vector; 		\
-	make serial; 		\
-	make host;			\
-	make copy;
+	$(MAKE) -C _$@ runspike-v runspike-s
+	$(MAKE) -C _$@ runsniper-ooo-v runsniper-io-v runsniper-ooo-s runsniper-io-s
 
 matmul:
-	cd _matmul; 		\
-	make start;			\
-	make vector; 		\
-	make serial; 		\
-	make host;			\
-	make copy;
+	$(MAKE) -C _$@ runspike-v runspike-s
+	$(MAKE) -C _$@ runsniper-ooo-v runsniper-io-v runsniper-ooo-s runsniper-io-s
 
 axpy:
-	cd _axpy; 			\
-	make start;			\
-	make vector; 		\
-	make serial; 		\
-	make host;			\
-	make copy;
+	$(MAKE) -C _$@ runspike-v
+	$(MAKE) -C _$@ runsniper-ooo-v runsniper-io-v
 
 clean:
-	for dir in $(APPLICATION_DIRS) ; do cd $$dir ; make clean ; cd .. ; done
+	$(MAKE) clean -C _blackscholes
+	$(MAKE) clean -C _swaptions
+	$(MAKE) clean -C _streamcluster
+	$(MAKE) clean -C _canneal
+	$(MAKE) clean -C _particlefilter
+	$(MAKE) clean -C _pathfinder
+	$(MAKE) clean -C _jacobi-2d
+	$(MAKE) clean -C _axpy

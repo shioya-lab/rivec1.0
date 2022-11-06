@@ -1,35 +1,25 @@
 #makefile
-GCC_TOOLCHAIN_DIR := /newlib/
-SYSROOT_DIR := $(GCC_TOOLCHAIN_DIR)/riscv64-unknown-elf
-
-LLVM := /llvm/build/
-SPIKE := spike
-PK := pk
-
 rvv_target = bin/rvv-test
 serial_target = bin/serial-test
 
-start:
-	mkdir -p bin; \
-	rm bin/*.*
+SPIKE_OPTS = 64 100 jacobi_2d.out
+
+include ../runspike.mk
+
 
 serial: $(serial_target)
 $(serial_target):
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -march=rv64g -O2 -o $(serial_target) src/*.o -lm; \
 	rm src/*.o; \
-	${LLVM}/bin/llvm-objdump --mattr=+v -ds  bin/jacobi-2d_serial.exe > bin/jacobi-2d_serial.dump
+	${LLVM}/bin/llvm-objdump --mattr=+v -ds  $(serial_target) > bin/jacobi-2d_serial.dump
 
 vector: $(rvv_target)
 $(rvv_target):
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(rvv_target) src/*.o -lm ; \
 	rm src/*.o ; \
-	${LLVM}/bin/llvm-objdump --mattr=+v -ds  bin/jacobi-2d_vector.exe > bin/jacobi-2d_vector.dump ; \
-
-SPIKE_OPTS = 64 100 jacobi_2d.out
-
-include ../runspike.mk
+	${LLVM}/bin/llvm-objdump --mattr=+v -ds  $(rvv_target) > bin/jacobi-2d_vector.dump ; \
 
 host:
 	g++ -O2 -g -Wall -std=c99 -c -o  src/jacobi-2d.o  src/jacobi-2d.cpp ; \
@@ -40,7 +30,3 @@ host:
 copy:
 	rm -r ../../Test/_jacobi-2d/bin/*.exe; \
 	cp -r bin/*exe ../../Test/_jacobi-2d/bin/;
-
-clean:
-	rm bin/*.dump; \
-	rm bin/*.exe;

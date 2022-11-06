@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
-#include "utils.h" 
+#include "utils.h"
 
 /*************************************************************************
 *GET_TIME
@@ -13,17 +13,28 @@
 #include <sys/time.h>
 
 long long get_time() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (tv.tv_sec * 1000000) + tv.tv_usec;
+    // struct timeval tv;
+    // gettimeofday(&tv, NULL);
+    // return (tv.tv_sec * 1000000) + tv.tv_usec;
+  return 0;
 }
+
+long long get_cycle()
+{
+  long long cycle;
+  asm volatile ("rdcycle %0":"=r"(cycle));
+
+  return cycle;
+}
+
+
 // Returns the number of seconds elapsed between the two specified times
 float elapsed_time(long long start_time, long long end_time) {
         return (float) (end_time - start_time) / (1000 * 1000);
 }
 /*************************************************************************/
 
-void axpy_intrinsics(double a, double *dx, double *dy, int n); 
+void axpy_intrinsics(double a, double *dx, double *dy, int n);
 
 // Ref version
 void axpy_ref(double a, double *dx, double *dy, int n) {
@@ -63,17 +74,17 @@ int main(int argc, char *argv[])
     double *dx     = (double*)malloc(n*sizeof(double));
     double *dy     = (double*)malloc(n*sizeof(double));
     double *dy_ref = (double*)malloc(n*sizeof(double));
- 
+
 
     init_vector(dx, n, 1.0);
     init_vector(dy, n, 2.0);
-    
+
     end = get_time();
     printf("init_vector time: %f\n", elapsed_time(start, end));
 
     printf ("doing reference axpy\n");
     start = get_time();
-    axpy_ref(a, dx, dy, n); 
+    axpy_ref(a, dx, dy, n);
     end = get_time();
     printf("axpy_reference time: %f\n", elapsed_time(start, end));
 
@@ -83,10 +94,13 @@ int main(int argc, char *argv[])
 
     printf ("doing vector axpy\n");
     start = get_time();
+    long long start_cycle = get_cycle();
     axpy_intrinsics(a, dx, dy, n);
+    long long end_cycle = get_cycle();
     end = get_time();
     printf("axpy_intrinsics time: %f\n", elapsed_time(start, end));
-    
+    printf("axpy_intrinsics cycle: %lld\n", end_cycle - start_cycle);
+
     printf ("done\n");
     test_result(dy, dy_ref, n);
 
