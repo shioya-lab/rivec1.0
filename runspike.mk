@@ -12,10 +12,9 @@ serial_sift = $(basename $(notdir $(serial_target))).sift
 build:
 	$(MAKE) vector
 	$(MAKE) runspike-v
-	$(MAKE) runsniper-ooo-v
-	$(MAKE) runsniper-vio
-	$(MAKE) serial
-	$(MAKE) runsniper-io-v
+	$(MAKE) runsniper-ooo-v runsniper-vio runsniper-io-v
+
+#	$(MAKE) serial
 
 
 runspike-v : $(rvv_target)
@@ -34,22 +33,25 @@ runsniper-ooo-v: $(rvv_sift)
 	mkdir -p ooo.v && \
 	cd ooo.v && \
 	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-mediumboom.cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).ooo.v.log 2>&1 && \
-	grep rdcycle -B4 $(basename $(notdir $(rvv_target))).ooo.v.log | grep Running | awk '{ if(NR%2==1) { start=$$3 } else { print $$3-start} }' > $(basename $(notdir $(rvv_target))).ooo && \
-	tar cvfz $(basename $(notdir $(rvv_target))).ooo.v.log.tgz $(basename $(notdir $(rvv_target))).ooo.v.log --remove-files
+	grep rdcycle -B2 $(basename $(notdir $(rvv_target))).ooo.v.log | grep Running | awk '{ if(NR%2==1) { start=$$3 } else { print $$3-start} }' > $(basename $(notdir $(rvv_target))).ooo && \
+	tar cvfz $(basename $(notdir $(rvv_target))).ooo.v.log.tgz $(basename $(notdir $(rvv_target))).ooo.v.log --remove-files && \
+	mv o3_trace.out $(APP_NAME).ooo.out
 
 runsniper-io-v: $(rvv_sift)
 	mkdir -p io.v && \
 	cd io.v && \
 	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-inorderboom.cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).io.v.log 2>&1 && \
-	grep rdcycle -B4 $(basename $(notdir $(rvv_target))).io.v.log | grep Running | awk '{ if(NR%2==1) { start=$$3 } else { print $$3-start} }' > $(basename $(notdir $(rvv_target))).io && \
-	tar cvfz $(basename $(notdir $(rvv_target))).io.v.log.tgz $(basename $(notdir $(rvv_target))).io.v.log --remove-files
+	grep rdcycle -B2 $(basename $(notdir $(rvv_target))).io.v.log | grep Running | awk '{ if(NR%2==1) { start=$$3 } else { print $$3-start} }' > $(basename $(notdir $(rvv_target))).io && \
+	tar cvfz $(basename $(notdir $(rvv_target))).io.v.log.tgz $(basename $(notdir $(rvv_target))).io.v.log --remove-files && \
+	mv o3_trace.out $(APP_NAME).io.out
 
 runsniper-vio: $(rvv_sift)
-	mkdir -p io.v && \
-	cd io.v && \
+	mkdir -p vio.v && \
+	cd vio.v && \
 	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-vinorderboom.cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).vio.log 2>&1 && \
-	grep rdcycle -B4 $(basename $(notdir $(rvv_target))).vio.log | grep Running | awk '{ if(NR%2==1) { start=$$3 } else { print $$3-start} }' > $(basename $(notdir $(rvv_target))).vio && \
-	tar cvfz $(basename $(notdir $(rvv_target))).vio.log.tgz $(basename $(notdir $(rvv_target))).vio.log --remove-files
+	grep rdcycle -B2 $(basename $(notdir $(rvv_target))).vio.log | grep Running | awk '{ if(NR%2==1) { start=$$3 } else { print $$3-start} }' > $(basename $(notdir $(rvv_target))).vio && \
+	tar cvfz $(basename $(notdir $(rvv_target))).vio.log.tgz $(basename $(notdir $(rvv_target))).vio.log --remove-files && \
+	mv o3_trace.out $(APP_NAME).vio.out
 
 runsniper-ooo-s: $(serial_sift)
 	mkdir -p ooo.s && \
@@ -70,6 +72,7 @@ clean:
 	rm -rf io.v
 	rm -rf ooo.s
 	rm -rf ooo.v
+	rm -rf vio.v
 	rm -rf *.sift
 	rm -rf *.log
 	rm -rf bin/*

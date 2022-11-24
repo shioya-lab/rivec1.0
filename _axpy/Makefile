@@ -5,6 +5,8 @@ serial_target = bin/serial-test
 
 SPIKE_OPTS = 256
 
+APP_NAME = axpy
+
 include ../runspike.mk
 
 serial: $(serial_target)
