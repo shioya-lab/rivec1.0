@@ -16,6 +16,14 @@
 #include <sys/resource.h>
 #include <limits.h>
 
+long long get_cycle()
+{
+  long long cycle;
+  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
+
+  return cycle;
+}
+
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
 #include "../../common/vector_defines.h"
@@ -1876,7 +1884,7 @@ void outcenterIDs( Points* centers, long* centerIDs, char* outfile ) {
       printf("\n\n");
     }
   }
-  fclose(fp);
+  // fclose(fp);
 }
 
 void streamCluster( PStream* stream,
@@ -2078,15 +2086,19 @@ int main(int argc, char **argv)
     struct timeval tv1, tv2;
     struct timezone tz;
     double elapsed=0.0;
-    gettimeofday(&tv1, &tz);
+    // gettimeofday(&tv1, &tz);
+    long long start_cycle = get_cycle();
+
 //#endif
 
   streamCluster(stream, kmin, kmax, dim, chunksize, clustersize, outfilename );
 
 //#ifdef USE_RISCV_VECTOR
-    gettimeofday(&tv2, &tz);
+  // gettimeofday(&tv2, &tz);
+    long long end_cycle = get_cycle();
     elapsed = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
     printf("\n\nstreamCluster Kernel took %8.8lf secs   \n", elapsed );
+    printf("\n\nstreamCluster Kernel took %lld cycles   \n",  end_cycle - start_cycle);
 //#endif
 
 #ifdef ENABLE_PARSEC_HOOKS

@@ -3,7 +3,7 @@
 rvv_target = bin/rvv-test
 serial_target = bin/serial-test
 
-SPIKE_OPTS = 256
+SPIKE_OPTS = 64
 
 APP_NAME = axpy
 

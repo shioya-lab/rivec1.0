@@ -37,6 +37,14 @@
 #include <time.h>
 #include <sys/time.h>
 
+long long get_cycle()
+{
+  long long cycle;
+  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
+
+  return cycle;
+}
+
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
 #include "../../common/vector_defines.h"
@@ -67,7 +75,8 @@ int main (int argc, char * const argv[]) {
     struct timeval tv1, tv2;
     struct timezone tz;
     double elapsed1=0.0;
-    gettimeofday(&tv1, &tz);
+    // gettimeofday(&tv1, &tz);
+    long long start_cycle = get_cycle();
 //#endif
 
 #ifdef PARSEC_VERSION
@@ -86,8 +95,8 @@ int main (int argc, char * const argv[]) {
 	if(argc != 5 && argc != 6) {
 		cout << "Usage: " << argv[0] << " NTHREADS NSWAPS TEMP NETLIST [NSTEPS]" << endl;
 		exit(1);
-	}	
-	
+	}
+
 	//argument 1 is numthreads
 	int num_threads = atoi(argv[1]);
 	cout << "Threadcount: " << num_threads << endl;
@@ -97,7 +106,7 @@ int main (int argc, char * const argv[]) {
 		exit(1);
 	}
 #endif
-		
+
 	//argument 2 is the num moves / temp
 	int swaps_per_temp = atoi(argv[2]);
 	cout << swaps_per_temp << " swaps per temperature step" << endl;
@@ -105,11 +114,11 @@ int main (int argc, char * const argv[]) {
 	//argument 3 is the start temp
 	int start_temp =  atoi(argv[3]);
 	cout << "start temperature: " << start_temp << endl;
-	
+
 	//argument 4 is the netlist filename
 	string filename(argv[4]);
 	cout << "netlist filename: " << filename << endl;
-	
+
 	//argument 5 (optional) is the number of temperature steps before termination
 	int number_temp_steps = -1;
         if(argc == 6) {
@@ -120,14 +129,16 @@ int main (int argc, char * const argv[]) {
 
 	//now that we've read in the commandline, run the program
 	netlist my_netlist(filename);
-	
+
 
 	annealer_thread a_thread(&my_netlist,num_threads,swaps_per_temp,start_temp,number_temp_steps);
-	
+
 	//#ifdef USE_RISCV_VECTOR
-    gettimeofday(&tv2, &tz);
-    elapsed1 = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6; 
+    // gettimeofday(&tv2, &tz);
+    long long end_cycle = get_cycle();
+    elapsed1 = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
     printf("\n\nInitialization took %8.8lf secs   \n", elapsed1 );
+    printf("\n\nInitialization took %lld cycle   \n", end_cycle - start_cycle );
 //#endif
 
 
@@ -139,7 +150,8 @@ int main (int argc, char * const argv[]) {
 //#ifdef USE_RISCV_VECTOR
     struct timeval tv3, tv4;
     double elapsed2=0.0;
-    gettimeofday(&tv3, &tz);
+    // gettimeofday(&tv3, &tz);
+    start_cycle = get_cycle();
 //#endif
 
 
@@ -158,16 +170,18 @@ int main (int argc, char * const argv[]) {
 
 
 //#ifdef USE_RISCV_VECTOR
-    gettimeofday(&tv4, &tz);
-    elapsed2 = (double) (tv4.tv_sec-tv3.tv_sec) + (double) (tv4.tv_usec-tv3.tv_usec) * 1.e-6; 
+    // gettimeofday(&tv4, &tz);
+    end_cycle = get_cycle();
+    elapsed2 = (double) (tv4.tv_sec-tv3.tv_sec) + (double) (tv4.tv_usec-tv3.tv_usec) * 1.e-6;
     printf("\n\nthread.Run() %8.8lf secs   \n", elapsed2 );
+    printf("\n\nthread.Run() %lld cycle\n", end_cycle - start_cycle );
 //#endif
 
 
 #ifdef ENABLE_PARSEC_HOOKS
 	__parsec_roi_end();
 #endif
-	
+
 	cout << "Final routing is: " << my_netlist.total_routing_cost() << endl;
 
 #ifdef ENABLE_PARSEC_HOOKS

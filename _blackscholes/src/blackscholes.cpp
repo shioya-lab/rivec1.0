@@ -3,8 +3,8 @@
 // Black-Scholes
 // Analytical method for calculating European Options
 //
-// 
-// Reference Source: Options, Futures, and Other Derivatives, 3rd Edition, Prentice 
+//
+// Reference Source: Options, Futures, and Other Derivatives, 3rd Edition, Prentice
 // Hall, John C. Hull,
 
 #include <stdio.h>
@@ -14,6 +14,15 @@
 
 #include <time.h>
 #include <sys/time.h>
+
+long long get_cycle()
+{
+  long long cycle;
+  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
+
+  return cycle;
+}
+
 
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
@@ -96,7 +105,7 @@ int nThreads;
 
 #ifdef USE_RISCV_VECTOR
 
-_MMR_f32 CNDF_SIMD  (_MMR_f32 xInput ,unsigned long int gvl) 
+_MMR_f32 CNDF_SIMD  (_MMR_f32 xInput ,unsigned long int gvl)
 {
 
   _MMR_f32 xNPrimeofX;
@@ -192,7 +201,7 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     _MMR_f32 xOptionPrice2;
     _MMR_f32 xfXd1;
     _MMR_f32 xfXd2;
-    
+
     FENCE();
     xStrikePrice = _MM_LOAD_f32(strike,gvl);
     xStockPrice = _MM_LOAD_f32(sptprice,gvl);
@@ -211,7 +220,7 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     xPowerTerm = _MM_MUL_f32(xVolatility, xVolatility,gvl);
     xPowerTerm = _MM_MUL_f32(xPowerTerm, _MM_SET_f32(0.5,gvl),gvl);
     xD1 = _MM_ADD_f32( xRiskFreeRate , xPowerTerm,gvl);
-    
+
     //xD1 = _MM_MUL_f32(xD1, xTime,gvl);
     //xD1 = _MM_ADD_f32(xD1,xLogTerm,gvl);
     xD1   = _MM_MADD_f32(xD1,xTime,xLogTerm,gvl);
@@ -543,7 +552,7 @@ int main (int argc, char **argv)
     struct timeval tv1_0, tv2_0;
     struct timezone tz_0;
     double elapsed0=0.0;
-    gettimeofday(&tv1_0, &tz_0);
+    // gettimeofday(&tv1_0, &tz_0);
 //#endif
 
 
@@ -639,8 +648,8 @@ int main (int argc, char **argv)
     printf("Size of data: %lu\n", numOptions * (sizeof(OptionData) + sizeof(int)));
 
 //#ifdef USE_RISCV_VECTOR
-    gettimeofday(&tv2_0, &tz_0);
-    elapsed0 = (double) (tv2_0.tv_sec-tv1_0.tv_sec) + (double) (tv2_0.tv_usec-tv1_0.tv_usec) * 1.e-6; 
+    // gettimeofday(&tv2_0, &tz_0);
+    elapsed0 = (double) (tv2_0.tv_sec-tv1_0.tv_sec) + (double) (tv2_0.tv_usec-tv1_0.tv_usec) * 1.e-6;
     printf("\n\nBlackScholes Initialization took %8.8lf secs   \n", elapsed0 );
 //#endif
 
@@ -648,7 +657,8 @@ int main (int argc, char **argv)
     struct timeval tv1, tv2;
     struct timezone tz;
     double elapsed1=0.0;
-    gettimeofday(&tv1, &tz);
+    // gettimeofday(&tv1, &tz);
+    long long start_cycle = get_cycle();
 //#endif
 
 #ifdef ENABLE_PARSEC_HOOKS
@@ -706,38 +716,40 @@ int main (int argc, char **argv)
 #endif
 
 //#ifdef USE_RISCV_VECTOR
-    gettimeofday(&tv2, &tz);
-    elapsed1 = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6; 
-    printf("\n\nBlackScholes Kernel took %8.8lf secs   \n", elapsed1 );
+    // gettimeofday(&tv2, &tz);
+    long long end_cycle = get_cycle();
+    elapsed1 = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
+    // printf("\n\nBlackScholes Kernel took %8.8lf secs   \n", elapsed1 );
+    printf("\n\nBlackScholes Kernel took %lld secs   \n", end_cycle - start_cycle);
 //#endif
 
-    //Write prices to output file
-    file = fopen(outputFile, "w");
-    if(file == NULL) {
-      printf("ERROR: Unable to open file `%s'.\n", outputFile);
-    //  exit(1);
-    }
-    //rv = fprintf(file, "%i\n", numOptions);
-    printf("%i\n", numOptions);
-    if(rv < 0) {
-      printf("ERROR: Unable to write to file `%s'.\n", outputFile);
-      fclose(file);
-      exit(1);
-    }
-    for(i=0; i<numOptions; i++) {
-      //rv = fprintf(file, "%.18f\n", prices[i]);
-      printf("%.18f\n", prices[i]);
-      if(rv < 0) {
-        printf("ERROR: Unable to write to file `%s'.\n", outputFile);
-        fclose(file);
-        exit(1);
-      }
-    }
-    rv = fclose(file);
-    if(rv != 0) {
-      printf("ERROR: Unable to close file `%s'.\n", outputFile);
-      exit(1);
-    }
+    // //Write prices to output file
+    // file = fopen(outputFile, "w");
+    // if(file == NULL) {
+    //   printf("ERROR: Unable to open file `%s'.\n", outputFile);
+    // //  exit(1);
+    // }
+    // //rv = fprintf(file, "%i\n", numOptions);
+    // printf("%i\n", numOptions);
+    // if(rv < 0) {
+    //   printf("ERROR: Unable to write to file `%s'.\n", outputFile);
+    //   fclose(file);
+    //   exit(1);
+    // }
+    // for(i=0; i<numOptions; i++) {
+    //   //rv = fprintf(file, "%.18f\n", prices[i]);
+    //   printf("%.18f\n", prices[i]);
+    //   if(rv < 0) {
+    //     printf("ERROR: Unable to write to file `%s'.\n", outputFile);
+    //     fclose(file);
+    //     exit(1);
+    //   }
+    // }
+    // rv = fclose(file);
+    // if(rv != 0) {
+    //   printf("ERROR: Unable to close file `%s'.\n", outputFile);
+    //   exit(1);
+    // }
 
 #ifdef ERR_CHK
     printf("Num Errors: %d\n", numError);
@@ -751,4 +763,3 @@ int main (int argc, char **argv)
 
     return 0;
 }
-

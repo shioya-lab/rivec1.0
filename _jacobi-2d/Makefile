@@ -2,6 +2,8 @@
 rvv_target = bin/rvv-test
 serial_target = bin/serial-test
 
+APP_NAME = jacobi-2d
+
 SPIKE_OPTS = 64 100 jacobi_2d.out
 
 include ../runspike.mk

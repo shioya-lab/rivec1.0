@@ -2,6 +2,8 @@
 rvv_target = bin/rvv-test
 serial_target = bin/serial-test
 
+APP_NAME = pathfinder
+
 SPIKE_OPTS = 32 32 out
 
 include ../runspike.mk

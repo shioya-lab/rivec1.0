@@ -3,6 +3,8 @@
 rvv_target = bin/rvv-test
 serial_target = bin/serial-test
 
+APP_NAME = swaptions
+
 SPIKE_OPTS = -ns 8 -sm 512 -nt 1
 
 include ../runspike.mk

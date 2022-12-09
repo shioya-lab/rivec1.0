@@ -24,9 +24,18 @@
 #endif
 /************************************************************************/
 
+long long get_cycle()
+{
+  long long cycle;
+  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
+
+  return cycle;
+}
+
+
 using namespace std;
 #define DATA_TYPE double
-#define RESULT_PRINT
+// #define RESULT_PRINT
 string outfilename;
 
 /* Array initialization. */
@@ -64,7 +73,7 @@ void kernel_jacobi_2d_vector(int tsteps,int n, DATA_TYPE **A,DATA_TYPE **B)
 
     xConstant = _MM_SET_f64(0.20,gvl);
 
-    for (int j=1; j<=size_x; j=j+gvl) 
+    for (int j=1; j<=size_x; j=j+gvl)
     {
         // gvl = __builtin_epi_vsetvl(size_y-j+1, __epi_e64, __epi_m1);
         gvl =  vsetvl_e64m1(size_y-j+1); //PLCT
@@ -72,7 +81,7 @@ void kernel_jacobi_2d_vector(int tsteps,int n, DATA_TYPE **A,DATA_TYPE **B)
         xUtop = _MM_LOAD_f64(&A[0][j],gvl);
         xUbottom = _MM_LOAD_f64(&A[2][j],gvl);
 
-        for (int i=1; i<=size_y; i++) 
+        for (int i=1; i<=size_y; i++)
         {
             if(i!=1)
             {
@@ -80,7 +89,7 @@ void kernel_jacobi_2d_vector(int tsteps,int n, DATA_TYPE **A,DATA_TYPE **B)
                 xU =  xUbottom;
                 xUbottom =  _MM_LOAD_f64(&A[i+1][j],gvl);
             }
-            izq = *(unsigned long int*)&A[i][j-1]; 
+            izq = *(unsigned long int*)&A[i][j-1];
             der = *(unsigned long int*)&A[i][j+gvl];
             xUleft = _MM_VSLIDE1UP_f64(xU,izq,gvl);
             xUright = _MM_VSLIDE1DOWN_f64(xU,der,gvl);
@@ -177,13 +186,16 @@ int main(int argc, char** argv)
 
   /* Start timer. */
   long long start = get_time();
+  long long start_cycle = get_cycle();
 
   /* Run kernel. */
   kernel_jacobi_2d(tsteps, n, A, B);
 
   // stopping time
   long long end = get_time();
+  long long end_cycle = get_cycle();
   printf("time: %lf\n", elapsed_time(start, end));
+  printf("time: %lld\n", end_cycle - start_cycle);
 #ifdef RESULT_PRINT
   output_printfile(n,A, outfilename );
 #endif  // RESULT_PRINT

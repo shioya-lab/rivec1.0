@@ -22,7 +22,7 @@ long long get_time() {
 long long get_cycle()
 {
   long long cycle;
-  asm volatile ("rdcycle %0":"=r"(cycle));
+  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
 
   return cycle;
 }

@@ -41,10 +41,20 @@ void output_printfile(int *dst, string& filename);
 *returns a long int representing the time
 *************************************************************************/
 long long get_time() {
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return (tv.tv_sec * 1000000) + tv.tv_usec;
+    // struct timeval tv;
+    // gettimeofday(&tv, NULL);
+    // return (tv.tv_sec * 1000000) + tv.tv_usec;
+  return 0;
 }
+
+long long get_cycle()
+{
+  long long cycle;
+  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
+
+  return cycle;
+}
+
 // Returns the number of seconds elapsed between the two specified times
 float elapsed_time(long long start_time, long long end_time) {
         return (float) (end_time - start_time) / (1000 * 1000);
@@ -70,13 +80,13 @@ void init(int argc, char** argv)
 
     wall = new int[rows * cols];
     result = new int[cols];
-    
+
     //int seed = M_SEED;
     //srand(seed);
     /*
     init_data(wall, inputfilename );
     */
-    
+
     for (int i = 0; i < rows; i++)
     {
         for (int j = 0; j < cols; j++)
@@ -84,7 +94,7 @@ void init(int argc, char** argv)
             wall[i*cols+j] = rand() % 10;
         }
     }
-    
+
     //for (int j = 0; j < cols; j++)
     //    result[j] = wall[j];
 
@@ -116,7 +126,7 @@ int main(int argc, char** argv)
 // if(argc != 1 ) {
 //         cout << "Usage: " << argv[0] << " <input_file> " << endl;
 //         exit(1);
-//     }   
+//     }
 long long start_0 = get_time();
 init(argc,argv);
 long long end_0 = get_time();
@@ -138,9 +148,9 @@ void run()
 {
     int min;
     int *src,*dst, *temp;
-    
+
     //src = (int *)malloc(sizeof(int)*cols);
-    
+
     printf("NUMBER OF RUNS: %d\n",NUM_RUNS);
     long long start = get_time();
 
@@ -164,7 +174,7 @@ void run()
                 min = MIN(min, src[n+1]);
               dst[n] = wall[(t+1)*cols + n]+min;
             }
-        }   
+        }
         //delete src;
     }
 
@@ -188,6 +198,7 @@ void run_vector()
     int *dst;
 
     long long start = get_time();
+    long long start_cycle = get_cycle();
     printf("NUMBER OF RUNS VECTOR: %d\n",NUM_RUNS);
 
     for (int j=0; j<NUM_RUNS; j++) {
@@ -201,11 +212,11 @@ void run_vector()
         _MMR_i32    xSrc_slideup;
         _MMR_i32    xSrc_slidedown;
         _MMR_i32    xSrc;
-        _MMR_i32    xNextrow; 
+        _MMR_i32    xNextrow;
 
         int aux,aux2;
 
-        for (int t = 0; t < rows-1; t++) 
+        for (int t = 0; t < rows-1; t++)
         {
             aux = dst[0] ;
             for(int n = 0; n < cols; n = n + gvl)
@@ -224,7 +235,7 @@ void run_vector()
 
                 xNextrow = _MM_LOAD_i32(&wall[(t+1)*cols + n],gvl);
                 xNextrow = _MM_ADD_i32(xNextrow,xSrc,gvl);
-                
+
                 aux = dst[n+gvl-1];
                 _MM_STORE_i32(&dst[n],xNextrow,gvl);
                 FENCE();
@@ -234,7 +245,9 @@ void run_vector()
         FENCE();
     }
     long long end = get_time();
+    long long end_cycle = get_cycle();
     printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
+    printf("TIME TO FIND THE SMALLEST PATH: %lld\n", end_cycle - start_cycle);
 
 #ifdef RESULT_PRINT
 
