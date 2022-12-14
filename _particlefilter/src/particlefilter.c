@@ -40,13 +40,7 @@ long long get_time() {
   return 0;
 }
 
-long long get_cycle()
-{
-  long long cycle;
-  asm volatile ("rdcycle %0; add x0, x0, x0":"=r"(cycle));
-
-  return cycle;
-}
+#include "count_utils.h"
 
 // Returns the number of seconds elapsed between the two specified times
 long long elapsed_time(long long start_time, long long end_time) {
@@ -962,6 +956,7 @@ int main(int argc, char * argv[]){
     int * I = (int *)malloc(sizeof(int)*IszX*IszY*Nfr); // 128 * 128 * 10 = 163840 * sizeof(int)
     long long start = get_time();
     long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
     //call video sequence
     videoSequence(I, IszX, IszY, Nfr, seed);
     long long endVideoSequence = get_time();
@@ -982,9 +977,11 @@ int main(int argc, char * argv[]){
 
     long long endParticleFilter = get_time();
     long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
     printf("PARTICLE FILTER TOOK %f\n", elapsed_time(endVideoSequence, endParticleFilter));
     printf("ENTIRE PROGRAM TOOK %f\n", elapsed_time(start, endParticleFilter));
-    printf("ENTIRE PROGRAM TOOK %lld\n", elapsed_time(start_cycle, end_cycle));
+    printf("cycles = %lld\n", end_cycle - start_cycle);
+    printf("vecinst = %lld\n", end_vecinst - start_vecinst);
 
     free(seed);
     free(I);

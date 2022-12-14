@@ -47,13 +47,7 @@ long long get_time() {
   return 0;
 }
 
-long long get_cycle()
-{
-  long long cycle;
-  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
-
-  return cycle;
-}
+#include "count_utils.h"
 
 // Returns the number of seconds elapsed between the two specified times
 float elapsed_time(long long start_time, long long end_time) {
@@ -153,6 +147,8 @@ void run()
 
     printf("NUMBER OF RUNS: %d\n",NUM_RUNS);
     long long start = get_time();
+    long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
 
     for (int j=0; j<NUM_RUNS; j++) {
         src = new int[cols];
@@ -179,7 +175,10 @@ void run()
     }
 
     long long end = get_time();
+    long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
     printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
+    printf("TIME TO FIND THE SMALLEST PATH: %lld\n", end_cycle - start_cycle);
 
 #ifdef RESULT_PRINT
 
@@ -199,6 +198,7 @@ void run_vector()
 
     long long start = get_time();
     long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
     printf("NUMBER OF RUNS VECTOR: %d\n",NUM_RUNS);
 
     for (int j=0; j<NUM_RUNS; j++) {
@@ -246,8 +246,10 @@ void run_vector()
     }
     long long end = get_time();
     long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
     printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
-    printf("TIME TO FIND THE SMALLEST PATH: %lld\n", end_cycle - start_cycle);
+    printf("cycle = %lld\n", end_cycle - start_cycle);
+    printf("vecinst = %ld\n",  end_vecinst - start_vecinst);
 
 #ifdef RESULT_PRINT
 

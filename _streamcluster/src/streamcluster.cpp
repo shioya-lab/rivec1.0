@@ -16,13 +16,7 @@
 #include <sys/resource.h>
 #include <limits.h>
 
-long long get_cycle()
-{
-  long long cycle;
-  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
-
-  return cycle;
-}
+#include "count_utils.h"
 
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
@@ -2088,6 +2082,7 @@ int main(int argc, char **argv)
     double elapsed=0.0;
     // gettimeofday(&tv1, &tz);
     long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
 
 //#endif
 
@@ -2096,9 +2091,11 @@ int main(int argc, char **argv)
 //#ifdef USE_RISCV_VECTOR
   // gettimeofday(&tv2, &tz);
     long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
     elapsed = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
     printf("\n\nstreamCluster Kernel took %8.8lf secs   \n", elapsed );
-    printf("\n\nstreamCluster Kernel took %lld cycles   \n",  end_cycle - start_cycle);
+    printf("cycles = %ld\n",  end_cycle - start_cycle);
+    printf("vecinst = %ld\n",  end_vecinst - start_vecinst);
 //#endif
 
 #ifdef ENABLE_PARSEC_HOOKS

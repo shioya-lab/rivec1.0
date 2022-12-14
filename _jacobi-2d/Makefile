@@ -9,8 +9,9 @@ SPIKE_OPTS = 64 100 jacobi_2d.out
 include ../runspike.mk
 
 
-serial: $(serial_target)
+scalar: $(serial_target)
 $(serial_target):
+	mkdir -p bin
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -march=rv64g -O2 -o $(serial_target) src/*.o -lm; \
 	rm src/*.o; \
@@ -18,6 +19,7 @@ $(serial_target):
 
 vector: $(rvv_target)
 $(rvv_target):
+	mkdir -p bin
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(rvv_target) src/*.o -lm ; \
 	rm src/*.o ; \

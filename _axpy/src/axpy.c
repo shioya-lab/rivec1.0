@@ -3,6 +3,7 @@
 #include <math.h>
 #include <assert.h>
 
+#ifdef USE_RISCV_VECTOR
 
 #include "../../common/vector_defines.h"
 
@@ -28,3 +29,18 @@ void axpy_intrinsics(double a, double *dx, double *dy, int n) {
 
 FENCE();
 }
+
+#else // USE_RISCV_VECTOR
+
+#define FENCE()   asm volatile( "fence" : : );
+
+void axpy_intrinsics(double a, double *dx, double *dy, int n) {
+
+  for (int i = 0; i < n; i++) {
+    dy[i] = a * dx[i] + dy[i];
+  }
+
+  FENCE();
+}
+
+#endif // USE_RISCV_VECTOR

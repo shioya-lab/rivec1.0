@@ -37,13 +37,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-long long get_cycle()
-{
-  long long cycle;
-  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
-
-  return cycle;
-}
+#include "count_utils.h"
 
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
@@ -77,6 +71,7 @@ int main (int argc, char * const argv[]) {
     double elapsed1=0.0;
     // gettimeofday(&tv1, &tz);
     long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
 //#endif
 
 #ifdef PARSEC_VERSION
@@ -136,9 +131,11 @@ int main (int argc, char * const argv[]) {
 	//#ifdef USE_RISCV_VECTOR
     // gettimeofday(&tv2, &tz);
     long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
     elapsed1 = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
     printf("\n\nInitialization took %8.8lf secs   \n", elapsed1 );
-    printf("\n\nInitialization took %lld cycle   \n", end_cycle - start_cycle );
+    printf("cycle = %lld\n", end_cycle - start_cycle );
+    printf("vecinst = %lld\n", end_vecinst - start_vecinst);
 //#endif
 
 
@@ -152,6 +149,7 @@ int main (int argc, char * const argv[]) {
     double elapsed2=0.0;
     // gettimeofday(&tv3, &tz);
     start_cycle = get_cycle();
+    start_vecinst = get_vecinst();
 //#endif
 
 
@@ -172,9 +170,11 @@ int main (int argc, char * const argv[]) {
 //#ifdef USE_RISCV_VECTOR
     // gettimeofday(&tv4, &tz);
     end_cycle = get_cycle();
+    end_vecinst = get_vecinst ();
     elapsed2 = (double) (tv4.tv_sec-tv3.tv_sec) + (double) (tv4.tv_usec-tv3.tv_usec) * 1.e-6;
     printf("\n\nthread.Run() %8.8lf secs   \n", elapsed2 );
-    printf("\n\nthread.Run() %lld cycle\n", end_cycle - start_cycle );
+    printf("cycles = %lld\n", end_cycle - start_cycle );
+    printf("vecinst = %lld\n", end_vecinst - start_vecinst );
 //#endif
 
 

@@ -6,9 +6,10 @@ start:
 	mkdir bin; \
 	rm bin/*.*
 
-serial: bin/tests_serial.exe
+scalar: bin/tests_serial.exe
 
 bin/tests_serial.exe:
+	mkdir -p bin
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64g -O2 --sysroot=$(SYSROOT_DIR) -c -o src/tests.o src/tests.cpp
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64g -O2 --sysroot=$(SYSROOT_DIR) -o  src/tests_serial.o -lm
 	rm src/*.o
@@ -16,6 +17,7 @@ bin/tests_serial.exe:
 
 vector: bin/tests_vector.exe
 bin/tests_vector.exe:
+	mkdir -p bin
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -O2 --sysroot=$(SYSROOT_DIR) -c -o src/tests.o src/tests.cpp ; \
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -O2 --sysroot=$(SYSROOT_DIR) -o $@ src/*.o -lm ; \
 	rm src/*.o ; \

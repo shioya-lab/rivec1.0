@@ -12,21 +12,14 @@
 #include <time.h>
 #include <sys/time.h>
 
+#include "count_utils.h"
+
 long long get_time() {
     // struct timeval tv;
     // gettimeofday(&tv, NULL);
     // return (tv.tv_sec * 1000000) + tv.tv_usec;
   return 0;
 }
-
-long long get_cycle()
-{
-  long long cycle;
-  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
-
-  return cycle;
-}
-
 
 // Returns the number of seconds elapsed between the two specified times
 float elapsed_time(long long start_time, long long end_time) {
@@ -95,11 +88,14 @@ int main(int argc, char *argv[])
     printf ("doing vector axpy\n");
     start = get_time();
     long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
     axpy_intrinsics(a, dx, dy, n);
     long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
     end = get_time();
     printf("axpy_intrinsics time: %f\n", elapsed_time(start, end));
-    printf("axpy_intrinsics cycle: %lld\n", end_cycle - start_cycle);
+    printf("cycle = %lld\n", end_cycle - start_cycle);
+    printf("vecinst = %lld\n", end_vecinst - start_vecinst);
 
     printf ("done\n");
     test_result(dy, dy_ref, n);

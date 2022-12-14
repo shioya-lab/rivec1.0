@@ -1,10 +1,10 @@
-LLVM = /home/kimura/work/llvm/llvm-myriscvx150/build
-GCC_TOOLCHAIN_DIR = /home/kimura/riscv-rvvnext
+LLVM = /riscv
+GCC_TOOLCHAIN_DIR = /riscv
 SYSROOT_DIR := $(GCC_TOOLCHAIN_DIR)/riscv64-unknown-elf
 
 SNIPER_ROOT = $(abspath ../../../sniper)
 SPIKE = $(SNIPER_ROOT)/../riscv-isa-sim/spike
-PK = $(HOME)/riscv64imafd/riscv64-unknown-elf/bin/pk
+PK ?= $(SYSROOT_DIR)/bin/pk
 # PK = $(HOME)/riscv64/riscv64-unknown-elf/bin/pk
 
 rvv_sift = $(basename $(notdir $(rvv_target))).sift
@@ -13,6 +13,9 @@ serial_sift = $(basename $(notdir $(serial_target))).sift
 build:
 	$(MAKE) vector scalar
 	$(MAKE) runspike-s runspike-v
+	$(MAKE) runsniper
+
+runsniper:
 	$(MAKE) runsniper-ooo-v runsniper-vio runsniper-ino-v runsniper-ooo-s runsniper-ino-s
 
 runspike-v : $(rvv_target)
@@ -64,7 +67,7 @@ runsniper-ino-v: $(rvv_sift)
 runsniper-vio: $(rvv_sift)
 	mkdir -p vio.v && \
 	cd vio.v && \
-	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-viorderboom.cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).vio.log 2>&1 && \
+	$(SNIPER_ROOT)/run-sniper -v -c $(SNIPER_ROOT)/config/riscv-vinorderboom.cfg --traces=../$^ > $(basename $(notdir $(rvv_target))).vio.log 2>&1 && \
 	awk '{ if($$1 == "CycleTrace") { if (cycle==0) { cycle=$$2 } else { print $$2 - cycle; cycle=0;} }}'  $(basename $(notdir $(rvv_target))).vio.log > $(basename $(notdir $(rvv_target))).vio && \
 	xz -f $(basename $(notdir $(rvv_target))).vio.log && \
 	mv o3_trace.out $(APP_NAME).vio.out && \
@@ -92,9 +95,8 @@ runsniper-ino-s: $(serial_sift)
 	mv o3_trace.out $(APP_NAME).ino.s.out && \
 	xz -f $(APP_NAME).ino.s.out
 
-
-
 clean:
+	rm -rf $(rvv_target) $(serial_target)
 	rm -rf output.txt
 	rm -rf ino.s
 	rm -rf ino.v
@@ -104,3 +106,4 @@ clean:
 	rm -rf *.sift
 	rm -rf *.log
 	rm -rf bin/*
+	rm -rf *.xz

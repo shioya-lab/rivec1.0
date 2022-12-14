@@ -33,14 +33,7 @@ tbb::cache_aligned_allocator<parm> memory_parm;
 #endif // TBB_VERSION
 #endif //ENABLE_THREADS
 
-long long get_cycle()
-{
-  long long cycle;
-  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
-
-  return cycle;
-}
-
+#include "count_utils.h"
 
 #ifdef ENABLE_PARSEC_HOOKS
 #include <hooks.h>
@@ -321,6 +314,7 @@ int main(int argc, char *argv[])
      double elapsed0=0.0;
      // gettimeofday(&tv1_0, &tz_0);
      long long start_cycle = get_cycle();
+     long long start_vecinst = get_vecinst();
 //#endif
 
 #ifdef ENABLE_THREADS
@@ -351,9 +345,11 @@ int main(int argc, char *argv[])
 //#ifdef USE_RISCV_VECTOR
     // gettimeofday(&tv2_0, &tz_0);
      long long end_cycle = get_cycle();
+     long long end_vecinst = get_vecinst();
      elapsed0 = (double) (tv2_0.tv_sec-tv1_0.tv_sec) + (double) (tv2_0.tv_usec-tv1_0.tv_usec) * 1.e-6;
      printf("\n\nSwaption Pricing Routine took %8.8lf secs   \n", elapsed0 );
-     printf("\n\nSwaption Pricing Routine took %lld   \n", end_cycle - start_cycle );
+     printf("cycle = %lld\n", end_cycle - start_cycle );
+     printf("vecinst = %lld\n", end_vecinst - start_vecinst );
 //#endif
 
 #ifdef ENABLE_PARSEC_HOOKS

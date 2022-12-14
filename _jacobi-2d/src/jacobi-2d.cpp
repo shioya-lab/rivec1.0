@@ -24,14 +24,7 @@
 #endif
 /************************************************************************/
 
-long long get_cycle()
-{
-  long long cycle;
-  asm volatile ("rdcycle %0; add x0,x0,x0":"=r"(cycle));
-
-  return cycle;
-}
-
+#include "count_utils.h"
 
 using namespace std;
 #define DATA_TYPE double
@@ -187,6 +180,7 @@ int main(int argc, char** argv)
   /* Start timer. */
   long long start = get_time();
   long long start_cycle = get_cycle();
+  long long start_vecinst = get_vecinst();
 
   /* Run kernel. */
   kernel_jacobi_2d(tsteps, n, A, B);
@@ -194,8 +188,10 @@ int main(int argc, char** argv)
   // stopping time
   long long end = get_time();
   long long end_cycle = get_cycle();
+  long long end_vecinst = get_vecinst();
   printf("time: %lf\n", elapsed_time(start, end));
-  printf("time: %lld\n", end_cycle - start_cycle);
+  printf("cycle = %lld\n", end_cycle - start_cycle);
+  printf("vecinst = %lld\n", end_vecinst - start_vecinst);
 #ifdef RESULT_PRINT
   output_printfile(n,A, outfilename );
 #endif  // RESULT_PRINT

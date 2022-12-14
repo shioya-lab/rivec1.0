@@ -1,11 +1,18 @@
 BASE_DIR := $(shell pwd)
 
-APPLICATION_DIRS := _blackscholes _swaptions _streamcluster _canneal _particlefilter _pathfinder _jacobi-2d _matmul _axpy
+APPLICATION_DIRS := _blackscholes _swaptions _streamcluster _canneal _particlefilter _pathfinder _jacobi-2d _axpy
 
 # all: blackscholes swaptions streamcluster canneal particlefilter pathfinder jacobi-2d matmul axpy
 all: swaptions streamcluster canneal particlefilter pathfinder jacobi-2d axpy
 
 .PHONY: $(addsuffix _sniper, $(APPLICATION_DIRS))
+.PHONY: $(addsuffix _spike, $(APPLICATION_DIRS))
+
+only_spike:
+	$(MAKE) $(addsuffix _spike, $(APPLICATION_DIRS))
+
+$(addsuffix _spike, $(APPLICATION_DIRS)):
+	$(MAKE) -C $(subst _spike,, $@) runspike-v runspike-s
 
 only_sniper:
 	$(MAKE) $(addsuffix _sniper, $(APPLICATION_DIRS)) runsniper
