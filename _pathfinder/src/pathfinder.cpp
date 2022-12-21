@@ -178,7 +178,8 @@ void run()
     long long end_cycle = get_cycle();
     long long end_vecinst = get_vecinst();
     printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
-    printf("TIME TO FIND THE SMALLEST PATH: %lld\n", end_cycle - start_cycle);
+    printf("cycles = %lld\n", end_cycle - start_cycle);
+    printf("vecinst = %lld\n", end_vecinst - start_vecinst);
 
 #ifdef RESULT_PRINT
 
