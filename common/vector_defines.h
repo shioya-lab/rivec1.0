@@ -393,7 +393,8 @@ vfloat64m1_t vmerge_vvm_f64m1 (vbool64_t mask, vfloat64m1_t op1, vfloat64m1_t op
 //#define _MM_VFCVT_f32_i32   __builtin_epi_vfcvt_f_x_2xf32_2xi32
 #define _MM_VFCVT_f32_i32(op1, op2) vfcvt_f_x_v_f32m1(op1)
 
-#define FENCE()   asm volatile( "fence" : : );
+// #define FENCE()   asm volatile( "fence" : : );
+#define FENCE()
 
 //---------------------------------------------------------------------------
 // VECTOR ELEMENT MANIPULATION

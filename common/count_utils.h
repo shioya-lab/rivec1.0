@@ -22,3 +22,21 @@ long long get_vecinst()
   return num;
 }
 
+
+long long start_konatadump()
+{
+  long long cycle;
+  asm volatile ("rdcycle %0; add x0,x0,x1":"=r"(cycle));
+
+  return cycle;
+}
+
+
+long long stop_konatadump()
+{
+  long long cycle;
+  asm volatile ("rdcycle %0; add x0,x0,x2":"=r"(cycle));
+
+  return cycle;
+}
+

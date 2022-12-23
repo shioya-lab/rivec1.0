@@ -117,8 +117,14 @@ void kernel_jacobi_2d(int tsteps,int n, DATA_TYPE **A,DATA_TYPE **B)
 #else
     for (t = 0; t < tsteps; t++)
     {
+      if (t == 1) {
+        start_konatadump();
+      }
       kernel_jacobi_2d_vector(tsteps,n, A,B);
       kernel_jacobi_2d_vector(tsteps,n, B,A);
+      if (t == 3) {
+        stop_konatadump();
+      }
     }
 #endif
 }

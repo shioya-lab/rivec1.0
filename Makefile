@@ -24,45 +24,49 @@ $(addsuffix _sniper, $(APPLICATION_DIRS)):
 	$(MAKE) -C $(subst _sniper,, $@) runsniper-ooo-v runsniper-io-v runsniper-vio
 
 runsniper:
-	$(MAKE) runsniper-ooo-v runsniper-io-v runsniper-vio runsniper-ooo-s runsniper-io-s
+	$(MAKE) runsniper-v runsniper-s
 
+runsniper-v:
+	$(MAKE) runsniper-ooo-v runsniper-io-v runsniper-vio
+
+runsniper-s:
+	$(MAKE) runsniper-ooo-s runsniper-io-s
 
 blackscholes:
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper
+	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v
 
 swaptions:
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper
+	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v
 
 streamcluster:
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper
+	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v
 
 canneal:
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper
+	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v
 
 particlefilter:
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper
+	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v
 
 pathfinder:
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper
+	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v
 
 jacobi-2d:
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper
+	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v
 
 matmul:
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper
-
+	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v
 
 axpy:
 	$(MAKE) -C _$@ runspike-v
-	$(MAKE) -C _$@ runsniper
+	$(MAKE) -C _$@ runsniper-v
 
 stats:
 	for dir in $(APPLICATION_DIRS); do \

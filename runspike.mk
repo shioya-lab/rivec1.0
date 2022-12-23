@@ -12,13 +12,25 @@ serial_sift = $(basename $(notdir $(serial_target))).sift
 
 VLEN ?= 256
 
+.PHONY: build vector scalar 
+.PHONY: runspike-s runspike-v
+.PHONY: runsniper runsniper-v runsniper-s
+.PHONY: runsniper-ooo-v runsniper-vio runsniper-ino-v
+.PHONY: runsniper-ooo-s runsniper-ino-s
+
 build:
 	$(MAKE) vector scalar
 	$(MAKE) runspike-s runspike-v
 	$(MAKE) runsniper
 
 runsniper:
-	$(MAKE) runsniper-ooo-v runsniper-vio runsniper-ino-v runsniper-ooo-s runsniper-ino-s
+	$(MAKE) runsniper-v runsniper-s
+
+runsniper-v:
+	$(MAKE) runsniper-ooo-v runsniper-vio runsniper-ino-v
+
+runsniper-s:
+	$(MAKE) runsniper-ooo-s runsniper-ino-s
 
 runspike-v : $(rvv_target)
 	$(MAKE) $(rvv_sift)
