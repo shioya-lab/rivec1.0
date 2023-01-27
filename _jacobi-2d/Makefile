@@ -6,22 +6,22 @@ APP_NAME = jacobi-2d
 
 SPIKE_OPTS = 64 100 jacobi_2d.out
 
-include ../runspike.mk
+include ../../scripts/runspike.mk
 
 
 scalar: $(serial_target)
 $(serial_target):
 	mkdir -p bin
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -march=rv64g -O2 -o $(serial_target) src/*.o -lm; \
+	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
+	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -march=rv64g -O2 -o $(serial_target) src/*.o -lm; \
 	rm src/*.o; \
 	${LLVM}/bin/llvm-objdump --mattr=+v -ds  $(serial_target) > bin/jacobi-2d_serial.dump
 
 vector: $(rvv_target)
 $(rvv_target):
 	mkdir -p bin
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(rvv_target) src/*.o -lm ; \
+	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.o src/jacobi-2d.cpp; \
+	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(rvv_target) src/*.o -lm ; \
 	rm src/*.o ; \
 	${LLVM}/bin/llvm-objdump --mattr=+v -ds  $(rvv_target) > bin/jacobi-2d_vector.dump ; \
 

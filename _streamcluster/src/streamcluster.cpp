@@ -16,6 +16,7 @@
 #include <sys/resource.h>
 #include <limits.h>
 
+#include "sim_api.h"
 #include "count_utils.h"
 
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
@@ -2085,10 +2086,15 @@ int main(int argc, char **argv)
     long long start_vecinst = get_vecinst();
 
 //#endif
+    SimRoiStart();
+    start_konatadump();
 
   streamCluster(stream, kmin, kmax, dim, chunksize, clustersize, outfilename );
 
-//#ifdef USE_RISCV_VECTOR
+    SimRoiEnd();
+    stop_konatadump();
+
+    //#ifdef USE_RISCV_VECTOR
   // gettimeofday(&tv2, &tz);
     long long end_cycle = get_cycle();
     long long end_vecinst = get_vecinst();

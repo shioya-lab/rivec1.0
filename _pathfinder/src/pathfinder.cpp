@@ -48,6 +48,7 @@ long long get_time() {
 }
 
 #include "count_utils.h"
+#include "sim_api.h"
 
 // Returns the number of seconds elapsed between the two specified times
 float elapsed_time(long long start_time, long long end_time) {
@@ -149,6 +150,8 @@ void run()
     long long start = get_time();
     long long start_cycle = get_cycle();
     long long start_vecinst = get_vecinst();
+     SimRoiStart();
+     start_konatadump();
 
     for (int j=0; j<NUM_RUNS; j++) {
         src = new int[cols];
@@ -173,6 +176,9 @@ void run()
         }
         //delete src;
     }
+
+    SimRoiEnd();
+    stop_konatadump();
 
     long long end = get_time();
     long long end_cycle = get_cycle();
@@ -201,8 +207,14 @@ void run_vector()
     long long start_cycle = get_cycle();
     long long start_vecinst = get_vecinst();
     printf("NUMBER OF RUNS VECTOR: %d\n",NUM_RUNS);
+     SimRoiStart();
+     start_konatadump();
 
     for (int j=0; j<NUM_RUNS; j++) {
+      if (j == 2) {
+        start_konatadump();
+      }
+
         for (int x = 0; x < cols; x++){
             result[x] = wall[x];
         }
@@ -245,11 +257,14 @@ void run_vector()
 
         FENCE();
     }
+    SimRoiEnd();
+    stop_konatadump();
+
     long long end = get_time();
     long long end_cycle = get_cycle();
     long long end_vecinst = get_vecinst();
     printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
-    printf("cycle = %lld\n", end_cycle - start_cycle);
+    printf("cycles = %lld\n", end_cycle - start_cycle);
     printf("vecinst = %ld\n",  end_vecinst - start_vecinst);
 
 #ifdef RESULT_PRINT

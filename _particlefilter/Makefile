@@ -6,23 +6,23 @@ APP_NAME = particlefilter
 
 SPIKE_OPTS =  -x 128 -y 128 -z 2 -np 256
 
-include ../runspike.mk
+include ../../scripts/runspike.mk
 
 start:
-	mkdir bin; \
-	rm bin/*.*
+	echo $(rvv_target)
+	echo $(serial_target)
 
 scalar: $(serial_target)
 $(serial_target):
 	mkdir -p bin
-	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf  -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/particlefilter_serial.o src/particlefilter.c
-	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf  -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(serial_target) src/particlefilter_serial.o -lm
+	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include  -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/particlefilter_serial.o src/particlefilter.c
+	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include  -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(serial_target) src/particlefilter_serial.o -lm
 	rm src/*.o
 
 vector: $(rvv_target)
 $(rvv_target):
 	mkdir -p bin
-	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -DMVL_$$mvl -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -c -o src/particlefilter.o src/particlefilter.c
-	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -DMVL_$$mvl -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -o $(rvv_target) src/*.o -lm
+	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -DMVL_$$mvl -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -c -o src/particlefilter.o src/particlefilter.c
+	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -DMVL_$$mvl -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -o $(rvv_target) src/*.o -lm
 	$(GCC_TOOLCHAIN_DIR)/bin/riscv64-unknown-elf-objdump -D $(rvv_target) > $(rvv_target).dmp
 	rm src/*.o

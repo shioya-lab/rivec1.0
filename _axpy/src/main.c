@@ -12,6 +12,7 @@
 #include <time.h>
 #include <sys/time.h>
 
+#include "sim_api.h"
 #include "count_utils.h"
 
 long long get_time() {
@@ -58,9 +59,9 @@ int main(int argc, char *argv[])
     long n;
 
     if (argc == 2)
-	n = 1024*atol(argv[1]); // input argument: vector size in Ks
+      n = 1024*atol(argv[1]); // input argument: vector size in Ks
     else
-        n = (30*1024);
+      n = (30*1024);
 
 
     /* Allocate the source and result vectors */
@@ -85,20 +86,29 @@ int main(int argc, char *argv[])
     init_vector(dx, n, 1.0);
     init_vector(dy, n, 2.0);
 
+    // Initial trial (Warmup)
+    axpy_intrinsics(a, dx, dy, n);
+    test_result(dy, dy_ref, n);
+
     printf ("doing vector axpy\n");
     start = get_time();
     long long start_cycle = get_cycle();
     long long start_vecinst = get_vecinst();
+
+    SimRoiStart();
+    start_konatadump();
     axpy_intrinsics(a, dx, dy, n);
+    SimRoiEnd();
+    stop_konatadump();
+
     long long end_cycle = get_cycle();
     long long end_vecinst = get_vecinst();
     end = get_time();
     printf("axpy_intrinsics time: %f\n", elapsed_time(start, end));
-    printf("cycle = %lld\n", end_cycle - start_cycle);
+    printf("cycles = %lld\n", end_cycle - start_cycle);
     printf("vecinst = %lld\n", end_vecinst - start_vecinst);
 
     printf ("done\n");
-    test_result(dy, dy_ref, n);
 
 
     free(dx); free(dy); free(dy_ref);

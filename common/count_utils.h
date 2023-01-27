@@ -39,4 +39,3 @@ long long stop_konatadump()
 
   return cycle;
 }
-

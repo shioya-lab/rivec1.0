@@ -41,6 +41,7 @@ long long get_time() {
 }
 
 #include "count_utils.h"
+#include "sim_api.h"
 
 // Returns the number of seconds elapsed between the two specified times
 long long elapsed_time(long long start_time, long long end_time) {
@@ -957,6 +958,8 @@ int main(int argc, char * argv[]){
     long long start = get_time();
     long long start_cycle = get_cycle();
     long long start_vecinst = get_vecinst();
+    SimRoiStart();
+    start_konatadump();
     //call video sequence
     videoSequence(I, IszX, IszY, Nfr, seed);
     long long endVideoSequence = get_time();
@@ -975,6 +978,8 @@ int main(int argc, char * argv[]){
     particleFilter(I, IszX, IszY, Nfr, seed, Nparticles);
     #endif
 
+    SimRoiEnd();
+    stop_konatadump();
     long long endParticleFilter = get_time();
     long long end_cycle = get_cycle();
     long long end_vecinst = get_vecinst();

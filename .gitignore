@@ -1,10 +1,10 @@
 *.o
-vio.v
-ooo.v
-ino.v
-io.v
-ooo.s
-ino.s
+vio.v*
+ooo.v*
+ino.v*
+io.v*
+ooo.s*
+ino.s*
 *.sift
 *.xz
 *.tgz
