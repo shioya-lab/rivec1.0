@@ -28,16 +28,11 @@ void spmv(int r, const double* val, const uint64_t* idx, const double* x,
   size_t vlmax = vsetvlmax_e64m4();
   for (int i = 0; i < r; i++) {
     uint64_t    base_k   = ptr[i];
-    // vuint64m4_t v_k_base = vsll_vx_u64m4(vmv_v_x_u64m4(base_k, vlmax), 3, vlmax);
-    // vuint64m4_t v_k_0    = vsll_vx_u64m4(vid_v_u64m4(vlmax), 3, vlmax);
-    // vuint64m4_t v_k      = vadd_vv_u64m4(v_k_base, v_k_0, vlmax);
-
     uint64_t *idx_ptr  = (uint64_t *)&idx[base_k];
     uint64_t *val_ptr  = (uint64_t *)&val[ptr[i]];
     vfloat64m4_t v_y = vfmv_v_f_f64m4(0.0, vlmax);
     for (int c_n_count = ptr[i+1]-ptr[i]; c_n_count > 0; c_n_count -= vl) {
       vl = vsetvl_e64m4(c_n_count);
-      // vfloat64m4_t v_val = vluxei64_v_f64m4(val, v_k, vl);
       vfloat64m4_t v_val = vle64_v_f64m4(val_ptr, vl);
 
       vuint64m4_t  v_idx_0 = vle64_v_u64m4((const uint64_t *)idx_ptr, vl);
@@ -124,5 +119,11 @@ int __attribute__((optimize("O0"))) main()
   printf("cycles = %lld\n", end_cycle - start_cycle);
   printf("vecinst = %lld\n", end_vecinst - start_vecinst);
 
-  return verifyDouble(R, y, verify_data);
+  int result = verifyDouble(R, y, verify_data);
+  if (!result) {
+    printf("Pass\n");
+  } else {
+    printf("Error\n");
+  }
+  return result;
 }
