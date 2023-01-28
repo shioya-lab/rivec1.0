@@ -26,7 +26,7 @@ runsniper:
 	$(MAKE) runsniper-v runsniper-s
 
 runsniper-v:
-	$(MAKE) runsniper-ooo-v runsniper-io-v runsniper-vio-v
+	$(MAKE) runsniper-ooo-v runsniper-io-v runsniper-vio-v runsniper-vio-ngs-v
 
 runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-io-s
