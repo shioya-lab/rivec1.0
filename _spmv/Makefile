@@ -8,6 +8,7 @@ run:
 	$(MAKE) runsniper-ooo-s runsniper-ino-s
 
 SOURCE_FILES += spmv_main.c
+SOURCE_FILES += spmv_vector.S
 
 APP_NAME = spmv
 

@@ -31,20 +31,24 @@ void spmv(int r, const double* val, const uint64_t* idx, const double* x,
     uint64_t *idx_ptr  = (uint64_t *)&idx[base_k];
     uint64_t *val_ptr  = (uint64_t *)&val[ptr[i]];
     vfloat64m4_t v_y = vfmv_v_f_f64m4(0.0, vlmax);
-    for (int c_n_count = ptr[i+1]-ptr[i]; c_n_count > 0; c_n_count -= vl) {
+    for (int c_n_count = ptr[i+1]-ptr[i]; c_n_count > 0; ) {
       vl = vsetvl_e64m4(c_n_count);
-      vfloat64m4_t v_val = vle64_v_f64m4(val_ptr, vl);
+      vfloat64m4_t v_val_0, v_val_1;
+      vuint64m4_t  v_idx_0, v_idx_1;
+      vfloat64m4_t v_x_0  , v_x_1  ;
 
-      vuint64m4_t  v_idx_0 = vle64_v_u64m4((const uint64_t *)idx_ptr, vl);
-      vuint64m4_t  v_idx_shifted = vsll_vx_u64m4(v_idx_0, 3, vl);
-      vfloat64m4_t v_x = vluxei64_v_f64m4(x, v_idx_shifted, vl);
+      v_val_0 = vle64_v_f64m4(val_ptr, vl);
 
-      v_y = vfmacc_vv_f64m4(v_y, v_x, v_val, vl);
+      v_idx_0 = vle64_v_u64m4((const uint64_t *)idx_ptr, vl);
+      v_idx_0 = vsll_vx_u64m4(v_idx_0, 3, vl);
+      v_x_0   = vluxei64_v_f64m4(x, v_idx_0, vl);
 
-      // v_k = vadd_vx_u64m4 (v_k, vl << 3, vl);
+      v_y = vfmacc_vv_f64m4(v_y, v_x_0, v_val_0, vl);
+
       idx_ptr += vl;
       val_ptr += vl;
 
+      c_n_count -= vl;
     }
     vfloat64m1_t v_zero = vfmv_v_f_f64m1(0.0, vlmax);
     vfloat64m1_t v_y_m1 = vfredusum_vs_f64m4_f64m1 (v_y_m1, v_y, v_zero, vlmax);
@@ -110,7 +114,7 @@ int __attribute__((optimize("O0"))) main()
 
   SimRoiStart();
   start_konatadump();
-  spmv(R, val, idx, x, ptr, y);
+  spmv_vector(R, val, idx, x, ptr, y);
   SimRoiEnd();
   stop_konatadump();
 
