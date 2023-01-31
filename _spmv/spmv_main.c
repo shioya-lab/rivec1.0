@@ -114,7 +114,11 @@ int __attribute__((optimize("O0"))) main()
 
   SimRoiStart();
   start_konatadump();
+#ifdef USE_RISCV_VECTOR
   spmv_vector(R, val, idx, x, ptr, y);
+#else // USE_RISCV_VECTOR
+  spmv(R, val, idx, x, ptr, y);
+#endif // USE_RISCV_VECTOR
   SimRoiEnd();
   stop_konatadump();
 

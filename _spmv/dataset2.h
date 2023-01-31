@@ -1,7 +1,8 @@
 #define R 128
 #define C 128
 #define NNZ 16384
-const double val[16384] = {  916,
+
+const double val[16384] __attribute__ ((aligned(64))) = {  916,
   254,
   745,
   510,
@@ -16386,7 +16387,8 @@ const double val[16384] = {  916,
   194,
   572};
 
-const uint64_t idx[16384] = {  0,
+
+const uint64_t __attribute__ ((aligned(64))) idx[16384] = {  0,
   1,
   2,
   3,
@@ -32900,7 +32902,8 @@ const double x[128] = {  769,
   515,
   760};
 
-const uint64_t ptr[129] = {  0,
+
+const uint64_t __attribute__ ((aligned(64))) ptr[129] = {  0,
   128,
   256,
   384,
@@ -33030,6 +33033,7 @@ const uint64_t ptr[129] = {  0,
   16256,
   16384};
 
+__attribute__ ((aligned(64)))
 const double verify_data[129] = {  32265068,
   32139260,
   28612250,
@@ -33159,4 +33163,3 @@ const double verify_data[129] = {  32265068,
   28816879,
   32737177,
   0};
-
