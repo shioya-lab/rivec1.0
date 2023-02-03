@@ -1,7 +1,7 @@
 #define R 500
 #define C 500
 #define NNZ 2399
-const double val[2399] = {
+const double val[2399]  __attribute__ ((aligned(64))) = {
   566,
   508,
   850,
@@ -2402,7 +2402,7 @@ const double val[2399] = {
   964,
   1
 };
-const int idx[2399] = {
+const uint64_t idx[2399]  __attribute__ ((aligned(64))) = {
   220,
   336,
   347,
@@ -4803,7 +4803,7 @@ const int idx[2399] = {
   212,
   496
 };
-const double x[500] = {
+const double x[500]  __attribute__ ((aligned(64))) = {
   737,
   519,
   538,
@@ -5305,7 +5305,7 @@ const double x[500] = {
   538,
   545
 };
-const int ptr[501] = {
+const uint64_t ptr[501]  __attribute__ ((aligned(64))) = {
   0,
   4,
   8,
@@ -5808,7 +5808,7 @@ const int ptr[501] = {
   2394,
   2399
 };
-const double verify_data[500] = {
+const double verify_data[500]  __attribute__ ((aligned(64))) = {
   1636962,
   1714376,
   142636,

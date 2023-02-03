@@ -7,6 +7,9 @@ VLEN = 256
 all: $(subst _,,$(APPLICATION_DIRS))
 	$(MAKE) stats
 
+power: $(addprefix power,$(APPLICATION_DIRS))
+
+
 .PHONY: $(addsuffix _sniper, $(APPLICATION_DIRS))
 .PHONY: $(addsuffix _spike, $(APPLICATION_DIRS))
 
@@ -31,57 +34,64 @@ runsniper-v:
 runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-io-s
 
-blackscholes:
+$(subst _,,$(APPLICATION_DIRS)):
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
 	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
+	$(MAKE) -C _$@ VLEN=$(VLEN) power-v power-s
 
-swaptions:
-	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
+$(addprefix power,$(APPLICATION_DIRS)):
+	$(MAKE) -C $(subst power,,$@) VLEN=$(VLEN) power-v power-s
 
-streamcluster:
-	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
-
-canneal:
-	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
-
-particlefilter:
-	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
-
-pathfinder:
-	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
-
-jacobi-2d:
-	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
-
-matmul:
-	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
-
-axpy:
-	$(MAKE) -C _$@ runspike-v runspike-s
-	$(MAKE) -C _$@ runsniper-v runsniper-s
-
-spmv:
-	$(MAKE) -C _$@ runspike-v runspike-s
-	$(MAKE) -C _$@ runsniper-v runsniper-s
+# swaptions:
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
+#
+# streamcluster:
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
+#
+# canneal:
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
+#
+# particlefilter:
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
+#
+# pathfinder:
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
+#
+# jacobi-2d:
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
+#
+# matmul:
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
+# 	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
+#
+# axpy:
+# 	$(MAKE) -C _$@ runspike-v runspike-s
+# 	$(MAKE) -C _$@ runsniper-v runsniper-s
+#
+# spmv:
+# 	$(MAKE) -C _$@ runspike-v runspike-s
+# 	$(MAKE) -C _$@ runsniper-v runsniper-s
 
 stats:
 	for dir in $(APPLICATION_DIRS); do \
 		echo -n $${dir} "\t"; \
 		xzgrep "cycles = " $${dir}/spike-s.log.xz | sed 's/cycles = //g'     | xargs echo -n; echo -n " "; \
 		paste $${dir}/ooo.s/cycle $${dir}/ino.s/cycle                      | xargs echo -n; echo -n " "; \
-		xzgrep "cycles = " $${dir}/spike-v.log.xz | sed 's/cycles = //g'     | xargs echo -n; echo -n " "; \
-		xzgrep "vecinst = " $${dir}/spike-v.log.xz | sed 's/vecinst = //g' | xargs echo -n; echo -n " "; \
+		xzgrep "cycles = " $${dir}/spike-v.$(VLEN).log.xz | sed 's/cycles = //g'     | xargs echo -n; echo -n " "; \
+		xzgrep "vecinst = " $${dir}/spike-v.$(VLEN).log.xz | sed 's/vecinst = //g' | xargs echo -n; echo -n " "; \
 		paste $${dir}/ino.v.$(VLEN)/cycle $${dir}/vio.v.$(VLEN)/cycle $${dir}/ooo.v.$(VLEN)/cycle ; \
 	done
 
 power:
+	$(MAKE) power_all power_filtered VLEN=$(VLEN)
+
+power_all:
 	echo -n "Application," > power.$(VLEN).csv
 	head -n1 _spmv/ooo.v.$(VLEN)/sim.stats.mcpat.output.csv >> power.$(VLEN).csv
 	for dir in $(APPLICATION_DIRS); do \
@@ -91,6 +101,17 @@ power:
 		echo -n $${dir}_vio_v ","; tail -n+2 $${dir}/vio.v.$(VLEN)/sim.stats.mcpat.output.csv; \
 		echo -n $${dir}_ooo_v ","; tail -n+2 $${dir}/ooo.v.$(VLEN)/sim.stats.mcpat.output.csv; \
 	done >> power.$(VLEN).csv
+
+power_filtered:
+	echo -n "Application,," > power.$(VLEN).filtered.csv
+	head -n1 _spmv/ooo.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv >> power.$(VLEN).filtered.csv
+	for dir in $(APPLICATION_DIRS); do \
+		echo -n $${dir}_ino_s","; tail -n+2 $${dir}/ino.s/sim.stats.mcpat.output.filtered.csv; \
+		echo -n $${dir}_ooo_s","; tail -n+2 $${dir}/ooo.s/sim.stats.mcpat.output.filtered.csv; \
+		echo -n $${dir}_ino_v","; tail -n+2 $${dir}/ino.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv; \
+		echo -n $${dir}_vio_v","; tail -n+2 $${dir}/vio.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv; \
+		echo -n $${dir}_ooo_v","; tail -n+2 $${dir}/ooo.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv; \
+	done >> power.$(VLEN).filtered.csv
 
 clean:
 	$(MAKE) clean -C _blackscholes

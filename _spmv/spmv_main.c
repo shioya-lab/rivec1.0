@@ -13,6 +13,7 @@
 // Input/Reference Data
 
 #include "dataset2.h"
+// #include "dataset1.h"
 // #include "dataset_small.h"
 #include "count_utils.h"
 #include "sim_api.h"
@@ -106,7 +107,11 @@ int __attribute__((optimize("O0"))) main()
   double y[R];
 
 #if PREALLOCATE
+#ifdef USE_RISCV_VECTOR
+  spmv_vector(R, val, idx, x, ptr, y);
+#else // USE_RISCV_VECTOR
   spmv(R, val, idx, x, ptr, y);
+#endif // USE_RISCV_VECTOR
 #endif
 
   long long start_cycle = get_cycle();
