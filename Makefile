@@ -37,7 +37,7 @@ runsniper-s:
 $(subst _,,$(APPLICATION_DIRS)):
 	$(MAKE) -C _$@ VLEN=$(VLEN) runspike-v runspike-s
 	$(MAKE) -C _$@ VLEN=$(VLEN) runsniper-v runsniper-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) power-v power-s
+#	$(MAKE) -C _$@ VLEN=$(VLEN) power-v power-s
 
 $(addprefix power,$(APPLICATION_DIRS)):
 	$(MAKE) -C $(subst power,,$@) VLEN=$(VLEN) power-v power-s
@@ -82,7 +82,7 @@ stats:
 	for dir in $(APPLICATION_DIRS); do \
 		echo -n $${dir} "\t"; \
 		xzgrep "cycles = " $${dir}/spike-s.log.xz | sed 's/cycles = //g'     | xargs echo -n; echo -n " "; \
-		paste $${dir}/ooo.s/cycle $${dir}/ino.s/cycle                      | xargs echo -n; echo -n " "; \
+		paste $${dir}/ino.s/cycle $${dir}/ooo.s/cycle                       | xargs echo -n; echo -n " "; \
 		xzgrep "cycles = " $${dir}/spike-v.$(VLEN).log.xz | sed 's/cycles = //g'     | xargs echo -n; echo -n " "; \
 		xzgrep "vecinst = " $${dir}/spike-v.$(VLEN).log.xz | sed 's/vecinst = //g' | xargs echo -n; echo -n " "; \
 		paste $${dir}/ino.v.$(VLEN)/cycle $${dir}/vio.v.$(VLEN)/cycle $${dir}/ooo.v.$(VLEN)/cycle ; \
@@ -95,30 +95,25 @@ power_all:
 	echo -n "Application," > power.$(VLEN).csv
 	head -n1 _spmv/ooo.v.$(VLEN)/sim.stats.mcpat.output.csv >> power.$(VLEN).csv
 	for dir in $(APPLICATION_DIRS); do \
-		echo -n $${dir}_ino_s ","; tail -n+2 $${dir}/ino.s/sim.stats.mcpat.output.csv; \
-		echo -n $${dir}_ooo_s ","; tail -n+2 $${dir}/ooo.s/sim.stats.mcpat.output.csv; \
-		echo -n $${dir}_ino_v ","; tail -n+2 $${dir}/ino.v.$(VLEN)/sim.stats.mcpat.output.csv; \
-		echo -n $${dir}_vio_v ","; tail -n+2 $${dir}/vio.v.$(VLEN)/sim.stats.mcpat.output.csv; \
-		echo -n $${dir}_ooo_v ","; tail -n+2 $${dir}/ooo.v.$(VLEN)/sim.stats.mcpat.output.csv; \
+		echo -n $${dir}_ino_s_${VLEN}","; tail -n+2 $${dir}/ino.s/sim.stats.mcpat.output.csv; \
+		echo -n $${dir}_ooo_s_${VLEN}","; tail -n+2 $${dir}/ooo.s/sim.stats.mcpat.output.csv; \
+		echo -n $${dir}_ino_v_${VLEN}","; tail -n+2 $${dir}/ino.v.$(VLEN)/sim.stats.mcpat.output.csv; \
+		echo -n $${dir}_vio_v_${VLEN}","; tail -n+2 $${dir}/vio.v.$(VLEN)/sim.stats.mcpat.output.csv; \
+		echo -n $${dir}_ooo_v_${VLEN}","; tail -n+2 $${dir}/ooo.v.$(VLEN)/sim.stats.mcpat.output.csv; \
 	done >> power.$(VLEN).csv
 
 power_filtered:
 	echo -n "Application,," > power.$(VLEN).filtered.csv
 	head -n1 _spmv/ooo.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv >> power.$(VLEN).filtered.csv
 	for dir in $(APPLICATION_DIRS); do \
-		echo -n $${dir}_ino_s","; tail -n+2 $${dir}/ino.s/sim.stats.mcpat.output.filtered.csv; \
-		echo -n $${dir}_ooo_s","; tail -n+2 $${dir}/ooo.s/sim.stats.mcpat.output.filtered.csv; \
-		echo -n $${dir}_ino_v","; tail -n+2 $${dir}/ino.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv; \
-		echo -n $${dir}_vio_v","; tail -n+2 $${dir}/vio.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv; \
-		echo -n $${dir}_ooo_v","; tail -n+2 $${dir}/ooo.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv; \
+		echo -n $${dir}_ino_s_${VLEN}","; tail -n+2 $${dir}/ino.s/sim.stats.mcpat.output.filtered.csv; \
+		echo -n $${dir}_ooo_s_${VLEN}","; tail -n+2 $${dir}/ooo.s/sim.stats.mcpat.output.filtered.csv; \
+		echo -n $${dir}_ino_v_${VLEN}","; tail -n+2 $${dir}/ino.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv; \
+		echo -n $${dir}_vio_v_${VLEN}","; tail -n+2 $${dir}/vio.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv; \
+		echo -n $${dir}_ooo_v_${VLEN}","; tail -n+2 $${dir}/ooo.v.$(VLEN)/sim.stats.mcpat.output.filtered.csv; \
 	done >> power.$(VLEN).filtered.csv
 
 clean:
-	$(MAKE) clean -C _blackscholes
-	$(MAKE) clean -C _swaptions
-	$(MAKE) clean -C _streamcluster
-	$(MAKE) clean -C _canneal
-	$(MAKE) clean -C _particlefilter
-	$(MAKE) clean -C _pathfinder
-	$(MAKE) clean -C _jacobi-2d
-	$(MAKE) clean -C _axpy
+	for dir in $(APPLICATION_DIRS); do \
+		$(MAKE) clean -C $${dir}; \
+	done
