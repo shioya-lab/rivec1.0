@@ -32,10 +32,10 @@ spmv_vector:
 	slli	    t4,a0,3
 	subw	    a6,a6,a0
 	vle64.v	    VREG_VEC_B,(t3)
+	vle64.v	    VREG_VEC_A,(t1)
 	vsll.vi	    VREG_VEC_B,VREG_VEC_B,3
 	add	        t3,t3,t4
 	vluxei64.v	VREG_VEC_B,(a3),VREG_VEC_B
-	vle64.v	    VREG_VEC_A,(t1)
 	add	        t1,t1,t4
 	vfmacc.vv	VREG_VEC_C,VREG_VEC_B,VREG_VEC_A
     bgt	        a6,zero,.calc_loop
