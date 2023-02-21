@@ -274,6 +274,7 @@ vint64m1_t vmerge_vvm_i64m1 (vbool64_t mask, vint64m1_t op1, vint64m1_t op2);
 #define _MM_SUB_f64_MASK(op1, op2, op3, op4, op5) vfsub_vv_f64m1_m(op4, op1, op2, op3, op5)
 #define _MM_SUB_f64_m4_MASK(op1, op2, op3, op4, op5) vfsub_vv_f64m4_m(op4, op1, op2, op3, op5)
 #define _MM_SUB_f64_m8_MASK(op1, op2, op3, op4, op5) vfsub_vv_f64m8_m(op4, op1, op2, op3, op5)
+#define _MM_SUB_f64_MASK_f(op1, op2, op3, op4, op5) vfsub_vf_f64m1_m(op4, op1, op2, op3, op5)
 
 //#define _MM_SUB_f32_MASK	__builtin_epi_vfsub_2xf32_mask
 #define _MM_SUB_f32_MASK(op1, op2, op3, op4, op5) vfsub_vv_f32m1_m(op4, op1, op2, op3, op5)
@@ -610,6 +611,7 @@ https://github.com/riscv/rvv-intrinsic-doc/issues/37
 #define _MM_VFGT_f64(op1, op2, op3) vmfgt_vv_f64m1_b64(op1, op2, op3)
 #define _MM_VFGT_f64_m4(op1, op2, op3) vmfgt_vv_f64m4_b64(op1, op2, op3)
 #define _MM_VFGT_f64_m8(op1, op2, op3) vmfgt_vv_f64m8_b64(op1, op2, op3)
+#define _MM_VFGT_f64_f(op1, op2, op3) vmfgt_vf_f64m1_b64(op1, op2, op3)
 
 //#define _MM_VFGT_f32        __builtin_epi_vmfgt_2xf32
 #define _MM_VFGT_f32(op1, op2, op3) vmfgt_vv_f32m1_b32(op1, op2, op3)
@@ -622,6 +624,7 @@ https://github.com/riscv/rvv-intrinsic-doc/issues/37
 
 //#define _MM_VFLT_f64        __builtin_epi_vmflt_1xf64
 #define _MM_VFLT_f64(op1, op2, op3) vmflt_vv_f64m1_b64(op1, op2, op3)
+#define _MM_VFLT_f64_f(op1, op2, op3) vmflt_vf_f64m1_b64(op1, op2, op3)
 
 //#define _MM_VFLT_f32        __builtin_epi_vmflt_2xf32
 #define _MM_VFLT_f32(op1, op2, op3) vmflt_vv_f32m1_b32(op1, op2, op3)
