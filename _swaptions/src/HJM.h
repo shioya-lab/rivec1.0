@@ -13,6 +13,11 @@ void RanUnif_vector( long *s , int iFactors , int iN ,int  BLOCKSIZE, FTYPE **ra
 FTYPE CumNormalInv( FTYPE u );
 void CumNormalInv_vector( FTYPE* u ,FTYPE* output ,unsigned long int gvl);
 
+extern "C" {
+  // Declared in CumNormalInv.assembly.S
+  void CumNormalInvAsm_vector(FTYPE* u ,FTYPE* output, unsigned long int gvl);
+}
+
 void icdf_SSE(const int N, FTYPE *in, FTYPE *out);
 void icdf_baseline(const int N, FTYPE *in, FTYPE *out);
 int HJM_SimPath_Forward_SSE(FTYPE **ppdHJMPath, int iN, int iFactors, FTYPE dYears, FTYPE *pdForward, FTYPE *pdTotalDrift,

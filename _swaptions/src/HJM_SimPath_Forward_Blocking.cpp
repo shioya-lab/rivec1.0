@@ -72,7 +72,7 @@ void serialB(FTYPE **pdZ, FTYPE **randZ, int BLOCKSIZE, int iN, int iFactors)
             //for(int b=0; b<BLOCKSIZE; b+=BLOCKSIZE){
           		// unsigned long int gvl = __builtin_epi_vsetvl(BLOCKSIZE, __epi_e64, __epi_m1);
     			unsigned long int  gvl = vsetvl_e64m1(BLOCKSIZE); //PLCT
-                CumNormalInv_vector(&randZ[l][BLOCKSIZE*j /*+ b*/] , &pdZ[l][BLOCKSIZE*j/* + b*/] , gvl);
+                CumNormalInvAsm_vector(&randZ[l][BLOCKSIZE*j /*+ b*/] , &pdZ[l][BLOCKSIZE*j/* + b*/] , gvl);
     			FENCE();
             //}
         }
@@ -290,6 +290,3 @@ int HJM_SimPath_Forward_Blocking(FTYPE **ppdHJMPath,	//Matrix that stores genera
 	iSuccess = 1;
 	return iSuccess;
 }
-	
-
-
