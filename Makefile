@@ -85,7 +85,7 @@ stats:
 		paste $${dir}/ino.s/cycle $${dir}/ooo.s/cycle                       | xargs echo -n; echo -n " "; \
 		xzgrep "cycles = " $${dir}/spike-v.$(VLEN).log.xz | sed 's/cycles = //g'     | xargs echo -n; echo -n " "; \
 		xzgrep "vecinst = " $${dir}/spike-v.$(VLEN).log.xz | sed 's/vecinst = //g' | xargs echo -n; echo -n " "; \
-		paste $${dir}/ino.v.$(VLEN)/cycle $${dir}/vio.v.$(VLEN)/cycle $${dir}/ooo.v.$(VLEN)/cycle ; \
+		paste $${dir}/ino.v.v$(VLEN)_d$(DLEN)/cycle $${dir}/vio.v.v$(VLEN)_d$(DLEN)/cycle $${dir}/ooo.v.v$(VLEN)_d$(DLEN)/cycle ; \
 	done
 
 power:
