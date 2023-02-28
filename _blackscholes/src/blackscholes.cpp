@@ -200,7 +200,9 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     xStrikePrice = _MM_LOAD_f32(strike,gvl);
     xStockPrice = _MM_LOAD_f32(sptprice,gvl);
     xStrikePrice = _MM_DIV_f32(xStockPrice,xStrikePrice,gvl);
-    xLogTerm = _MM_LOG_f32(xStrikePrice,gvl);
+    // xLogTerm = _MM_LOG_f32(xStrikePrice,gvl);
+    xLogTerm = __log_vector_2xf32(xStrikePrice,gvl);
+
     //FENCE();
     xRiskFreeRate = _MM_LOAD_f32(rate,gvl);
     xVolatility = _MM_LOAD_f32(volatility,gvl);
