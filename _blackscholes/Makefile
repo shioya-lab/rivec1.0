@@ -19,5 +19,5 @@ $(serial_target):
 vector: $(rvv_target)
 $(rvv_target):
 	mkdir -p bin
-	${LLVM}/bin/clang++ --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR   -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -o $(rvv_target) src/log_handwriting.S src/blackscholes.cpp  -lm
+	${LLVM}/bin/clang++ --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR   -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -o $(rvv_target) src/blackscholes.assembly.S src/blackscholes.cpp  -lm
 	riscv64-unknown-elf-objdump -D $(rvv_target) > $(rvv_target).dmp

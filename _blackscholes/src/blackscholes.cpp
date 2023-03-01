@@ -200,8 +200,7 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     xStrikePrice = _MM_LOAD_f32(strike,gvl);
     xStockPrice = _MM_LOAD_f32(sptprice,gvl);
     xStrikePrice = _MM_DIV_f32(xStockPrice,xStrikePrice,gvl);
-    // xLogTerm = _MM_LOG_f32(xStrikePrice,gvl);
-    xLogTerm = __log_vector_2xf32(xStrikePrice,gvl);
+    xLogTerm = _MM_LOG_f32(xStrikePrice,gvl);
 
     //FENCE();
     xRiskFreeRate = _MM_LOAD_f32(rate,gvl);
@@ -434,6 +433,12 @@ int bs_thread(void *tid_ptr) {
 }
 #else // !ENABLE_TBB
 
+extern "C" {
+  void BlkSchlsEqEuroNoDiv_vector_asm (fptype * OptionPrice, int numOptions, fptype * sptprice,
+                                       fptype * strike, fptype * rate, fptype * volatility,
+                                       fptype * time, int * otype/*,long int *  otype_d*/, float timet ,unsigned long int gvl);
+}
+
 #ifdef WIN32
 DWORD WINAPI bs_thread(LPVOID tid_ptr){
 #else
@@ -468,7 +473,7 @@ int bs_thread(void *tid_ptr) {
             // equation.
             // gvl = __builtin_epi_vsetvl(end-i, __epi_e32, __epi_m1);
             gvl = vsetvl_e32m1(end-i); //PLCT
-            BlkSchlsEqEuroNoDiv_vector( price, gvl, &(sptprice[i]), &(strike[i]),
+            BlkSchlsEqEuroNoDiv_vector_asm( price, gvl, &(sptprice[i]), &(strike[i]),
                                 &(rate[i]), &(volatility[i]), &(otime[i]), &(otype[i])/*,&(otype_d[i])*/, 0,gvl);
             for (k=0; k<gvl; k++) {
               prices[i+k] = price[k];
