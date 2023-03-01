@@ -668,10 +668,6 @@ https://github.com/riscv/rvv-intrinsic-doc/issues/37
 #define _MM_LOG_f32 		__log_2xf32
 #endif
 
-extern "C" {
-  inline _MMR_f32 __log_vector_2xf32(_MMR_f32 x , unsigned long int gvl);
-}
-
 #ifndef _MM_EXP
 #define _MM_EXP
 #include "__exp.h"
