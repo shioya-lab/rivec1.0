@@ -4,7 +4,7 @@ rvv_target    = spmv_vector_vlen$(VLEN)
 serial_target = spmv_scalar_vlen$(VLEN)
 
 run:
-	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-ino-v  runsniper-vio-ngs-v
+	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-vio-fence-v runsniper-ino-v  runsniper-vio-ngs-v
 	$(MAKE) runsniper-ooo-s runsniper-ino-s
 
 SOURCE_FILES += spmv_main.c

@@ -11,3 +11,4 @@ ino.s*
 bin/
 *.dmp
 *.log
+*.csv
