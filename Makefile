@@ -90,6 +90,7 @@ perf:
 		xzgrep "vecinst = " $${dir}/spike-v.$(VLEN).log.xz | sed 's/vecinst = //g' | xargs echo -n; echo -n " "; \
 		paste $${dir}/ino.v.v$(VLEN)_d$(DLEN)/cycle \
 			  $${dir}/vio.v.fence.v$(VLEN)_d$(DLEN)/cycle \
+			  $${dir}/vio.v.ngs.v$(VLEN)_d$(DLEN)/cycle \
 			  $${dir}/vio.v.v$(VLEN)_d$(DLEN)/cycle \
 			  $${dir}/ooo.v.v$(VLEN)_d$(DLEN)/cycle ; \
 	done > perf.v$(VLEN)_d$(DLEN).csv
