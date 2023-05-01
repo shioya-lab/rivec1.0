@@ -1,8 +1,8 @@
-// 
+//
 // RISC-V VECTOR EXP FUNCTION Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 // This RISC-V Vector implementation is based on the original code presented by Julien Pommier
 
-/* 
+/*
    AVX implementation of sin, cos, sincos, exp and log
 
    Based on "sse_mathfun.h", by Julien Pommier
@@ -71,10 +71,10 @@ _MMR_i64  tmp3;
         fx    = _MM_MACC_f64(fx,x,cephes_LOG2EF,gvl);
 
         tmp3  = _MM_VFCVT_X_F_i64(fx,gvl);
-        tmp   = _MM_VFCVT_F_X_f64(tmp3,gvl);     
+        tmp   = _MM_VFCVT_F_X_f64(tmp3,gvl);
 
-        mask  = _MM_VFLT_f64(fx,tmp,gvl); 
-        //mask  = _MM_VFLT_f64(tmp,fx,gvl); 
+        mask  = _MM_VFLT_f64(fx,tmp,gvl);
+        //mask  = _MM_VFLT_f64(tmp,fx,gvl);
         tmp2  = _MM_MERGE_f64( zero,one, mask,gvl);
         fx    = _MM_SUB_f64(tmp,tmp2,gvl);
         tmp   = _MM_MUL_f64(fx, cephes_exp_C1,gvl);
@@ -105,9 +105,9 @@ _MMR_i64  tmp3;
         y     = _MM_MADD_f64(y,z,x,gvl);
         y     = _MM_ADD_f64(y, one,gvl);
 
-        
+
         imm0  = _MM_VFCVT_X_F_i64(fx,gvl);
-        imm0  = _MM_ADD_i64(imm0, _MM_SET_i64(1023,gvl),gvl); 
+        imm0  = _MM_ADD_i64(imm0, _MM_SET_i64(1023,gvl),gvl);
         imm0  = _MM_SLL_i64(imm0, _MM_SET_u64(52,gvl),gvl);
 
         tmp4 = _MMR_i64_to_f64(imm0);
@@ -118,19 +118,29 @@ _MMR_i64  tmp3;
 
 inline _MMR_f32 __exp_2xf32(_MMR_f32 x ,unsigned long int gvl) {
 
-_MMR_f32   exp_hi        = _MM_SET_f32(88.3762626647949,gvl);
-_MMR_f32   exp_lo        = _MM_SET_f32(-88.3762626647949,gvl);
+// _MMR_f32   exp_hi        = _MM_SET_f32(88.3762626647949,gvl);
+// _MMR_f32   exp_lo        = _MM_SET_f32(-88.3762626647949,gvl);
 
-_MMR_f32   cephes_LOG2EF = _MM_SET_f32(1.44269504088896341,gvl);
-_MMR_f32   cephes_exp_C1 = _MM_SET_f32(0.693359375,gvl);
-_MMR_f32   cephes_exp_C2 = _MM_SET_f32(-2.12194440e-4,gvl);
+// _MMR_f32   cephes_LOG2EF = _MM_SET_f32(1.44269504088896341,gvl);
+// _MMR_f32   cephes_exp_C1 = _MM_SET_f32(0.693359375,gvl);
+// _MMR_f32   cephes_exp_C2 = _MM_SET_f32(-2.12194440e-4,gvl);
 
-_MMR_f32   cephes_exp_p0 = _MM_SET_f32(1.9875691500E-4,gvl);
-_MMR_f32   cephes_exp_p1 = _MM_SET_f32(1.3981999507E-3,gvl);
-_MMR_f32   cephes_exp_p2 = _MM_SET_f32(8.3334519073E-3,gvl);
-_MMR_f32   cephes_exp_p3 = _MM_SET_f32(4.1665795894E-2,gvl);
-_MMR_f32   cephes_exp_p4 = _MM_SET_f32(1.6666665459E-1,gvl);
-_MMR_f32   cephes_exp_p5 = _MM_SET_f32(5.0000001201E-1,gvl);
+
+
+const float s_exp_hi        = 88.3762626647949;
+const float s_exp_lo        = -88.3762626647949;
+
+const float s_cephes_LOG2EF = 1.44269504088896341;
+const float s_cephes_exp_C1 = 0.693359375;
+const float s_cephes_exp_C2 = -2.12194440e-4;
+
+const float s_cephes_exp_p0 = 1.9875691500E-4;
+const float s_cephes_exp_p1 = 1.3981999507E-3;
+const float s_cephes_exp_p2 = 8.3334519073E-3;
+const float s_cephes_exp_p3 = 4.1665795894E-2;
+const float s_cephes_exp_p4 = 1.6666665459E-1;
+const float s_cephes_exp_p5 = 5.0000001201E-1;
+
 _MMR_f32   tmp;
 _MMR_f32   tmp2;
 _MMR_f32   tmp4;
@@ -145,53 +155,94 @@ _MMR_MASK_i32  mask;
 _MMR_i32  imm0;
 _MMR_i32  tmp3;
 
-        x     = _MM_MIN_f32(x, exp_hi,gvl);
-        x     = _MM_MAX_f32(x, exp_lo,gvl);
+        x     = _MM_MIN_f32_f(x, s_exp_hi,gvl);
+        x     = _MM_MAX_f32_f(x, s_exp_lo,gvl);
 
         //fx    = _MM_MUL_f32(x, cephes_LOG2EF,gvl);
         //fx    = _MM_ADD_f32(fx, _MM_SET_f32(0.5,gvl),gvl);
-        fx    = _MM_SET_f32(0.5,gvl);
-        fx    = _MM_MACC_f32(fx,x,cephes_LOG2EF,gvl);
+        // fx    = _MM_SET_f32(0.5,gvl);
+        // fx    = _MM_MACC_f32(fx,x,cephes_LOG2EF,gvl);
+        fx    = _MM_MUL_f32_f(x, s_cephes_LOG2EF, gvl);
+        fx    = _MM_ADD_f32_f(fx, 0.5,gvl);
 
         tmp3  = _MM_VFCVT_X_F_i32(fx,gvl);
-        tmp   = _MM_VFCVT_F_X_f32(tmp3,gvl);     
+        tmp   = _MM_VFCVT_F_X_f32(tmp3,gvl);
 
-        mask  = _MM_VFLT_f32(fx,tmp,gvl); 
-        //mask  = _MM_VFLT_f32(tmp,fx,gvl); 
+        mask  = _MM_VFLT_f32(fx,tmp,gvl);
+        //mask  = _MM_VFLT_f32(tmp,fx,gvl);
         tmp2  = _MM_MERGE_f32( zero,one, mask,gvl);
         fx    = _MM_SUB_f32(tmp,tmp2,gvl);
-        tmp   = _MM_MUL_f32(fx, cephes_exp_C1,gvl);
-        z     = _MM_MUL_f32(fx, cephes_exp_C2,gvl);
+        tmp   = _MM_MUL_f32_f(fx, s_cephes_exp_C1,gvl);
+        z     = _MM_MUL_f32_f(fx, s_cephes_exp_C2,gvl);
         x     = _MM_SUB_f32(x,tmp,gvl);
         x     = _MM_SUB_f32(x,z,gvl);
 
         z     = _MM_MUL_f32(x,x,gvl);
 
-        y     = cephes_exp_p0;
+        // y     = _MM_SET_f32(1.9875691500E-4,gvl);
+        // //y     = _MM_MUL_f32(y, x,gvl);
+        // //y     = _MM_ADD_f32(y, cephes_exp_p1,gvl);
+        // y     = _MM_MADD_f32(y,x,_MM_SET_f32(1.3981999507E-3,gvl),gvl);
+        // // y     = _MM_MUL_f32(y, x,gvl);
+        // // y     = _MM_ADD_f32(y, cephes_exp_p2,gvl);
+        // y     = _MM_MADD_f32(y,x,_MM_SET_f32(8.3334519073E-3,gvl),gvl);
+        // // y     = _MM_MUL_f32(y, x,gvl);
+        // // y     = _MM_ADD_f32(y, cephes_exp_p3,gvl);
+        // y     = _MM_MADD_f32(y,x,_MM_SET_f32(4.1665795894E-2,gvl),gvl);
+        // // y     = _MM_MUL_f32(y, x,gvl);
+        // // y     = _MM_ADD_f32(y, cephes_exp_p4,gvl);
+        // y     = _MM_MADD_f32(y,x,_MM_SET_f32(1.6666665459E-1,gvl),gvl);
+        // // y     = _MM_MUL_f32(y, x,gvl);
+        // // y     = _MM_ADD_f32(y, cephes_exp_p5,gvl);
+        // y     = _MM_MADD_f32(y,x,_MM_SET_f32(5.0000001201E-1,gvl),gvl);
+        // // y     = _MM_MUL_f32(y, z,gvl);
+        // // y     = _MM_ADD_f32(y, x,gvl);
+        // y     = _MM_MADD_f32(y,z,x,gvl);
+        // y     = _MM_ADD_f32(y, one,gvl);
+
+        // y     = cephes_exp_p0;
         //y     = _MM_MUL_f32(y, x,gvl);
         //y     = _MM_ADD_f32(y, cephes_exp_p1,gvl);
-        y     = _MM_MADD_f32(y,x,cephes_exp_p1,gvl);
+        // y     = _MM_MADD_f32(y,x,cephes_exp_p1,gvl);
+        y     = _MM_MUL_f32_f(x, s_cephes_exp_p0,gvl);
+        y     = _MM_ADD_f32_f(y, s_cephes_exp_p1,gvl);
+
         // y     = _MM_MUL_f32(y, x,gvl);
         // y     = _MM_ADD_f32(y, cephes_exp_p2,gvl);
-        y     = _MM_MADD_f32(y,x,cephes_exp_p2,gvl);
+        // y     = _MM_MADD_f32(y,x,cephes_exp_p2,gvl);
+        y     = _MM_MUL_f32(y, x,gvl);
+        y     = _MM_ADD_f32_f(y, s_cephes_exp_p2,gvl);
+
         // y     = _MM_MUL_f32(y, x,gvl);
         // y     = _MM_ADD_f32(y, cephes_exp_p3,gvl);
-        y     = _MM_MADD_f32(y,x,cephes_exp_p3,gvl);
+        // y     = _MM_MADD_f32(y,x,cephes_exp_p3,gvl);
+        y     = _MM_MUL_f32(y, x,gvl);
+        y     = _MM_ADD_f32_f(y, s_cephes_exp_p3,gvl);
+
         // y     = _MM_MUL_f32(y, x,gvl);
         // y     = _MM_ADD_f32(y, cephes_exp_p4,gvl);
-        y     = _MM_MADD_f32(y,x,cephes_exp_p4,gvl);
+        // y     = _MM_MADD_f32(y,x,cephes_exp_p4,gvl);
+        y     = _MM_MUL_f32(y, x,gvl);
+        y     = _MM_ADD_f32_f(y, s_cephes_exp_p4,gvl);
+
         // y     = _MM_MUL_f32(y, x,gvl);
         // y     = _MM_ADD_f32(y, cephes_exp_p5,gvl);
-        y     = _MM_MADD_f32(y,x,cephes_exp_p5,gvl);
+        // y     = _MM_MADD_f32(y,x,cephes_exp_p5,gvl);
+        y     = _MM_MUL_f32(y, x,gvl);
+        y     = _MM_ADD_f32_f(y, s_cephes_exp_p5,gvl);
+
+
         // y     = _MM_MUL_f32(y, z,gvl);
         // y     = _MM_ADD_f32(y, x,gvl);
         y     = _MM_MADD_f32(y,z,x,gvl);
-        y     = _MM_ADD_f32(y, one,gvl);
+        // y     = _MM_ADD_f32(y, one,gvl);
+        y     = _MM_ADD_f32_f(y, 1.0, gvl);
 
-        
         imm0  = _MM_VFCVT_X_F_i32(fx,gvl);
-        imm0  = _MM_ADD_i32(imm0, _MM_SET_i32(0x7f,gvl),gvl); 
-        imm0  = _MM_SLL_i32(imm0, _MM_SET_u32(23,gvl),gvl);
+        // imm0  = _MM_ADD_i32(imm0, _MM_SET_i32(0x7f,gvl),gvl);
+        // imm0  = _MM_SLL_i32(imm0, _MM_SET_u32(23,gvl),gvl);
+        imm0  = _MM_ADD_i32_x(imm0, 0x7f,gvl);
+        imm0  = _MM_SLL_i32_x(imm0, 23,gvl);
 
         tmp4 = _MMR_i32_to_f32(imm0);
         y     = _MM_MUL_f32(y, tmp4,gvl);

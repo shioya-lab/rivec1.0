@@ -9,18 +9,8 @@
 #define _MMR_f64        	vfloat64m1_t //<vscale x 1 x double>  //__epi_1xf64
 #define _MMR_f32        	vfloat32m1_t //<vscale x 2 x float>  //__epi_2xf32
 
-#define _MMR_2xf64			vfloat64m2_t //<vscale x 2 x double> //__epi_2xf64
-#define _MMR_2xf32			vfloat32m2_t //<vscale x 4 x float> //__epi_4xf32
-
 #define _MMR_i64            vint64m1_t //<vscale x 1 x i64> //__epi_1xi64
 #define _MMR_i32        	vint32m1_t //<vscale x 2 x i32> //__epi_2xi32
-
-#define _MMR_4xf64			vfloat64m4_t //<vscale x 2 x double> //__epi_2xf64
-#define _MMR_4xf32			vfloat32m4_t //<vscale x 4 x float> //__epi_4xf32
-
-#define _MMR_8xf64			vfloat64m8_t //<vscale x 2 x double> //__epi_2xf64
-#define _MMR_8xf32			vfloat32m8_t //<vscale x 4 x float> //__epi_4xf32
-
 
 //---------------------------------------------------------------------------
 // INTEGER INTRINSICS
@@ -39,8 +29,6 @@
 
 //#define _MM_STORE_i64   	__builtin_epi_vstore_1xi64
 #define _MM_STORE_i64(op1, op2, op3)       __riscv_vse64_v_i64m1(op1, op2, op3)
-#define _MM_STORE_i64_m4(op1, op2, op3)    __riscv_vse64_v_i64m4(op1, op2, op3)
-#define _MM_STORE_i64_m8(op1, op2, op3)    __riscv_vse64_v_i64m8(op1, op2, op3)
 
 //#define _MM_STORE_i32   	__builtin_epi_vstore_2xi32
 #define _MM_STORE_i32(op1, op2, op3)    __riscv_vse32_v_i32m1(op1, op2, op3)
@@ -50,6 +38,7 @@
 
 //#define _MM_ADD_i32     	__builtin_epi_vadd_2xi32
 #define _MM_ADD_i32(op1, op2, op3) __riscv_vadd_vv_i32m1(op1, op2, op3)
+#define _MM_ADD_i32_x(op1, op2, op3) __riscv_vadd_vx_i32m1(op1, op2, op3)
 
 //#define _MM_SUB_i64			  __builtin_epi_vsub_1xi64
 #define _MM_SUB_i64(op1, op2, op3) __riscv_vsub_vv_i64m1(op1, op2, op3)
@@ -67,10 +56,10 @@ __epi_1xi64 test_vadd_1xi64_mask(__epi_1xi64 arg_0, __epi_1xi64 arg_1, __epi_1xi
 0.9/1.0:
 vint64m1_t vadd_vv_i64m1_m (vbool64_t mask, vint64m1_t maskedoff, vint64m1_t op1, vint64m1_t op2);
 */
-#define _MM_ADD_i64_MASK(op1, op2, op3, op4, op5) __riscv_vadd_vv_i64m1_mu(op4, op1, op2, op3, op5)
+#define _MM_ADD_i64_MASK(op1, op2, op3, op4, op5) __riscv_vadd_vv_i64m1_m(op4, op1, op2, op3, op5)
 
 // #define _MM_ADD_i32_MASK  __builtin_epi_vadd_2xi32_mask
-#define _MM_ADD_i32_MASK(op1, op2, op3, op4, op5) __riscv_vadd_vv_i32m1_mu(op4, op1, op2, op3, op5)
+#define _MM_ADD_i32_MASK(op1, op2, op3, op4, op5) __riscv_vadd_vv_i32m1_m(op4, op1, op2, op3, op5)
 
 //#define _MM_MUL_i64       __builtin_epi_vmul_1xi64
 #define _MM_MUL_i64(op1, op2, op3) __riscv_vmul_vv_i64m1(op1, op2, op3)
@@ -135,6 +124,7 @@ vint64m1_t vmv_v_x_i64m1 (int64_t src);
 
 //#define _MM_SLL_i32     	__builtin_epi_vsll_2xi32
 #define _MM_SLL_i32(op1, op2, op3) __riscv_vsll_vv_i32m1(op1, op2, op3)
+#define _MM_SLL_i32_x(op1, op2, op3) __riscv_vsll_vx_i32m1(op1, op2, op3)
 
 //#define _MM_SRL_i64     	__builtin_epi_vsrl_1xi64
 #define _MM_SRL_i64(op1, op2, op3) __riscv_vsrl_vv_u64m1(op1, op2, op3)
@@ -153,6 +143,7 @@ vint64m1_t vmv_v_x_i64m1 (int64_t src);
 
 //#define _MM_OR_i32     		__builtin_epi_vor_2xi32
 #define _MM_OR_i32(op1, op2, op3) __riscv_vor_vv_i32m1(op1, op2, op3)
+#define _MM_OR_i32_x(op1, op2, op3) __riscv_vor_vx_i32m1(op1, op2, op3)
 
 //#define _MM_XOR_i64     	__builtin_epi_vxor_1xi64
 #define _MM_XOR_i64(op1, op2, op3) __riscv_vxor_vv_i64m1(op1, op2, op3)
@@ -184,7 +175,7 @@ bb.0.entry:
   %0:vr = COPY $v16
   %4:vr = IMPLICIT_DEF
   dead %5:gpr = Pseudo__RISCV_VSETVLI %2:gpr, 12, implicit-def $vl, implicit-def $vtype
-  %3:vr = PseudoVREDSUM_VS_M1 %4:vr(tied-def 0), %0:vr, %1:vr, $noreg, $noreg, -1, implicit $vl, implicit $vtype
+  %3:vr = PseudoVREDSUM_VS_m1 %4:vr(tied-def 0), %0:vr, %1:vr, $noreg, $noreg, -1, implicit $vl, implicit $vtype
   $v16 = COPY %3:vr
   PseudoRET implicit $v16
 0.9/1.0:
@@ -218,31 +209,21 @@ vint64m1_t __riscv_vmerge_vvm_i64m1 (vbool64_t mask, vint64m1_t op1, vint64m1_t 
 
 //#define _MM_LOAD_f64    	__builtin_epi_vload_1xf64
 #define _MM_LOAD_f64(op1, op2) __riscv_vle64_v_f64m1(op1, op2)
-#define _MM_LOAD_f64_m4(op1, op2) __riscv_vle64_v_f64m4(op1, op2)
-#define _MM_LOAD_f64_m8(op1, op2) __riscv_vle64_v_f64m8(op1, op2)
 
 //#define _MM_LOAD_f32    	__builtin_epi_vload_2xf32
 #define _MM_LOAD_f32(op1, op2) __riscv_vle32_v_f32m1(op1, op2)
-#define _MM_LOAD_f32_m1(op1, op2) __riscv_vle32_v_f32m1(op1, op2)
-#define _MM_LOAD_f32_m2(op1, op2) __riscv_vle32_v_f32m2(op1, op2)
-#define _MM_LOAD_f32_m4(op1, op2) __riscv_vle32_v_f32m4(op1, op2)
-#define _MM_LOAD_f32_m8(op1, op2) __riscv_vle32_v_f32m8(op1, op2)
 
 #define _MM_LOAD_INDEX_f64 __builtin_epi_vload_indexed_1xf64 //TODO, not being used
 #define _MM_LOAD_INDEX_f32 __builtin_epi_vload_indexed_2xf32 //TODO, not being used
 
 //#define _MM_STORE_f64   	__builtin_epi_vstore_1xf64
 #define _MM_STORE_f64(op1, op2, op3) __riscv_vse64_v_f64m1(op1, op2, op3)
-#define _MM_STORE_f64_m4(op1, op2, op3) __riscv_vse64_v_f64m4(op1, op2, op3)
-#define _MM_STORE_f64_m8(op1, op2, op3) __riscv_vse64_v_f64m8(op1, op2, op3)
 
 //#define _MM_STORE_f32   	__builtin_epi_vstore_2xf32
 #define _MM_STORE_f32(op1, op2, op3) __riscv_vse32_v_f32m1(op1, op2, op3)
 
 //#define _MM_MUL_f64     	__builtin_epi_vfmul_1xf64
 #define _MM_MUL_f64(op1, op2, op3) __riscv_vfmul_vv_f64m1(op1, op2, op3)
-#define _MM_MUL_f64_m4(op1, op2, op3) __riscv_vfmul_vv_f64m4(op1, op2, op3)
-#define _MM_MUL_f64_m8(op1, op2, op3) __riscv_vfmul_vv_f64m8(op1, op2, op3)
 #define _MM_MUL_f64_f(op1, op2, op3) __riscv_vfmul_vf_f64m1(op1, op2, op3)
 
 //#define _MM_MUL_f32     	__builtin_epi_vfmul_2xf32
@@ -251,8 +232,6 @@ vint64m1_t __riscv_vmerge_vvm_i64m1 (vbool64_t mask, vint64m1_t op1, vint64m1_t 
 
 //#define _MM_ADD_f64     	__builtin_epi_vfadd_1xf64
 #define _MM_ADD_f64(op1, op2, op3) __riscv_vfadd_vv_f64m1(op1, op2, op3)
-#define _MM_ADD_f64_m4(op1, op2, op3) __riscv_vfadd_vv_f64m4(op1, op2, op3)
-#define _MM_ADD_f64_m8(op1, op2, op3) __riscv_vfadd_vv_f64m8(op1, op2, op3)
 #define _MM_ADD_f64_f(op1, op2, op3) __riscv_vfadd_vf_f64m1(op1, op2, op3)
 
 //#define _MM_ADD_f32     	__builtin_epi_vfadd_2xf32
@@ -265,37 +244,35 @@ vint64m1_t __riscv_vmerge_vvm_i64m1 (vbool64_t mask, vint64m1_t op1, vint64m1_t 
 
 //#define _MM_SUB_f32     	__builtin_epi_vfsub_2xf32
 #define _MM_SUB_f32(op1, op2, op3) __riscv_vfsub_vv_f32m1(op1, op2, op3)
-#define _MM_SUB_f32_m1(op1, op2, op3) __riscv_vfsub_vv_f32m1(op1, op2, op3)
-#define _MM_SUB_f32_m2(op1, op2, op3) __riscv_vfsub_vv_f32m2(op1, op2, op3)
-#define _MM_SUB_f32_m4(op1, op2, op3) __riscv_vfsub_vv_f32m4(op1, op2, op3)
-#define _MM_SUB_f32_m8(op1, op2, op3) __riscv_vfsub_vv_f32m8(op1, op2, op3)
+#define _MM_SUB_f32_f(op1, op2, op3) __riscv_vfsub_vf_f32m1(op1, op2, op3)
+#define _MM_RSUB_f32_f(op1, op2, op3) __riscv_vfrsub_vf_f32m1(op2, op1, op3)
 
 //#define _MM_SUB_f64_MASK	__builtin_epi_vfsub_1xf64_mask
-#define _MM_SUB_f64_MASK(op1, op2, op3, op4, op5) __riscv_vfsub_vv_f64m1_mu(op4, op1, op2, op3, op5)
-#define _MM_SUB_f64_m4_MASK(op1, op2, op3, op4, op5) __riscv_vfsub_vv_f64m4_mu(op4, op1, op2, op3, op5)
-#define _MM_SUB_f64_m8_MASK(op1, op2, op3, op4, op5) __riscv_vfsub_vv_f64m8_mu(op4, op1, op2, op3, op5)
-#define _MM_SUB_f64_MASK_f(op1, op2, op3, op4, op5) __riscv_vfsub_vf_f64m1_mu(op4, op1, op2, op3, op5)
+#define _MM_SUB_f64_MASK(op1, op2, op3, op4, op5) __riscv_vfsub_vv_f64m1_m(op4, op1, op2, op3, op5)
+#define _MM_SUB_f64_MASK_f(op1, op2, op3, op4, op5) __riscv_vfsub_vf_f64m1_m(op4, op1, op2, op3, op5)
 
 //#define _MM_SUB_f32_MASK	__builtin_epi_vfsub_2xf32_mask
 #define _MM_SUB_f32_MASK(op1, op2, op3, op4, op5) __riscv_vfsub_vv_f32m1_mu(op4, op1, op2, op3, op5)
 
 //#define _MM_ADD_f64_MASK  __builtin_epi_vfadd_1xf64_mask
-#define _MM_ADD_f64_MASK(op1, op2, op3, op4, op5) __riscv_vfadd_vv_f64m1_mu(op4, op1, op2, op3, op5)
+#define _MM_ADD_f64_MASK(op1, op2, op3, op4, op5) __riscv_vfadd_vv_f64m1_m(op4, op1, op2, op3, op5)
 
 //#define _MM_ADD_f32_MASK  __builtin_epi_vfadd_2xf32_mask
-#define _MM_ADD_f32_MASK(op1, op2, op3, op4, op5) __riscv_vfadd_vv_f32m1_mu(op4, op1, op2, op3, op5)
+#define _MM_ADD_f32_MASK(op1, op2, op3, op4, op5) __riscv_vfadd_vv_f32m1_m(op4, op1, op2, op3, op5)
 
 //#define _MM_DIV_f64     	__builtin_epi_vfdiv_1xf64
 #define _MM_DIV_f64(op1, op2, op3) __riscv_vfdiv_vv_f64m1(op1, op2, op3)
 
 //#define _MM_DIV_f32     	__builtin_epi_vfdiv_2xf32
 #define _MM_DIV_f32(op1, op2, op3) __riscv_vfdiv_vv_f32m1(op1, op2, op3)
+#define _MM_DIV_f32_f(op1, op2, op3) __riscv_vfdiv_vf_f32m1(op1, op2, op3)
+#define _MM_RDIV_f32_f(op1, op2, op3) __riscv_vfrdiv_vf_f32m1(op2, op1, op3)
 
 //#define _MM_DIV_2xf64		__builtin_epi_vfdiv_2xf64
-#define _MM_DIV_2xf64(op1, op2, op3)  __riscv_vfdiv_vv_f64m2(op1, op2, op3)
+#define _MM_DIV_2xf64(op1, op2, op3)  __riscv_vfdiv_vv_f64m1(op1, op2, op3)
 
 //#define _MM_DIV_4xf32     	__builtin_epi_vfdiv_4xf32
-#define _MM_DIV_4xf32(op1, op2, op3)  __riscv_vfdiv_vv_f32m2(op1, op2)
+#define _MM_DIV_4xf32(op1, op2, op3)  __riscv_vfdiv_vv_f32m1(op1, op2)
 
 //#define _MM_SQRT_f64    	__builtin_epi_vfsqrt_1xf64
 #define _MM_SQRT_f64(op1, op2) __riscv_vfsqrt_v_f64m1(op1, op2)
@@ -305,21 +282,16 @@ vint64m1_t __riscv_vmerge_vvm_i64m1 (vbool64_t mask, vint64m1_t op1, vint64m1_t 
 
 //#define _MM_SET_f64     	__builtin_epi_vbroadcast_1xf64
 #define _MM_SET_f64(op1, op2) __riscv_vfmv_v_f_f64m1(op1, op2)
-#define _MM_SET_f64_m4(op1, op2) __riscv_vfmv_v_f_f64m4(op1, op2)
-#define _MM_SET_f64_m8(op1, op2) __riscv_vfmv_v_f_f64m8(op1, op2)
 
 //#define _MM_SET_f32     	__builtin_epi_vbroadcast_2xf32
 #define _MM_SET_f32(op1, op2) __riscv_vfmv_v_f_f32m1(op1, op2)
-#define _MM_SET_f32_m1(op1, op2) __riscv_vfmv_v_f_f32m1(op1, op2)
-#define _MM_SET_f32_m2(op1, op2) __riscv_vfmv_v_f_f32m2(op1, op2)
-#define _MM_SET_f32_m4(op1, op2) __riscv_vfmv_v_f_f32m4(op1, op2)
-#define _MM_SET_f32_m8(op1, op2) __riscv_vfmv_v_f_f32m8(op1, op2)
 
 //#define _MM_MIN_f64         __builtin_epi_vfmin_1xf64
 #define _MM_MIN_f64(op1, op2, op3) __riscv_vfmin_vv_f64m1(op1, op2, op3)
 
 //#define _MM_MIN_f32         __builtin_epi_vfmin_2xf32
 #define _MM_MIN_f32(op1, op2, op3) __riscv_vfmin_vv_f32m1(op1, op2, op3)
+#define _MM_MIN_f32_f(op1, op2, op3) __riscv_vfmin_vf_f32m1(op1, op2, op3)
 
 //#define _MM_MAX_f64         __builtin_epi_vfmax_1xf64
 #define _MM_MAX_f64(op1, op2, op3) __riscv_vfmax_vv_f64m1(op1, op2, op3)
@@ -367,10 +339,6 @@ vfloat64m1_t __riscv_vmerge_vvm_f64m1 (vbool64_t mask, __riscv_vfloat64m1_t op1,
 
 //#define _MM_REDSUM_f32  	__builtin_epi_vfredsum_2xf32
 #define _MM_REDSUM_f32(op1, op2, op3)    __riscv_vfredusum_vs_f32m1_f32m1(op1, op2, op3)
-#define _MM_REDSUM_f32_m1(op1, op2, op3) __riscv_vfredusum_vs_f32m1_f32m1(op1, op2, op3)
-#define _MM_REDSUM_f32_m2(op1, op2, op3) __riscv_vfredusum_vs_f32m2_f32m2(op1, op2, op3)
-#define _MM_REDSUM_f32_m4(op1, op2, op3) __riscv_vfredusum_vs_f32m4_f32m4(op1, op2, op3)
-#define _MM_REDSUM_f32_m8(op1, op2, op3) __riscv_vfredusum_vs_f32m8_f32m1(op1, op2, op3)
 
 #define _MM_REDSUM_f64_MASK __builtin_epi_vfredsum_1xf64_mask //TODO, not being used
 #define _MM_REDSUM_f32_MASK __builtin_epi_vfredsum_2xf32_mask  //TODO, not being used
@@ -378,17 +346,11 @@ vfloat64m1_t __riscv_vmerge_vvm_f64m1 (vbool64_t mask, __riscv_vfloat64m1_t op1,
 
 //#define _MM_MACC_f64  		__builtin_epi_vfmacc_1xf64
 #define _MM_MACC_f64(op1, op2, op3, op4) __riscv_vfmacc_vv_f64m1(op1, op2, op3, op4)
-#define _MM_MACC_f64_m4(op1, op2, op3, op4) __riscv_vfmacc_vv_f64m4(op1, op2, op3, op4)
-#define _MM_MACC_f64_m8(op1, op2, op3, op4) __riscv_vfmacc_vv_f64m8(op1, op2, op3, op4)
 
 #define _MM_MACC_f64_f(op1, op2, op3, op4) __riscv_vfmacc_vf_f64m1(op1, op2, op3, op4)
 
 //#define _MM_MACC_f32  		__builtin_epi_vfmacc_2xf32
 #define _MM_MACC_f32(op1, op2, op3, op4) __riscv_vfmacc_vv_f32m1(op1, op2, op3, op4)
-#define _MM_MACC_f32_m1(op1, op2, op3, op4) __riscv_vfmacc_vv_f32m1(op1, op2, op3, op4)
-#define _MM_MACC_f32_m2(op1, op2, op3, op4) __riscv_vfmacc_vv_f32m2(op1, op2, op3, op4)
-#define _MM_MACC_f32_m4(op1, op2, op3, op4) __riscv_vfmacc_vv_f32m4(op1, op2, op3, op4)
-#define _MM_MACC_f32_m8(op1, op2, op3, op4) __riscv_vfmacc_vv_f32m8(op1, op2, op3, op4)
 #define _MM_MACC_f32_f(op1, op2, op3, op4) __riscv_vfmacc_vf_f32m1(op1, op2, op3, op4)
 
 //#define _MM_NMACC_f64  		__builtin_epi_vfnmacc_1xf64 error
@@ -426,13 +388,13 @@ vfloat64m1_t __riscv_vmerge_vvm_f64m1 (vbool64_t mask, __riscv_vfloat64m1_t op1,
 #define _MM_VFCVT_X_F_i32(op1, op2) __riscv_vfcvt_x_f_v_i32m1(op1, op2)
 
 //#define _MM_VFWCVT_F_F_f64  __builtin_epi_vfwcvt_f_f_2xf64_2xf32
-#define _MM_VFWCVT_F_F_f64(op1, op2) __riscv_vfwcvt_f_f_v_f64m2(op1, op2)
+#define _MM_VFWCVT_F_F_f64(op1, op2) __riscv_vfwcvt_f_f_v_f64m1(op1, op2)
 
 //#define _MM_VFNCVT_F_F_f32  __builtin_epi_vfncvt_f_f_2xf32_2xf64
 #define _MM_VFNCVT_F_F_f32(op1, op2) __riscv_vfncvt_f_f_w_f32m1(op1)
 
 //#define _MM_VFWCVT_F_X_f64  __builtin_epi_vfwcvt_f_x_2xf64_2xi32
-#define _MM_VFWCVT_F_X_f64(op1, op2) __riscv_vfwcvt_f_x_v_f64m2(op1)
+#define _MM_VFWCVT_F_X_f64(op1, op2) __riscv_vfwcvt_f_x_v_f64m1(op1)
 
 //#define _MM_VFCVT_f32_i32   __builtin_epi_vfcvt_f_x_2xf32_2xi32
 #define _MM_VFCVT_f32_i32(op1, op2) __riscv_vfcvt_f_x_v_f32m1(op1)
@@ -451,7 +413,7 @@ __epi_2xi32 test_vslideup_2xi32(__epi_2xi32 arg_0, unsigned long int arg_1, unsi
     return __builtin_epi_vslideup_2xi32(arg_0, arg_1, arg_2);
 }
 0.9/1.0:
-vint32m2_t __riscv_vslideup_vx_i32m2 (vint32m2_t dst, vint32m2_t src, size_t offset)
+vint32m1_t __riscv_vslideup_vx_i32m1 (vint32m1_t dst, vint32m1_t src, size_t offset)
 */
 #define _MM_VSLIDEUP_i32    __builtin_epi_vslideup_2xi32 //TODO, not being used
 #define _MM_VSLIDEUP_i64    __builtin_epi_vslideup_1xi64 //TODO, not being used
@@ -485,10 +447,6 @@ vint32m2_t __riscv_vslideup_vx_i32m2 (vint32m2_t dst, vint32m2_t src, size_t off
 //0.9 float32_t vfmv_f_s_f32m1_f32 (vfloat32m1_t src);
 //#define _MM_VGETFIRST_f32   __builtin_epi_vgetfirst_2xf32
 #define _MM_VGETFIRST_f32(op1, op2) __riscv_vfmv_f_s_f32m1_f32(op1)
-#define _MM_VGETFIRST_f32_m1(op1, op2) __riscv_vfmv_f_s_f32m1_f32(op1)
-#define _MM_VGETFIRST_f32_m2(op1, op2) __riscv_vfmv_f_s_f32m2_f32(op1)
-#define _MM_VGETFIRST_f32_m4(op1, op2) __riscv_vfmv_f_s_f32m4_f32(op1)
-#define _MM_VGETFIRST_f32_m8(op1, op2) __riscv_vfmv_f_s_f32m8_f32(op1)
 
 //#define _MM_VGETFIRST_f64   __builtin_epi_vgetfirst_1xf64
 #define _MM_VGETFIRST_f64(op1, op2) __riscv_vfmv_f_s_f64m1_f64(op1)
@@ -501,8 +459,6 @@ vint32m2_t __riscv_vslideup_vx_i32m2 (vint32m2_t dst, vint32m2_t src, size_t off
 
 //#define _MM_VSLIDE1UP_f64    __builtin_epi_vslide1up_1xf64
 #define _MM_VSLIDE1UP_f64(op1, op2, op3) __riscv_vfslide1up_vf_f64m1(op1, op2, op3)
-#define _MM_VSLIDE1UP_f64_m4(op1, op2, op3) __riscv_vfslide1up_vf_f64m4(op1, op2, op3)
-#define _MM_VSLIDE1UP_f64_m8(op1, op2, op3) __riscv_vfslide1up_vf_f64m8(op1, op2, op3)
 
 #define _MM_VSLIDEUP_f32_MASK    __builtin_epi_vslideup_2xf32_mask //TODO, not being used
 #define _MM_VSLIDEUP_f64_MASK    __builtin_epi_vslideup_1xf64_mask //TODO, not being used
@@ -518,8 +474,6 @@ vint32m2_t __riscv_vslideup_vx_i32m2 (vint32m2_t dst, vint32m2_t src, size_t off
 
 //#define _MM_VSLIDE1DOWN_f64    __builtin_epi_vslide1down_1xf64
 #define _MM_VSLIDE1DOWN_f64(op1, op2, op3) __riscv_vfslide1down_vf_f64m1(op1, op2, op3)
-#define _MM_VSLIDE1DOWN_f64_m4(op1, op2, op3) __riscv_vfslide1down_vf_f64m4(op1, op2, op3)
-#define _MM_VSLIDE1DOWN_f64_m8(op1, op2, op3) __riscv_vfslide1down_vf_f64m8(op1, op2, op3)
 
 #define _MM_VSLIDEDOWN_f32_MASK    __builtin_epi_vslidedown_2xf32_mask //TODO, not being used
 #define _MM_VSLIDEDOWN_f64_MASK    __builtin_epi_vslidedown_1xf64_mask //TODO, not being used
@@ -609,8 +563,6 @@ https://github.com/riscv/rvv-intrinsic-doc/issues/37
 
 //#define _MM_VFGT_f64        __builtin_epi_vmfgt_1xf64
 #define _MM_VFGT_f64(op1, op2, op3) __riscv_vmfgt_vv_f64m1_b64(op1, op2, op3)
-#define _MM_VFGT_f64_m4(op1, op2, op3) __riscv_vmfgt_vv_f64m4_b64(op1, op2, op3)
-#define _MM_VFGT_f64_m8(op1, op2, op3) __riscv_vmfgt_vv_f64m8_b64(op1, op2, op3)
 #define _MM_VFGT_f64_f(op1, op2, op3) __riscv_vmfgt_vf_f64m1_b64(op1, op2, op3)
 
 //#define _MM_VFGT_f32        __builtin_epi_vmfgt_2xf32

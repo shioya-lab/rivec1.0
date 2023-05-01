@@ -32,6 +32,7 @@
 
   (this is the zlib license)
 */
+
 inline _MMR_f64 __log_1xf64(_MMR_f64 x , unsigned long int gvl) {
 
 
@@ -137,104 +138,147 @@ _MMR_f64   _ps256_cephes_log_q2     = _MM_SET_f64(0.693359375,gvl);
 
 inline _MMR_f32 __log_2xf32(_MMR_f32 x , unsigned long int gvl) {
 
-_MMR_f32   _ps256_cephes_SQRTHF     = _MM_SET_f32(0.707106781186547524,gvl);
+  // _MMR_f32   _ps256_cephes_SQRTHF     = _MM_SET_f32(0.707106781186547524,gvl);
+  const float s_cephes_SQRTHF     = 0.707106781186547524;
 
-_MMR_f32   _ps256_cephes_log_p0     = _MM_SET_f32(7.0376836292E-2,gvl);
-_MMR_f32   _ps256_cephes_log_p1     = _MM_SET_f32(-1.1514610310E-1,gvl);
-_MMR_f32   _ps256_cephes_log_p2     = _MM_SET_f32(1.1676998740E-1,gvl);
-_MMR_f32   _ps256_cephes_log_p3     = _MM_SET_f32(-1.2420140846E-1,gvl);
-_MMR_f32   _ps256_cephes_log_p4     = _MM_SET_f32(1.4249322787E-1,gvl);
-_MMR_f32   _ps256_cephes_log_p5     = _MM_SET_f32(-1.6668057665E-1,gvl);
-_MMR_f32   _ps256_cephes_log_p6     = _MM_SET_f32(2.0000714765E-1,gvl);
-_MMR_f32   _ps256_cephes_log_p7     = _MM_SET_f32(-2.4999993993E-1,gvl);
-_MMR_f32   _ps256_cephes_log_p8     = _MM_SET_f32(3.3333331174E-1,gvl);
-_MMR_i32   _256_min_norm_pos        = _MM_SET_i32(0x00800000,gvl);
-_MMR_f32   _ps256_min_norm_pos      = _MMR_i32_to_f32(_256_min_norm_pos);
+  // _MMR_f32   _ps256_cephes_log_p0     = _MM_SET_f32(7.0376836292E-2,gvl);
+  // _MMR_f32   _ps256_cephes_log_p1     = _MM_SET_f32(-1.1514610310E-1,gvl);
+  // _MMR_f32   _ps256_cephes_log_p2     = _MM_SET_f32(1.1676998740E-1,gvl);
+  // _MMR_f32   _ps256_cephes_log_p3     = _MM_SET_f32(-1.2420140846E-1,gvl);
+  // _MMR_f32   _ps256_cephes_log_p4     = _MM_SET_f32(1.4249322787E-1,gvl);
+  // _MMR_f32   _ps256_cephes_log_p5     = _MM_SET_f32(-1.6668057665E-1,gvl);
+  // _MMR_f32   _ps256_cephes_log_p6     = _MM_SET_f32(2.0000714765E-1,gvl);
+  // _MMR_f32   _ps256_cephes_log_p7     = _MM_SET_f32(-2.4999993993E-1,gvl);
+  // _MMR_f32   _ps256_cephes_log_p8     = _MM_SET_f32(3.3333331174E-1,gvl);
+  const float s_cephes_log_p0     =  7.0376836292E-2;
+  const float s_cephes_log_p1     = -1.1514610310E-1;
+  const float s_cephes_log_p2     =  1.1676998740E-1;
+  const float s_cephes_log_p3     = -1.2420140846E-1;
+  const float s_cephes_log_p4     =  1.4249322787E-1;
+  const float s_cephes_log_p5     = -1.6668057665E-1;
+  const float s_cephes_log_p6     =  2.0000714765E-1;
+  const float s_cephes_log_p7     = -2.4999993993E-1;
+  const float s_cephes_log_p8     =  3.3333331174E-1;
+  // _MMR_i32   _256_min_norm_pos        = _MM_SET_i32(0x00800000,gvl);
+  // _MMR_f32   _ps256_min_norm_pos      = _MMR_i32_to_f32(_256_min_norm_pos);
+  float s_min_norm_pos = 1.17549e-38; // 0x00800000
 
-_MMR_i32   _x_i;
+  _MMR_i32   _x_i;
 
-_MMR_i32   _256_inv_mant_mask       = _MM_SET_i32(~0x7f800000,gvl);
-// _MMR_f32   _ps256_inv_mant_mask     = (_MMR_f32)_256_inv_mant_mask;
+  // _MMR_i32   _256_inv_mant_mask       = _MM_SET_i32(~0x7f800000,gvl);
+  // _MMR_f32   _ps256_inv_mant_mask     = (_MMR_f32)_256_inv_mant_mask;
 
-_MMR_i32   _256_0x7f                = _MM_SET_i32(0x7f,gvl);
+  // _MMR_i32   _256_0x7f                = _MM_SET_i32(0x7f,gvl);
 
-_MMR_i32   imm0;
-_MMR_f32   one                      = _MM_SET_f32(1.0f,gvl);
-_MMR_f32   _ps256_0p5               = _MM_SET_f32(0.5f,gvl);
+  _MMR_i32   imm0;
+  // _MMR_f32   one                      = _MM_SET_f32(1.0f,gvl);
+  // _MMR_f32   _ps256_0p5               = _MM_SET_f32(0.5f,gvl);
+  const uint32_t zero_p5 = 0x3f000000; // 0.5
+  // _MMR_f32   _ps256_cephes_log_q1     = _MM_SET_f32(-2.12194440e-4,gvl);
+  const float s_cephes_log_q1     = -2.12194440e-4;
+  // _MMR_f32   _ps256_cephes_log_q2     = _MM_SET_f32(0.693359375,gvl);
+  const float s_cephes_log_q2     = 0.693359375;
+  _MMR_f32  e;
 
-_MMR_f32   _ps256_cephes_log_q1     = _MM_SET_f32(-2.12194440e-4,gvl);
-_MMR_f32   _ps256_cephes_log_q2     = _MM_SET_f32(0.693359375,gvl);
+  _MMR_MASK_i32 invalid_mask = _MM_VFLE_f32_f(x, 0.0f, gvl);
 
-_MMR_f32  e;
-
-_MMR_MASK_i32 invalid_mask = _MM_VFLE_f32(x,_MM_SET_f32(0.0f,gvl),gvl);
-
-  x = _MM_MAX_f32(x, _ps256_min_norm_pos, gvl);  /* cut off denormalized stuff */
+  // x = _MM_MAX_f32(x, _ps256_min_norm_pos, gvl);  /* cut off denormalized stuff */
+  x = _MM_MAX_f32_f(x, s_min_norm_pos, gvl);  /* cut off denormalized stuff */
 
   // can be done with AVX2
   imm0 = _MMR_u32_to_i32(_MM_SRL_i32(_MMR_f32_to_u32(x), _MM_SET_u32(23,gvl), gvl));
 
   /* keep only the fractional part */
-  _x_i = _MM_AND_i32(_MMR_f32_to_i32(x), _256_inv_mant_mask, gvl);
-  _x_i = _MM_OR_i32(_x_i, _MMR_f32_to_i32(_ps256_0p5), gvl);
+  // _x_i = _MM_AND_i32(_MMR_f32_to_i32(x), _256_inv_mant_mask, gvl);
+  // _x_i = _MM_OR_i32(_x_i, _MMR_f32_to_i32(_ps256_0p5), gvl);
+  // _x_i = _MM_AND_i32(_MMR_f32_to_i32(x), _256_inv_mant_mask, gvl);
+  _x_i = _MM_AND_i32_x(_MMR_f32_to_i32(x), ~0x7f800000, gvl);
+  _x_i = _MM_OR_i32_x(_x_i, zero_p5, gvl);
   x= _MMR_i32_to_f32(_x_i);
 
   // this is again another AVX2 instruction
-  imm0 = _MM_SUB_i32(imm0 ,_256_0x7f , gvl);
+  // imm0 = _MM_SUB_i32(imm0 ,_256_0x7f , gvl);
+  imm0 = _MM_SUB_i32_x(imm0, 0x7f , gvl);
   e = _MM_VFCVT_F_X_f32(imm0,gvl);
 
-  e = _MM_ADD_f32(e, one ,gvl);
+  _MMR_MASK_i32 mask = _MM_VFLT_f32_f(x, s_cephes_SQRTHF , gvl);
+  // e = _MM_ADD_f32(e, one ,gvl);
+  _MMR_f32 x_raw = x;
+  x = _MM_SUB_f32_f(x, 1.0, gvl);
+  e = _MM_ADD_f32_f(e, 1.0 ,gvl);
 
-_MMR_MASK_i32 mask = _MM_VFLT_f32(x, _ps256_cephes_SQRTHF , gvl);
-_MMR_f32 tmp  = _MM_MERGE_f32(_MM_SET_f32(0.0f,gvl),x, mask,gvl);
+  _MMR_f32 tmp  = _MM_MERGE_f32(_MM_SET_f32(0.0f,gvl), x_raw, mask,gvl);
 
-  x = _MM_SUB_f32(x, one,gvl);
-  e = _MM_SUB_f32(e, _MM_MERGE_f32(_MM_SET_f32(0.0f,gvl),one, mask,gvl),gvl);
+  // x = _MM_SUB_f32(x, one,gvl);
+  // e = _MM_SUB_f32(e, _MM_MERGE_f32(_MM_SET_f32(0.0f,gvl),one, mask,gvl),gvl);
+  e = _MM_SUB_f32(e, _MM_MERGE_f32(_MM_SET_f32(0.0f, gvl),
+                                   _MM_SET_f32(1.0f, gvl), mask, gvl),gvl);
 
-  x = _MM_ADD_f32(x, tmp,gvl);
+  x = _MM_ADD_f32(x, tmp, gvl);
 
-_MMR_f32 z = _MM_MUL_f32(x,x,gvl);
+  _MMR_f32 z = _MM_MUL_f32(x,x,gvl);
 
-_MMR_f32 y = _ps256_cephes_log_p0;
+  // _MMR_f32 y = _ps256_cephes_log_p0;
 
+  // //  y = _MM_MUL_f32(y, x,gvl);
+  // //  y = _MM_ADD_f32(y, _ps256_cephes_log_p1,gvl);
+  // y = _MM_MADD_f32(y,x,_ps256_cephes_log_p1,gvl);
+  // // y = _MM_MUL_f32(y, x,gvl);
+  // // y = _MM_ADD_f32(y, _ps256_cephes_log_p2,gvl);
+  // y = _MM_MADD_f32(y,x,_ps256_cephes_log_p2,gvl);
+  // // y = _MM_MUL_f32(y, x,gvl);
+  // // y = _MM_ADD_f32(y, _ps256_cephes_log_p3,gvl);
+  // y = _MM_MADD_f32(y,x,_ps256_cephes_log_p3,gvl);
+  // // y = _MM_MUL_f32(y, x,gvl);
+  // // y = _MM_ADD_f32(y, _ps256_cephes_log_p4,gvl);
+  // y = _MM_MADD_f32(y,x,_ps256_cephes_log_p4,gvl);
+  // // y = _MM_MUL_f32(y, x,gvl);
+  // // y = _MM_ADD_f32(y, _ps256_cephes_log_p5,gvl);
+  // y = _MM_MADD_f32(y,x,_ps256_cephes_log_p5,gvl);
+  // // y = _MM_MUL_f32(y, x,gvl);
+  // // y = _MM_ADD_f32(y, _ps256_cephes_log_p6,gvl);
+  // y = _MM_MADD_f32(y,x,_ps256_cephes_log_p6,gvl);
+  // // y = _MM_MUL_f32(y, x,gvl);
+  // // y = _MM_ADD_f32(y, _ps256_cephes_log_p7,gvl);
+  // y = _MM_MADD_f32(y,x,_ps256_cephes_log_p7,gvl);
+  // // y = _MM_MUL_f32(y, x,gvl);
+  // // y = _MM_ADD_f32(y, _ps256_cephes_log_p8,gvl);
+  // y = _MM_MADD_f32(y,x,_ps256_cephes_log_p8,gvl);
+  // // y = _MM_MUL_f32(y, x,gvl);
 
-//  y = _MM_MUL_f32(y, x,gvl);
-//  y = _MM_ADD_f32(y, _ps256_cephes_log_p1,gvl);
-  y = _MM_MADD_f32(y,x,_ps256_cephes_log_p1,gvl);
-  // y = _MM_MUL_f32(y, x,gvl);
-  // y = _MM_ADD_f32(y, _ps256_cephes_log_p2,gvl);
-  y = _MM_MADD_f32(y,x,_ps256_cephes_log_p2,gvl);
-  // y = _MM_MUL_f32(y, x,gvl);
-  // y = _MM_ADD_f32(y, _ps256_cephes_log_p3,gvl);
-  y = _MM_MADD_f32(y,x,_ps256_cephes_log_p3,gvl);
-  // y = _MM_MUL_f32(y, x,gvl);
-  // y = _MM_ADD_f32(y, _ps256_cephes_log_p4,gvl);
-  y = _MM_MADD_f32(y,x,_ps256_cephes_log_p4,gvl);
-  // y = _MM_MUL_f32(y, x,gvl);
-  // y = _MM_ADD_f32(y, _ps256_cephes_log_p5,gvl);
-  y = _MM_MADD_f32(y,x,_ps256_cephes_log_p5,gvl);
-  // y = _MM_MUL_f32(y, x,gvl);
-  // y = _MM_ADD_f32(y, _ps256_cephes_log_p6,gvl);
-  y = _MM_MADD_f32(y,x,_ps256_cephes_log_p6,gvl);
-  // y = _MM_MUL_f32(y, x,gvl);
-  // y = _MM_ADD_f32(y, _ps256_cephes_log_p7,gvl);
-  y = _MM_MADD_f32(y,x,_ps256_cephes_log_p7,gvl);
-  // y = _MM_MUL_f32(y, x,gvl);
-  // y = _MM_ADD_f32(y, _ps256_cephes_log_p8,gvl);
-  y = _MM_MADD_f32(y,x,_ps256_cephes_log_p8,gvl);
-  // y = _MM_MUL_f32(y, x,gvl);
+  _MMR_f32 y;
+  y = _MM_MUL_f32_f(x, s_cephes_log_p0, gvl);
+  y = _MM_ADD_f32_f(y, s_cephes_log_p1,gvl);
+  y = _MM_MUL_f32(y, x,gvl);
+  y = _MM_ADD_f32_f(y, s_cephes_log_p2,gvl);
+  y = _MM_MUL_f32(y, x,gvl);
+  y = _MM_ADD_f32_f(y, s_cephes_log_p3,gvl);
+  y = _MM_MUL_f32(y, x,gvl);
+  y = _MM_ADD_f32_f(y, s_cephes_log_p4,gvl);
+  y = _MM_MUL_f32(y, x,gvl);
+  y = _MM_ADD_f32_f(y, s_cephes_log_p5,gvl);
+  y = _MM_MUL_f32(y, x,gvl);
+  y = _MM_ADD_f32_f(y, s_cephes_log_p6,gvl);
+  y = _MM_MUL_f32(y, x,gvl);
+  y = _MM_ADD_f32_f(y, s_cephes_log_p7,gvl);
+  y = _MM_MUL_f32(y, x,gvl);
+  y = _MM_ADD_f32_f(y, s_cephes_log_p8,gvl);
+  y = _MM_MUL_f32(y, x,gvl);
+
 
   y = _MM_MUL_f32(y, z,gvl);
 
-  // tmp = _MM_MUL_f32(e, _ps256_cephes_log_q1,gvl);
-  // y = _MM_ADD_f32(y, tmp,gvl);
-  y = _MM_MACC_f32(y,e,_ps256_cephes_log_q1,gvl);
+  tmp = _MM_MUL_f32_f(e, s_cephes_log_q1,gvl);
+  y = _MM_ADD_f32(y, tmp, gvl);
+  // y = _MM_MACC_f32(y,e,_ps256_cephes_log_q1,gvl);
 
-  tmp = _MM_MUL_f32(z, _ps256_0p5,gvl);
+  // tmp = _MM_MUL_f32(z, _ps256_0p5,gvl);
+  // y = _MM_SUB_f32(y, tmp,gvl);
+  tmp = _MM_MUL_f32_f(z, 0.5, gvl);
   y = _MM_SUB_f32(y, tmp,gvl);
   //y = _MM_NMACC_f32(y,z,_ps256_0p5,gvl);
 
-  tmp = _MM_MUL_f32(e, _ps256_cephes_log_q2,gvl);
+  tmp = _MM_MUL_f32_f(e, s_cephes_log_q2,gvl);
   x = _MM_ADD_f32(x, y,gvl);
   x = _MM_ADD_f32(x, tmp,gvl);
   x = _MM_MERGE_f32(x,_MMR_i32_to_f32(_MM_SET_i32(0xffffffff,gvl)), invalid_mask,gvl);

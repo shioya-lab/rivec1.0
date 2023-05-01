@@ -6,9 +6,10 @@ VLEN ?= 256
 DLEN ?= $(VLEN)
 
 all: $(subst _,,$(APPLICATION_DIRS))
-	$(MAKE) perf
-	$(MAKE) power_filtered
-	$(MAKE) area
+
+# 	$(MAKE) perf
+# 	$(MAKE) power_filtered
+# 	$(MAKE) area
 
 power: $(addprefix power,$(APPLICATION_DIRS))
 
@@ -40,7 +41,7 @@ runsniper-s:
 $(subst _,,$(APPLICATION_DIRS)):
 	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runspike-v runspike-s
 	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runsniper-v runsniper-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runmcpat-v
+	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runmcpat
 
 $(addprefix power,$(APPLICATION_DIRS)):
 	$(MAKE) -C $(subst power,,$@) VLEN=$(VLEN) DLEN=$(DLEN) runmcpat
