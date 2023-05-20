@@ -1,3 +1,6 @@
 [submodule "rivec1.0"]
 	path = rivec1.0
 	url = git@github.com:shioya-lab/rivec1.0.git
+[submodule "_fftw3/fftw3"]
+	path = _fftw3/fftw3
+	url = https://github.com/msyksphinz-self/fftw3.git
