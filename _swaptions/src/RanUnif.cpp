@@ -56,7 +56,7 @@ void RanUnif_vector( long *s , int iFactors , int iN ,int  BLOCKSIZE , FTYPE **r
           xSeed   = _MM_SUB_i64(_MM_MUL_i64(cons2,_MM_SUB_i64(xSeed,_MM_MUL_i64(k1,cons1,gvl),gvl),gvl), _MM_MUL_i64(k1,cons3,gvl) , gvl);
           zero    = _MM_SET_i64(0,gvl);
           mask1   = _MM_VMSLT_i64(xSeed,zero,gvl);
-          xSeed   = _MM_ADD_i64_MASK(xSeed,cons4,mask1,gvl);
+          xSeed   = _MM_ADD_i64_MASK(cons4,xSeed,cons4,mask1,gvl);
           dRes    = _MM_MUL_f64( cons5,_MM_VFCVT_F_X_f64(xSeed,gvl),gvl);
 
           _MM_STORE_f64(&randZ[l][BLOCKSIZE*j], dRes,gvl);

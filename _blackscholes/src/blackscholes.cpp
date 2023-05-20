@@ -162,7 +162,8 @@ _MMR_f32 CNDF_SIMD  (_MMR_f32 xInput ,unsigned long int gvl)
   xLocal   = _MM_SUB_f32(xOne,xLocal,gvl);
   //xLocal   = _MM_NMSUB_f32(xLocal,xNPrimeofX,xOne,gvl);
 
-  xLocal   = _MM_SUB_f32_MASK(xOne,xLocal,xMask,gvl); //sub(vs2,vs1)
+  // xLocal   = _MM_SUB_f32_MASK(xOne,xLocal,xMask,gvl); //sub(vs2,vs1)
+  xLocal   = _MM_SUB_f32_MASK(xLocal,xOne,xLocal,xMask,gvl); //sub(vs2,vs1)
   return xLocal;
 }
 

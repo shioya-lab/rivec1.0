@@ -40,11 +40,6 @@
 #include "sim_api.h"
 #include "count_utils.h"
 
-// RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
-#ifdef USE_RISCV_VECTOR
-#include "../../common/vector_defines.h"
-#endif
-
 #ifdef ENABLE_THREADS
 #include <pthread.h>
 #endif

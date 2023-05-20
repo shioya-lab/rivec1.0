@@ -204,9 +204,6 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     xStrikePrice = _MM_LOAD_f32(strike,gvl);
     xStockPrice = _MM_LOAD_f32(sptprice,gvl);
     xStrikePrice = _MM_DIV_f32(xStockPrice,xStrikePrice,gvl);
-    xLogTerm = _MM_LOG_f32(xStrikePrice,gvl);
-
-    //FENCE();
     xRiskFreeRate = _MM_LOAD_f32(rate,gvl);
     xVolatility = _MM_LOAD_f32(volatility,gvl);
     xTime = _MM_LOAD_f32(time,gvl);
@@ -214,7 +211,10 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     xRatexTime = _MM_MUL_f32(xRiskFreeRate, xTime,gvl);
     xRatexTime = _MM_VFSGNJN_f32(xRatexTime, xRatexTime,gvl);
 
-    xFutureValueX = _MM_EXP_f32(xRatexTime,gvl);
+    asm volatile ("fence");
+    _MM_LOG_EXP_f32(xStrikePrice, xRatexTime, &xLogTerm, &xFutureValueX, gvl);
+    asm volatile ("fence");
+
     FENCE();
     xPowerTerm = _MM_MUL_f32(xVolatility, xVolatility,gvl);
     xPowerTerm = _MM_MUL_f32_f(xPowerTerm, 0.5,gvl);

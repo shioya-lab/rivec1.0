@@ -36,17 +36,17 @@
 
 #include "AtomicPtr.h"
 #include "location_t.h"
-#include "annealer_types.h" 
+#include "annealer_types.h"
 
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
-#include "../../common/vector_defines.h"
+#include "../../common/vector_defines_m2.h"
 #endif
 
 using threads::AtomicPtr;
 
 class netlist_elem{
-public:	
+public:
 	netlist_elem();
 	routing_cost_t routing_cost_given_loc(location_t loc);
 #ifdef USE_RISCV_VECTOR
@@ -54,7 +54,7 @@ public:
 #else // !USE_RISCV_VECTOR
 	routing_cost_t swap_cost(location_t* old_loc, location_t* new_loc);
 #endif //USE_RISCV_VECTOR
-	
+
 public:
 	std::string item_name;
 	std::vector<netlist_elem*> fanin;
@@ -67,4 +67,3 @@ protected:
 
 
 #endif
-

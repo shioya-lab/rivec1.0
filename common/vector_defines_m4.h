@@ -12,6 +12,10 @@
 #define _MMR_i64            vint64m4_t //<vscale x 1 x i64> //__epi_1xi64
 #define _MMR_i32        	vint32m4_t //<vscale x 2 x i32> //__epi_2xi32
 
+#define _MM_VSETVLI(type, n) __riscv_vsetvl_## type ##m4(n)
+#define _MM_VSETVLMAX(type)  __riscv_vsetvlmax_## type ##m4()
+
+
 //---------------------------------------------------------------------------
 // INTEGER INTRINSICS
 
@@ -45,6 +49,7 @@
 
 //#define _MM_SUB_i32			  __builtin_epi_vsub_2xi32
 #define _MM_SUB_i32(op1, op2, op3)  __riscv_vsub_vv_i32m4(op1, op2, op3)
+#define _MM_SUB_i32_x(op1, op2, op3)  __riscv_vsub_vx_i32m4(op1, op2, op3)
 
 //#define _MM_ADD_i64_MASK  __builtin_epi_vadd_1xi64_mask
 /*
@@ -137,6 +142,7 @@ vint64m4_t vmv_v_x_i64m4 (int64_t src);
 
 //#define _MM_AND_i32     	__builtin_epi_vand_2xi32
 #define _MM_AND_i32(op1, op2, op3) __riscv_vand_vv_i32m4(op1, op2, op3)
+#define _MM_AND_i32_x(op1, op2, op3) __riscv_vand_vx_i32m4(op1, op2, op3)
 
 //#define _MM_OR_i64     		__builtin_epi_vor_1xi64
 #define _MM_OR_i64(op1, op2, op3) __riscv_vor_vv_i64m4(op1, op2, op3)
@@ -285,6 +291,7 @@ vint64m4_t __riscv_vmerge_vvm_i64m4 (vbool64_t mask, vint64m4_t op1, vint64m4_t 
 
 //#define _MM_SET_f32     	__builtin_epi_vbroadcast_2xf32
 #define _MM_SET_f32(op1, op2) __riscv_vfmv_v_f_f32m4(op1, op2)
+#define _MM_SET_f32_m1(op1, op2) __riscv_vfmv_v_f_f32m1(op1, op2)
 
 //#define _MM_MIN_f64         __builtin_epi_vfmin_1xf64
 #define _MM_MIN_f64(op1, op2, op3) __riscv_vfmin_vv_f64m4(op1, op2, op3)
@@ -335,10 +342,10 @@ vfloat64m4_t __riscv_vmerge_vvm_f64m4 (vbool64_t mask, __riscv_vfloat64m4_t op1,
 #define _MM_MERGE_f32(op1, op2, op3, op4) __riscv_vmerge_vvm_f32m4(op1, op2, op3, op4)
 
 //#define _MM_REDSUM_f64  	__builtin_epi_vfredsum_1xf64
-#define _MM_REDSUM_f64(op1, op2, op3) __riscv_vfredusum_vs_f64m4_f64m4(op1, op2, op3)
+#define _MM_REDSUM_f64(op1, op2, op3) __riscv_vfredusum_vs_f64m4_f64m1(op1, op2, op3)
 
 //#define _MM_REDSUM_f32  	__builtin_epi_vfredsum_2xf32
-#define _MM_REDSUM_f32(op1, op2, op3)    __riscv_vfredusum_vs_f32m4_f32m4(op1, op2, op3)
+#define _MM_REDSUM_f32(op1, op2, op3)    __riscv_vfredusum_vs_f32m4_f32m1(op1, op2, op3)
 
 #define _MM_REDSUM_f64_MASK __builtin_epi_vfredsum_1xf64_mask //TODO, not being used
 #define _MM_REDSUM_f32_MASK __builtin_epi_vfredsum_2xf32_mask  //TODO, not being used
@@ -447,6 +454,7 @@ vint32m4_t __riscv_vslideup_vx_i32m4 (vint32m4_t dst, vint32m4_t src, size_t off
 //0.9 float32_t vfmv_f_s_f32m4_f32 (vfloat32m4_t src);
 //#define _MM_VGETFIRST_f32   __builtin_epi_vgetfirst_2xf32
 #define _MM_VGETFIRST_f32(op1, op2) __riscv_vfmv_f_s_f32m4_f32(op1)
+#define _MM_VGETFIRST_f32_m1(op1, op2) __riscv_vfmv_f_s_f32m1_f32(op1)
 
 //#define _MM_VGETFIRST_f64   __builtin_epi_vgetfirst_1xf64
 #define _MM_VGETFIRST_f64(op1, op2) __riscv_vfmv_f_s_f64m4_f64(op1)
@@ -587,6 +595,7 @@ https://github.com/riscv/rvv-intrinsic-doc/issues/37
 
 //#define _MM_VFLE_f32        __builtin_epi_vmfle_2xf32
 #define _MM_VFLE_f32(op1, op2, op3) __riscv_vmfle_vv_f32m4_b8(op1, op2, op3)
+#define _MM_VFLE_f32_f(op1, op2, op3) __riscv_vmfle_vf_f32m4_b8(op1, op2, op3)
 
 // reinterpert casts
 #define _MMR_i32_to_f32(op1) __riscv_vreinterpret_v_i32m4_f32m4(op1)

@@ -22,8 +22,9 @@ def load_csv(conf, app="axpy"):
     csv_data['v_ino']  = pd.read_csv(base_dir  + 'vec_ino/sim.stats.mcpat.output.csv',       header=None).T.dropna()
     csv_data['v_ino'].columns=['name', 'value']
 
-    csv_data['v_to_s'] = pd.read_csv(base_dir  + 'vec_to_scalar/sim.stats.mcpat.output.csv', header=None).T.dropna()
-    csv_data['v_to_s'].columns=['name', 'value']
+    if os.path.isfile(base_dir  + 'vec_to_scalar/sim.stats.mcpat.output.csv'):
+        csv_data['v_to_s'] = pd.read_csv(base_dir  + 'vec_to_scalar/sim.stats.mcpat.output.csv', header=None).T.dropna()
+        csv_data['v_to_s'].columns=['name', 'value']
 
     if os.path.isfile(base_dir  + 'v_to_s_ngs/sim.stats.mcpat.output.csv'):
         csv_data['v_to_s_ngs'] = pd.read_csv(base_dir  + 'v_to_s_ngs/sim.stats.mcpat.output.csv', header=None).T.dropna()

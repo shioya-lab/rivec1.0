@@ -47,6 +47,17 @@ df_cycle_v8_d2 = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 512, 128)
 df_cycle_v8_d8 = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 512, 512), ut.benchmarks)), 
                                   columns=(map(lambda b: "V8-D8 " + b, ut.pipe_conf)), index=ut.benchmarks)
 
+#%%
+# V8-D2 のテーブルを作る
+
+display(df_cycle_v8_d2)
+
+plt.figure()
+df_cycle_v8_d2_pct = np.reciprocal((df_cycle_v8_d2.T / df_cycle_v8_d2["V8-D2 ooo.v"].T).T)
+df_cycle_v8_d2_pct.loc['GeoMean'] = df_cycle_v8_d2_pct.mean()
+df_cycle_v8_d2_pct.plot.bar(title="V8-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+plt.savefig("v8_d2_perf.pdf", bbox_inches='tight')
+
 
 #%%
 # 全体的な性能グラフを作る
@@ -211,6 +222,7 @@ df_energy_whole.columns = ['V2-D2 Fence', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2
                            'V8-D8 Fence', 'V8-D8 NoMerge', 'V8-D8 Proposal', 'V8-D8 OoO',]
 display(df_energy_whole)
 df_energy_whole.T.plot.bar(title="Energy Estimation", stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+plt.savefig("relative_energy.pdf", bbox_inches='tight')
 
 
 # %%
@@ -310,11 +322,13 @@ plt.ylabel("Performance (Higher is Better)")
 plt.savefig("energy_perf.pdf", bbox_inches='tight')
 
 display(df_cycle_whole_pct)
-display(df_energy_whole_pct.sum().max())
-
+df_cycle_whole_pct.mean().to_csv("relative_cycle.csv")
+df_energy_whole_pct.mean().to_csv("relative_energy.csv")
 
 # %%
 # 性能と面積の分布図を作る
+
+df_area_whole_pct = df_area_whole.sum() / df_area_whole.sum().max()
 
 plt.scatter(df_area_fence, df_perf_fence, lw=2, label='VecInO Fence', color='blue')
 plt.plot   (df_area_fence, df_perf_fence, lw=2, color='blue')
@@ -341,5 +355,7 @@ plt.ylabel("Performance (Higher is Better)")
 plt.xlim(0.0, df_area_whole.sum().max() * 1.1)
 plt.ylim(0.0, df_cycle_whole_pct.mean().max() * 1.1)
 plt.savefig("area_perf.pdf", bbox_inches='tight')
+
+df_area_whole_pct.to_csv("relative_area.csv")
 
 # %%

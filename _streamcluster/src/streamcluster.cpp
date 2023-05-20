@@ -21,7 +21,7 @@
 
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
-#include "../../common/vector_defines.h"
+#include "../../common/vector_defines_m8.h"
 #endif
 
 #include <time.h>
@@ -665,10 +665,10 @@ float dist(Point p1, Point p2, int dim )
   //unsigned long int gvl = __builtin_epi_vsetvl(dim, __epi_e32, __epi_m1);
   unsigned long int gvl = __riscv_vsetvl_e32m8(dim); //PLCT
 
-  _MMR_8xf32 result1, _aux, _diff, _coord1, _coord2;
-  _MMR_f32   result2;
+  _MMR_f32 result1, _aux, _diff, _coord1, _coord2;
+  vfloat32m1_t result2;
 
-  result1 = _MM_SET_f32_m8(0.0,gvl);
+  result1 = _MM_SET_f32(0.0,gvl);
   result2 = _MM_SET_f32_m1(0.0,gvl);
   for (i=0;i<dim;i=i+gvl) {
 
@@ -676,13 +676,13 @@ float dist(Point p1, Point p2, int dim )
     // gvl = __riscv_vsetvl_e32m1(dim-i); //PLCT
     gvl = __riscv_vsetvl_e32m8(dim-i); //PLCT
 
-    _coord1 = _MM_LOAD_f32_m8(&(p1.coord[i]),gvl);
-    _coord2 = _MM_LOAD_f32_m8(&(p2.coord[i]),gvl);
+    _coord1 = _MM_LOAD_f32(&(p1.coord[i]),gvl);
+    _coord2 = _MM_LOAD_f32(&(p2.coord[i]),gvl);
 
-    _diff = _MM_SUB_f32_m8(_coord2,_coord1,gvl);
-    result1   = _MM_MACC_f32_m8(result1,_diff,_diff,gvl);
+    _diff = _MM_SUB_f32(_coord2,_coord1,gvl);
+    result1   = _MM_MACC_f32(result1,_diff,_diff,gvl);
   }
-  result2 = _MM_REDSUM_f32_m8(result1,result2,gvl);
+  result2 = _MM_REDSUM_f32(result1,result2,gvl);
   result = _MM_VGETFIRST_f32_m1(result2,gvl);
   FENCE();
   //printf("result = %f \n",result);

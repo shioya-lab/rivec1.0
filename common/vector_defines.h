@@ -50,12 +50,14 @@
 
 //#define _MM_ADD_i32     	__builtin_epi_vadd_2xi32
 #define _MM_ADD_i32(op1, op2, op3) __riscv_vadd_vv_i32m1(op1, op2, op3)
+#define _MM_ADD_i32_x(op1, op2, op3) __riscv_vadd_vx_i32m1(op1, op2, op3)
 
 //#define _MM_SUB_i64			  __builtin_epi_vsub_1xi64
 #define _MM_SUB_i64(op1, op2, op3) __riscv_vsub_vv_i64m1(op1, op2, op3)
 
 //#define _MM_SUB_i32			  __builtin_epi_vsub_2xi32
 #define _MM_SUB_i32(op1, op2, op3)  __riscv_vsub_vv_i32m1(op1, op2, op3)
+#define _MM_SUB_i32_x(op1, op2, op3)  __riscv_vsub_vx_i32m1(op1, op2, op3)
 
 //#define _MM_ADD_i64_MASK  __builtin_epi_vadd_1xi64_mask
 /*
@@ -135,6 +137,7 @@ vint64m1_t vmv_v_x_i64m1 (int64_t src);
 
 //#define _MM_SLL_i32     	__builtin_epi_vsll_2xi32
 #define _MM_SLL_i32(op1, op2, op3) __riscv_vsll_vv_i32m1(op1, op2, op3)
+#define _MM_SLL_i32_x(op1, op2, op3) __riscv_vsll_vx_i32m1(op1, op2, op3)
 
 //#define _MM_SRL_i64     	__builtin_epi_vsrl_1xi64
 #define _MM_SRL_i64(op1, op2, op3) __riscv_vsrl_vv_u64m1(op1, op2, op3)
@@ -147,12 +150,14 @@ vint64m1_t vmv_v_x_i64m1 (int64_t src);
 
 //#define _MM_AND_i32     	__builtin_epi_vand_2xi32
 #define _MM_AND_i32(op1, op2, op3) __riscv_vand_vv_i32m1(op1, op2, op3)
+#define _MM_AND_i32_x(op1, op2, op3) __riscv_vand_vx_i32m1(op1, op2, op3)
 
 //#define _MM_OR_i64     		__builtin_epi_vor_1xi64
 #define _MM_OR_i64(op1, op2, op3) __riscv_vor_vv_i64m1(op1, op2, op3)
 
 //#define _MM_OR_i32     		__builtin_epi_vor_2xi32
 #define _MM_OR_i32(op1, op2, op3) __riscv_vor_vv_i32m1(op1, op2, op3)
+#define _MM_OR_i32_x(op1, op2, op3) __riscv_vor_vx_i32m1(op1, op2, op3)
 
 //#define _MM_XOR_i64     	__builtin_epi_vxor_1xi64
 #define _MM_XOR_i64(op1, op2, op3) __riscv_vxor_vv_i64m1(op1, op2, op3)
@@ -265,10 +270,8 @@ vint64m1_t __riscv_vmerge_vvm_i64m1 (vbool64_t mask, vint64m1_t op1, vint64m1_t 
 
 //#define _MM_SUB_f32     	__builtin_epi_vfsub_2xf32
 #define _MM_SUB_f32(op1, op2, op3) __riscv_vfsub_vv_f32m1(op1, op2, op3)
-#define _MM_SUB_f32_m1(op1, op2, op3) __riscv_vfsub_vv_f32m1(op1, op2, op3)
-#define _MM_SUB_f32_m2(op1, op2, op3) __riscv_vfsub_vv_f32m2(op1, op2, op3)
-#define _MM_SUB_f32_m4(op1, op2, op3) __riscv_vfsub_vv_f32m4(op1, op2, op3)
-#define _MM_SUB_f32_m8(op1, op2, op3) __riscv_vfsub_vv_f32m8(op1, op2, op3)
+#define _MM_SUB_f32_f(op1, op2, op3) __riscv_vfsub_vf_f32m1(op1, op2, op3)
+#define _MM_RSUB_f32_f(op1, op2, op3) __riscv_vfrsub_vf_f32m1(op2, op1, op3)
 
 //#define _MM_SUB_f64_MASK	__builtin_epi_vfsub_1xf64_mask
 #define _MM_SUB_f64_MASK(op1, op2, op3, op4, op5) __riscv_vfsub_vv_f64m1_mu(op4, op1, op2, op3, op5)
@@ -320,6 +323,7 @@ vint64m1_t __riscv_vmerge_vvm_i64m1 (vbool64_t mask, vint64m1_t op1, vint64m1_t 
 
 //#define _MM_MIN_f32         __builtin_epi_vfmin_2xf32
 #define _MM_MIN_f32(op1, op2, op3) __riscv_vfmin_vv_f32m1(op1, op2, op3)
+#define _MM_MIN_f32_f(op1, op2, op3) __riscv_vfmin_vf_f32m1(op1, op2, op3)
 
 //#define _MM_MAX_f64         __builtin_epi_vfmax_1xf64
 #define _MM_MAX_f64(op1, op2, op3) __riscv_vfmax_vv_f64m1(op1, op2, op3)
@@ -635,6 +639,7 @@ https://github.com/riscv/rvv-intrinsic-doc/issues/37
 
 //#define _MM_VFLE_f32        __builtin_epi_vmfle_2xf32
 #define _MM_VFLE_f32(op1, op2, op3) __riscv_vmfle_vv_f32m1_b32(op1, op2, op3)
+#define _MM_VFLE_f32_f(op1, op2, op3) __riscv_vmfle_vf_f32m1_b32(op1, op2, op3)
 
 // reinterpert casts
 #define _MMR_i32_to_f32(op1) __riscv_vreinterpret_v_i32m1_f32m1(op1)

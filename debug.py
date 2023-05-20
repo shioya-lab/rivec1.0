@@ -69,3 +69,29 @@ plt.figure()
 df_power_v8_d2.plot.bar(stacked=True, title="V8-D2 : Power Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 
 # %%
+# AXPYの電力を取得する
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import util_power as ut_p
+import utils as ut
+
+df_power_axpy_v8_d2 = pd.DataFrame(ut_p.get_power_with_app('axpy', 512, 128))
+
+display(df_power_axpy_v8_d2)
+plt.figure()
+df_power_axpy_v8_d2.T.plot.bar(stacked=True, title="AXPY V8-D2 : Power Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+
+# %%
+# scatter_evalの電力を取得する
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import util_power as ut_p
+import utils as ut
+
+df_power_scatter_v8_d2 = pd.DataFrame(ut_p.get_power_with_app('scatter_eval', 512, 128))
+
+display(df_power_scatter_v8_d2)
+plt.figure()
+df_power_scatter_v8_d2.T.plot.bar(stacked=True, title="Scatter Eval V8-D2 : Power Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')

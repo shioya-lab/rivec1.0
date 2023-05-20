@@ -12,6 +12,9 @@
 #define _MMR_i64            vint64m2_t //<vscale x 1 x i64> //__epi_1xi64
 #define _MMR_i32        	vint32m2_t //<vscale x 2 x i32> //__epi_2xi32
 
+#define _MM_VSETVLI(type, n) __riscv_vsetvl_## type ##m2(n)
+#define _MM_VSETVLMAX(type)  __riscv_vsetvlmax_## type ##m2()
+
 //---------------------------------------------------------------------------
 // INTEGER INTRINSICS
 
@@ -287,6 +290,7 @@ vint64m2_t __riscv_vmerge_vvm_i64m2 (vbool64_t mask, vint64m2_t op1, vint64m2_t 
 
 //#define _MM_SET_f32     	__builtin_epi_vbroadcast_2xf32
 #define _MM_SET_f32(op1, op2) __riscv_vfmv_v_f_f32m2(op1, op2)
+#define _MM_SET_f32_m1(op1, op2) __riscv_vfmv_v_f_f32m1(op1, op2)
 
 //#define _MM_MIN_f64         __builtin_epi_vfmin_1xf64
 #define _MM_MIN_f64(op1, op2, op3) __riscv_vfmin_vv_f64m2(op1, op2, op3)
@@ -337,10 +341,10 @@ vfloat64m2_t __riscv_vmerge_vvm_f64m2 (vbool64_t mask, __riscv_vfloat64m2_t op1,
 #define _MM_MERGE_f32(op1, op2, op3, op4) __riscv_vmerge_vvm_f32m2(op1, op2, op3, op4)
 
 //#define _MM_REDSUM_f64  	__builtin_epi_vfredsum_1xf64
-#define _MM_REDSUM_f64(op1, op2, op3) __riscv_vfredusum_vs_f64m2_f64m2(op1, op2, op3)
+#define _MM_REDSUM_f64(op1, op2, op3) __riscv_vfredusum_vs_f64m2_f64m1(op1, op2, op3)
 
 //#define _MM_REDSUM_f32  	__builtin_epi_vfredsum_2xf32
-#define _MM_REDSUM_f32(op1, op2, op3)    __riscv_vfredusum_vs_f32m2_f32m2(op1, op2, op3)
+#define _MM_REDSUM_f32(op1, op2, op3)    __riscv_vfredusum_vs_f32m2_f32m1(op1, op2, op3)
 
 #define _MM_REDSUM_f64_MASK __builtin_epi_vfredsum_1xf64_mask //TODO, not being used
 #define _MM_REDSUM_f32_MASK __builtin_epi_vfredsum_2xf32_mask  //TODO, not being used
@@ -449,6 +453,7 @@ vint32m2_t __riscv_vslideup_vx_i32m2 (vint32m2_t dst, vint32m2_t src, size_t off
 //0.9 float32_t vfmv_f_s_f32m2_f32 (vfloat32m2_t src);
 //#define _MM_VGETFIRST_f32   __builtin_epi_vgetfirst_2xf32
 #define _MM_VGETFIRST_f32(op1, op2) __riscv_vfmv_f_s_f32m2_f32(op1)
+#define _MM_VGETFIRST_f32_m1(op1, op2) __riscv_vfmv_f_s_f32m1_f32(op1)
 
 //#define _MM_VGETFIRST_f64   __builtin_epi_vgetfirst_1xf64
 #define _MM_VGETFIRST_f64(op1, op2) __riscv_vfmv_f_s_f64m2_f64(op1)
@@ -629,6 +634,13 @@ https://github.com/riscv/rvv-intrinsic-doc/issues/37
 #include "__exp.h"
 #define _MM_EXP_f64 		__exp_1xf64
 #define _MM_EXP_f32 		__exp_2xf32
+#endif
+
+#ifndef _MM_LOG_EXP
+#define _MM_LOG_EXP
+#include "__log_exp.h"
+#define _MM_LOG_EXP_f64 		__log_exp_1xf64
+#define _MM_LOG_EXP_f32 		__log_exp_2xf32
 #endif
 
 #ifndef _MM_COS

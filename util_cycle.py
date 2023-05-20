@@ -5,8 +5,12 @@ import os
 def get_cycle(app, pipe_conf, vlen, dlen):
     file_str = '_%s/%s.v%s_d%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen)
     # print("Opening %s ..." % (file_str))
-    sql3_conn = sqlite3.connect(file_str)
-
+    try:
+        sql3_conn = sqlite3.connect(file_str)
+    except sqlite3.OperationalError:
+        print ('sqlite3 file error ' + file_str)
+        exit()
+    
     time_by_core0_index = sql3_conn.execute("SELECT * FROM 'names' WHERE objectname='thread' AND metricname='time_by_core[0]'").fetchall()[0][0]
     roi_begin_index = sql3_conn.execute("SELECT * FROM 'prefixes' WHERE prefixname='roi-begin'").fetchall()[0][0]
     roi_end_index = sql3_conn.execute("SELECT * FROM 'prefixes' WHERE prefixname='roi-end'").fetchall()[0][0]

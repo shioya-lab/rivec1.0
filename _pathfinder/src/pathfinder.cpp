@@ -12,7 +12,7 @@ using namespace std;
 /************************************************************************/
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
-#include "../../common/vector_defines.h"
+#include "../../common/vector_defines_m2.h"
 #endif
 /************************************************************************/
 
@@ -201,80 +201,79 @@ void run()
 
 void run_vector()
 {
-    int *dst;
+  int *dst;
 
-    long long start = get_time();
-    long long start_cycle = get_cycle();
-    long long start_vecinst = get_vecinst();
-    printf("NUMBER OF RUNS VECTOR: %d\n",NUM_RUNS);
-     SimRoiStart();
-     start_konatadump();
+  long long start = get_time();
+  long long start_cycle = get_cycle();
+  long long start_vecinst = get_vecinst();
+  printf("NUMBER OF RUNS VECTOR: %d\n",NUM_RUNS);
+  SimRoiStart();
+  start_konatadump();
 
-    for (int j=0; j<NUM_RUNS; j++) {
-      if (j == 2) {
-        start_konatadump();
-      }
-
-        for (int x = 0; x < cols; x++){
-            result[x] = wall[x];
-        }
-        dst = result;
-
-       // unsigned long int gvl = __builtin_epi_vsetvl(cols, __epi_e32, __epi_m1);
-        unsigned long int gvl = __riscv_vsetvl_e32m1(cols);  //PLCT
-        _MMR_i32    xSrc_slideup;
-        _MMR_i32    xSrc_slidedown;
-        _MMR_i32    xSrc;
-        _MMR_i32    xNextrow;
-
-        int aux,aux2;
-
-        for (int t = 0; t < rows-1; t++)
-        {
-            aux = dst[0] ;
-            for(int n = 0; n < cols; n = n + gvl)
-            {
-                // gvl = __builtin_epi_vsetvl(cols-n, __epi_e32, __epi_m1);
-                gvl = __riscv_vsetvl_e32m1(cols-n); //PLCT
-                xNextrow = _MM_LOAD_i32(&dst[n],gvl);
-
-                xSrc = xNextrow;
-                aux2 = (n+gvl >= cols) ?  dst[n+gvl-1] : dst[n+gvl];
-                xSrc_slideup = _MM_VSLIDE1UP_i32(xSrc,aux,gvl);
-                xSrc_slidedown = _MM_VSLIDE1DOWN_i32(xSrc,aux2,gvl);
-
-                xSrc = _MM_MIN_i32(xSrc,xSrc_slideup,gvl);
-                xSrc = _MM_MIN_i32(xSrc,xSrc_slidedown,gvl);
-
-                xNextrow = _MM_LOAD_i32(&wall[(t+1)*cols + n],gvl);
-                xNextrow = _MM_ADD_i32(xNextrow,xSrc,gvl);
-
-                aux = dst[n+gvl-1];
-                _MM_STORE_i32(&dst[n],xNextrow,gvl);
-                FENCE();
-            }
-        }
-
-        FENCE();
+  for (int j=0; j<NUM_RUNS; j++) {
+    if (j == 2) {
+      start_konatadump();
     }
-    SimRoiEnd();
-    stop_konatadump();
 
-    long long end = get_time();
-    long long end_cycle = get_cycle();
-    long long end_vecinst = get_vecinst();
-    printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
-    printf("cycles = %lld\n", end_cycle - start_cycle);
-    printf("vecinst = %ld\n",  end_vecinst - start_vecinst);
+    for (int x = 0; x < cols; x++){
+      result[x] = wall[x];
+    }
+    dst = result;
+
+    // unsigned long int gvl = __builtin_epi_vsetvl(cols, __epi_e32, __epi_m1);
+    unsigned long int gvl = _MM_VSETVLI(e32, cols);  //PLCT
+    _MMR_i32    xSrc_slideup;
+    _MMR_i32    xSrc_slidedown;
+    _MMR_i32    xSrc;
+    _MMR_i32    xNextrow;
+
+    int aux,aux2;
+
+    for (int t = 0; t < rows-1; t++)
+    {
+      aux = dst[0] ;
+      for(int n = 0; n < cols; n = n + gvl)
+      {
+        gvl = _MM_VSETVLI(e32, cols-n); //PLCT
+        xNextrow = _MM_LOAD_i32(&dst[n],gvl);
+
+        xSrc = xNextrow;
+        aux2 = (n+gvl >= cols) ?  dst[n+gvl-1] : dst[n+gvl];
+        xSrc_slideup = _MM_VSLIDE1UP_i32(xSrc,aux,gvl);
+        xSrc_slidedown = _MM_VSLIDE1DOWN_i32(xSrc,aux2,gvl);
+
+        xSrc = _MM_MIN_i32(xSrc,xSrc_slideup,gvl);
+        xSrc = _MM_MIN_i32(xSrc,xSrc_slidedown,gvl);
+
+        xNextrow = _MM_LOAD_i32(&wall[(t+1)*cols + n],gvl);
+        xNextrow = _MM_ADD_i32(xNextrow,xSrc,gvl);
+
+        aux = dst[n+gvl-1];
+        _MM_STORE_i32(&dst[n],xNextrow,gvl);
+        FENCE();
+      }
+    }
+
+    FENCE();
+  }
+  SimRoiEnd();
+  stop_konatadump();
+
+  long long end = get_time();
+  long long end_cycle = get_cycle();
+  long long end_vecinst = get_vecinst();
+  printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
+  printf("cycles = %lld\n", end_cycle - start_cycle);
+  printf("vecinst = %lld\n",  end_vecinst - start_vecinst);
 
 #ifdef RESULT_PRINT
 
-    output_printfile(dst, outfilename );
+  output_printfile(dst, outfilename );
 
 #endif // RESULT_PRINT
 
-    free(wall);
-    free(dst);
+  free(wall);
+  free(dst);
 }
 #endif // USE_RISCV_VECTOR
 
