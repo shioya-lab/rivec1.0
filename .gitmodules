@@ -4,3 +4,6 @@
 [submodule "_fftw3/fftw3"]
 	path = _fftw3/fftw3
 	url = https://github.com/msyksphinz-self/fftw3.git
+[submodule "_fftw3/fftw3_scalar"]
+	path = _fftw3/fftw3_scalar
+	url = https://github.com/FFTW/fftw3.git

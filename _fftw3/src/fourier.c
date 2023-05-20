@@ -9,6 +9,7 @@
 #include <complex.h> // complex.h は fftw3.h より先に include する
 #include <fftw3.h>   // windows環境では #include "C:/path/to/fftw3.h"
                      // あるいは        #include "./相対パス/fftw3.h"
+#include "sim_api.h"
 #include "count_utils.h"
 
 
@@ -41,13 +42,15 @@ int main( void )
 
   // フーリエ変換実行   b[n]に計算結果が入る
   long long start_cycle   = get_cycle();
-  // long long start_vecinst = get_vecinst();
+  long long start_vecinst = get_vecinst();
   long long start_inst    = get_instret();
-
+  SimRoiStart();
+  start_konatadump();
   fftw_execute(plan);
-
+  SimRoiEnd();
+  stop_konatadump();
   long long end_cycle   = get_cycle();
-  // long long end_vecinst = get_vecinst();
+  long long end_vecinst = get_vecinst();
   long long end_inst    = get_instret();
 
   // b[n]の値を表示
@@ -64,7 +67,7 @@ int main( void )
   fftw_free(a); fftw_free(b);
 
   printf("allinst = %lld\n", end_inst - start_inst);
-  // printf("vecinst = %lld\n", end_vecinst - start_vecinst);
+  printf("vecinst = %lld\n", end_vecinst - start_vecinst);
   printf("cycles = %lld\n", end_cycle - start_cycle);
 
   return 0;
