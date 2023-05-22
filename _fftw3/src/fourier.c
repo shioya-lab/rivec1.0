@@ -16,7 +16,7 @@
 int main( void )
 {
 
-  int N=32;
+  int N=128;
 
   // a,b は double _Complex 型のC99標準複素配列と実質的に同じ
   // double _Complex a[4] としても動くけど計算速度が低下する可能性あり
@@ -41,17 +41,61 @@ int main( void )
   // a[3] = 3.0 + 0.0*I;
 
   // フーリエ変換実行   b[n]に計算結果が入る
-  long long start_cycle   = get_cycle();
-  long long start_vecinst = get_vecinst();
-  long long start_inst    = get_instret();
-  SimRoiStart();
-  start_konatadump();
-  fftw_execute(plan);
-  SimRoiEnd();
-  stop_konatadump();
-  long long end_cycle   = get_cycle();
-  long long end_vecinst = get_vecinst();
-  long long end_inst    = get_instret();
+
+  long long start_cycle0;
+  long long start_vecinst0;
+  long long start_inst0;
+
+  long long end_cycle0;
+  long long end_vecinst0;
+  long long end_inst0;
+
+  long long start_cycle1;
+  long long start_vecinst1;
+  long long start_inst1;
+
+  long long end_cycle1;
+  long long end_vecinst1;
+  long long end_inst1;
+
+  {
+    start_cycle0   = get_cycle();
+    start_vecinst0 = get_vecinst();
+    start_inst0    = get_instret();
+
+    // SimRoiStart();
+    // start_konatadump();
+    fftw_execute(plan);
+    // SimRoiEnd();
+    // stop_konatadump();
+    end_cycle0   = get_cycle();
+    end_vecinst0 = get_vecinst();
+    end_inst0    = get_instret();
+  }
+
+  {
+    start_cycle1   = get_cycle();
+    start_vecinst1 = get_vecinst();
+    start_inst1    = get_instret();
+
+    SimRoiStart();
+    start_konatadump();
+    fftw_execute(plan);
+    SimRoiEnd();
+    stop_konatadump();
+
+    end_cycle1   = get_cycle();
+    end_vecinst1 = get_vecinst();
+    end_inst1    = get_instret();
+  }
+
+  printf("allinst = %lld\n", end_inst0 - start_inst0);
+  printf("vecinst = %lld\n", end_vecinst0 - start_vecinst0);
+  printf("cycles  = %lld\n", end_cycle0 - start_cycle0);
+
+  printf("allinst = %lld\n", end_inst1 - start_inst1);
+  printf("vecinst = %lld\n", end_vecinst1 - start_vecinst1);
+  printf("cycles  = %lld\n", end_cycle1 - start_cycle1);
 
   // b[n]の値を表示
   int n;
@@ -65,10 +109,6 @@ int main( void )
   // 計算終了時、メモリ開放を忘れないように
   if(plan) fftw_destroy_plan(plan);
   fftw_free(a); fftw_free(b);
-
-  printf("allinst = %lld\n", end_inst - start_inst);
-  printf("vecinst = %lld\n", end_vecinst - start_vecinst);
-  printf("cycles = %lld\n", end_cycle - start_cycle);
 
   return 0;
 }
