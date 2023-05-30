@@ -1,6 +1,6 @@
 #%%
 import sqlite3
-import os
+import utils as ut
 
 def get_cycle(app, pipe_conf, vlen, dlen):
     file_str = '_%s/%s.v%s_d%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen)
@@ -21,3 +21,8 @@ def get_cycle(app, pipe_conf, vlen, dlen):
                     % (roi_end_index, time_by_core0_index)).fetchall()[0][3]
     cycle = stop_time - start_time
     return cycle
+
+def get_cycle_with_app(app, vlen, dlen):
+    return list(map(lambda p: get_cycle(app, p, vlen, dlen) / 100000, ut.pipe_conf))
+
+# %%

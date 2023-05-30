@@ -25,15 +25,20 @@ def calc_group_area(conf):
     area_detail = dict()
     for e in ut.e_elem:
         e_name = e + "." + conf
+        print("calc_group_area : load csv %s", e_name)
         csv_data = ut.load_csv(e_name)
         area_detail[e_name] = dict()
         for grp_name in ut.e_elem[e] :
             for m in ut.e_elem[e][grp_name] :
+                scale = 1.0
+                if m[0] == '-':
+                    scale = -1.0
+                    m = m[1:]
                 (c, module) = m.split(':')
                 if c in csv_data:
                     if grp_name in area_detail[e_name]:
                         area_detail[e_name][grp_name] = area_detail[e_name][grp_name] + \
-                            float(csv_data[c][csv_data[c]['name'].str.contains(module + '-Area')].iloc[0]['value'])
+                            float(csv_data[c][csv_data[c]['name'].str.contains(module + '-Area')].iloc[0]['value']) * scale
                     else:
                         area_detail[e_name][grp_name] = float(csv_data[c][csv_data[c]['name'].str.contains(module + '-Area')].iloc[0]['value'])
                 else:

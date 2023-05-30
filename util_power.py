@@ -11,6 +11,10 @@ def calc_power(conf, app):
         power_detail[e_name] = dict()
         for p in ut.e_elem[e]:
             for m in ut.e_elem[e][p] :
+                scale = 1.0
+                if m[0] == '-':
+                    scale = 0.0
+                    m = m[1:]
                 (c, module) = m.split(':')
                 if c in csv_data:
                     power = \
@@ -33,13 +37,17 @@ def calc_group_power(conf, app):
         power_detail[e_name] = dict()
         for grp_name in ut.e_elem[e]:
             for m in ut.e_elem[e][grp_name] :
+                scale = 1.0
+                if m[0] == '-':
+                    scale = -1.0
+                    m = m[1:]
                 (c, module) = m.split(':')
                 if c in csv_data:
                     if grp_name in power_detail[e_name]:
                         power_detail[e_name][grp_name] = power_detail[e_name][grp_name] + \
-                            float(csv_data[c][csv_data[c]['name'].str.contains(module + '-SubthresholdLeakage')].iloc[0]['value']) + \
-                            float(csv_data[c][csv_data[c]['name'].str.contains(module + '-GateLeakage')].iloc[0]['value']) + \
-                            float(csv_data[c][csv_data[c]['name'].str.contains(module + '-RuntimeDynamic')].iloc[0]['value'])
+                            (float(csv_data[c][csv_data[c]['name'].str.contains(module + '-SubthresholdLeakage')].iloc[0]['value']) + \
+                             float(csv_data[c][csv_data[c]['name'].str.contains(module + '-GateLeakage')].iloc[0]['value']) + \
+                             float(csv_data[c][csv_data[c]['name'].str.contains(module + '-RuntimeDynamic')].iloc[0]['value'])) * scale
                     else:
                         power_detail[e_name][grp_name] = \
                             float(csv_data[c][csv_data[c]['name'].str.contains(module + '-SubthresholdLeakage')].iloc[0]['value']) + \
@@ -47,8 +55,8 @@ def calc_group_power(conf, app):
                             float(csv_data[c][csv_data[c]['name'].str.contains(module + '-RuntimeDynamic')].iloc[0]['value'])
                 else:
                     power_detail[e_name][m] = 0.0
-            if grp_name in ut.area_scale[conf]:
-                power_detail[e_name][grp_name] = power_detail[e_name][grp_name] * ut.area_scale[conf][grp_name]
+            if grp_name in ut.energy_scale[conf]:
+                power_detail[e_name][grp_name] = power_detail[e_name][grp_name] * ut.energy_scale[conf][grp_name]
     return power_detail
 
 

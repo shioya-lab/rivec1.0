@@ -18,7 +18,7 @@ $(serial_target):
 	mkdir -p obj_scalar
 	riscv64-unknown-elf-gcc  -Wall -I$(SNIPER_ROOT)/include -march=rv64g -O3 -c -o obj_scalar/fourier.o src/fourier.c -I$(abspath fftw3_scalar/api/) -I$(abspath src)
 	riscv64-unknown-elf-gcc  -Wall -I$(SNIPER_ROOT)/include -march=rv64gc -O3 -o $(serial_target) obj_scalar/fourier.o $(abspath fftw3_scalar/.libs/libfftw3.a) -lm
-	riscv64-unknown-elf-objdump -D $(serial_target) > $(serial_target).dmp
+	riscv64-unknown-elf-objdump -D $(serial_target) > $(serial_target).dmp &
 
 vector: $(rvv_target)
 $(rvv_target): src/utils.c src/fourier.c
@@ -26,7 +26,7 @@ $(rvv_target): src/utils.c src/fourier.c
 	mkdir -p obj_vector
 	riscv64-unknown-elf-gcc  -Wall -I$(SNIPER_ROOT)/include -march=rv64gv -O3 -c -o obj_vector/fourier.o src/fourier.c -I$(abspath fftw3/api/) -I$(abspath src)
 	riscv64-unknown-elf-gcc  -Wall -I$(SNIPER_ROOT)/include -march=rv64gcv -O3 -o $(rvv_target) obj_vector/fourier.o $(abspath fftw3/.libs/libfftw3.a) -lm
-	riscv64-unknown-elf-objdump -D $(rvv_target) > $(rvv_target).dmp
+	riscv64-unknown-elf-objdump -D $(rvv_target) > $(rvv_target).dmp &
 
 	# riscv64-unknown-elf-gcc  -Wall -I$(SNIPER_ROOT)/include -march=rv64gv -O2 -o $(rvv_target) src/fourier.o -L$(abspath fftw3/.libs/) -lm -lfftw3
 

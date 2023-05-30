@@ -16,7 +16,7 @@
 int main( void )
 {
 
-  int N=128;
+  int N = 32;
 
   // a,b は double _Complex 型のC99標準複素配列と実質的に同じ
   // double _Complex a[4] としても動くけど計算速度が低下する可能性あり
@@ -42,14 +42,6 @@ int main( void )
 
   // フーリエ変換実行   b[n]に計算結果が入る
 
-  long long start_cycle0;
-  long long start_vecinst0;
-  long long start_inst0;
-
-  long long end_cycle0;
-  long long end_vecinst0;
-  long long end_inst0;
-
   long long start_cycle1;
   long long start_vecinst1;
   long long start_inst1;
@@ -58,20 +50,10 @@ int main( void )
   long long end_vecinst1;
   long long end_inst1;
 
-  {
-    start_cycle0   = get_cycle();
-    start_vecinst0 = get_vecinst();
-    start_inst0    = get_instret();
-
-    // SimRoiStart();
-    // start_konatadump();
-    fftw_execute(plan);
-    // SimRoiEnd();
-    // stop_konatadump();
-    end_cycle0   = get_cycle();
-    end_vecinst0 = get_vecinst();
-    end_inst0    = get_instret();
-  }
+  // 1st-try
+  fftw_execute(plan);
+  // 2nd-try
+  fftw_execute(plan);
 
   {
     start_cycle1   = get_cycle();
@@ -88,10 +70,6 @@ int main( void )
     end_vecinst1 = get_vecinst();
     end_inst1    = get_instret();
   }
-
-  printf("allinst = %lld\n", end_inst0 - start_inst0);
-  printf("vecinst = %lld\n", end_vecinst0 - start_vecinst0);
-  printf("cycles  = %lld\n", end_cycle0 - start_cycle0);
 
   printf("allinst = %lld\n", end_inst1 - start_inst1);
   printf("vecinst = %lld\n", end_vecinst1 - start_vecinst1);

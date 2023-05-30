@@ -22,9 +22,14 @@ df_area_whole.columns = ['V2-D2 Fence', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2-D
                           'V8-D2 Fence', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',
                           'V8-D8 Fence', 'V8-D8 NoMerge', 'V8-D8 Proposal', 'V8-D8 OoO',]
 display(df_area_whole)
-df_area_whole.T.plot.bar(title="Area estimation with each configuration", 
-                         stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.xticks(rotation=45)
+area_graph = df_area_whole.T.plot(title="Area estimation with each configuration", 
+                                  kind='bar',
+                                  stacked=True)
+handles, labels = area_graph.get_legend_handles_labels()
+handles = handles[::-1]
+labels = labels[::-1]
+area_graph.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left', )
+plt.show()
 plt.savefig("area.pdf", bbox_inches='tight')
 plt.savefig("area.png", bbox_inches='tight')
 
@@ -50,7 +55,18 @@ df_cycle_v8_d8 = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 512, 512)
 #%%
 # V8-D2 のテーブルを作る
 
-display(df_cycle_v8_d2)
+# V2-D2のサイクル数でグラフを作る
+
+plt.figure()
+df_cycle_v2_d2_pct = np.reciprocal((df_cycle_v2_d2.T / df_cycle_v2_d2["V2-D2 ooo.v"].T).T)
+df_cycle_v2_d2_pct.loc['GeoMean'] = df_cycle_v2_d2_pct.mean()
+df_cycle_v2_d2_pct.plot.bar(title="V2-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+plt.savefig("v2_d2_perf.pdf", bbox_inches='tight')
+
+display(df_cycle_v2_d2)
+display(df_cycle_v2_d2_pct.loc['GeoMean'])
+
+# V8-D2のサイクル数でグラフを作る
 
 plt.figure()
 df_cycle_v8_d2_pct = np.reciprocal((df_cycle_v8_d2.T / df_cycle_v8_d2["V8-D2 ooo.v"].T).T)
@@ -58,6 +74,19 @@ df_cycle_v8_d2_pct.loc['GeoMean'] = df_cycle_v8_d2_pct.mean()
 df_cycle_v8_d2_pct.plot.bar(title="V8-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 plt.savefig("v8_d2_perf.pdf", bbox_inches='tight')
 
+display(df_cycle_v8_d2)
+display(df_cycle_v8_d2_pct.loc['GeoMean'])
+
+# V8-D8のサイクル数でグラフを作る
+
+plt.figure()
+df_cycle_v8_d8_pct = np.reciprocal((df_cycle_v8_d8.T / df_cycle_v8_d8["V8-D8 ooo.v"].T).T)
+df_cycle_v8_d8_pct.loc['GeoMean'] = df_cycle_v8_d8_pct.mean()
+df_cycle_v8_d8_pct.plot.bar(title="V8-D8 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+plt.savefig("v8_d8_perf.pdf", bbox_inches='tight')
+
+display(df_cycle_v8_d8)
+display(df_cycle_v8_d8_pct.loc['GeoMean'])
 
 #%%
 # 全体的な性能グラフを作る
@@ -69,6 +98,7 @@ df_cycle_whole.columns = ['V2-D2 Fence', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2-
 
 df_cycle_whole_pct = np.reciprocal((df_cycle_whole.T / df_cycle_v2_d2["V2-D2 vio.v.fence"].T).T)
 df_cycle_means = df_cycle_whole_pct.mean()
+display(df_cycle_means)
 plt.figure()
 df_cycle_means.plot.bar(title="Relative Cycle", figsize=(10, 3))
 plt.savefig("relative_performance.pdf", bbox_inches='tight')
@@ -221,7 +251,13 @@ df_energy_whole.columns = ['V2-D2 Fence', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2
                            'V8-D2 Fence', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',
                            'V8-D8 Fence', 'V8-D8 NoMerge', 'V8-D8 Proposal', 'V8-D8 OoO',]
 display(df_energy_whole)
-df_energy_whole.T.plot.bar(title="Energy Estimation", stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+energy_graph = df_energy_whole.T.plot(kind='bar', title="Energy Estimation", stacked=True)
+handles, labels = area_graph.get_legend_handles_labels()
+handles = handles[::-1]
+labels = labels[::-1]
+energy_graph.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left', )
+plt.show()
+
 plt.savefig("relative_energy.pdf", bbox_inches='tight')
 
 
@@ -230,7 +266,7 @@ plt.savefig("relative_energy.pdf", bbox_inches='tight')
 
 import numpy as np
 
-df_energy_whole_pct = df_energy_whole / df_energy_whole.max().max()
+df_energy_whole_pct = df_energy_whole / df_energy_whole.sum().min()
 
 df_perf_fence = pd.DataFrame([df_cycle_whole_pct['V2-D2 Fence'].mean(),
                               df_cycle_whole_pct['V8-D2 Fence'].mean(),
@@ -328,7 +364,7 @@ df_energy_whole_pct.mean().to_csv("relative_energy.csv")
 # %%
 # 性能と面積の分布図を作る
 
-df_area_whole_pct = df_area_whole.sum() / df_area_whole.sum().max()
+df_area_whole_pct = df_area_whole.sum() / df_area_whole.sum().min()
 
 plt.scatter(df_area_fence, df_perf_fence, lw=2, label='VecInO Fence', color='blue')
 plt.plot   (df_area_fence, df_perf_fence, lw=2, color='blue')
@@ -357,5 +393,10 @@ plt.ylim(0.0, df_cycle_whole_pct.mean().max() * 1.1)
 plt.savefig("area_perf.pdf", bbox_inches='tight')
 
 df_area_whole_pct.to_csv("relative_area.csv")
+
+# %%
+# 全体表示用の一覧を出力
+
+display(pd.concat([df_cycle_whole_pct.mean(), df_energy_whole_pct.sum(), df_area_whole_pct], axis=1))
 
 # %%

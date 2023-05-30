@@ -8,7 +8,7 @@ import utils as ut
 
 display(total_cycle)
 
-v2_d2 = pd.DataFrame(get_cycle_rate_with_vlen_dlen(128, 128), index=ut.benchmarks, columns=ut.pipe_conf)
+v2_d2 = pd.DataFrame(ut.get_cycle_rate_with_vlen_dlen(128, 128), index=ut.benchmarks, columns=ut.pipe_conf)
 v2_d2.loc["geomean"] = v2_d2.mean()
 display(v2_d2)
 plt.figure()
@@ -17,15 +17,6 @@ plt.legend(["VecInO Fence", "VecInO NoMerge", "VecInO Proposal", "VecOoO"], loc=
 plt.savefig("v2_d2_perf.pdf", bbox_inches='tight')
 
 #%%
-# V8-D8のサイクル数でグラフを作る
-
-v8_d8 = pd.DataFrame(get_cycle_rate_with_vlen_dlen(512, 512), index=ut.benchmarks, columns=ut.pipe_conf)
-v8_d8.loc["geomean"] = v8_d8.mean()
-display(v8_d8)
-plt.figure()
-v8_d8.plot.bar(title="V8-D8 : Cycle Rate", figsize=(10, 3))
-plt.legend(["VecInO Fence", "VecInO NoMerge", "VecInO Proposal", "VecOoO"], loc='center left', bbox_to_anchor=(1., .5))
-plt.savefig("v8_d8_perf.pdf", bbox_inches='tight')
 
 
 #%%
@@ -69,18 +60,54 @@ plt.figure()
 df_power_v8_d2.plot.bar(stacked=True, title="V8-D2 : Power Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 
 # %%
-# AXPYの電力を取得する
+# blackscholesの電力を取得する
 
 import pandas as pd
 import matplotlib.pyplot as plt
 import util_power as ut_p
 import utils as ut
+import util_cycle as ut_c
 
-df_power_axpy_v8_d2 = pd.DataFrame(ut_p.get_power_with_app('axpy', 512, 128))
+df_power_blackscholes_v8_d2 = pd.DataFrame(ut_p.get_power_with_app('blackscholes', 512, 128))
+df_cycle_blackscholes_v8_d2 = ut_c.get_cycle_with_app('blackscholes', 512, 128)
+df_energy_blackscholes_v8_d2 = df_cycle_blackscholes_v8_d2 * df_power_blackscholes_v8_d2
 
-display(df_power_axpy_v8_d2)
+display(df_energy_blackscholes_v8_d2)
+display(df_cycle_blackscholes_v8_d2)
 plt.figure()
-df_power_axpy_v8_d2.T.plot.bar(stacked=True, title="AXPY V8-D2 : Power Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+df_energy_blackscholes_v8_d2.T.plot.bar(stacked=True, title="blackscholes V8-D2 : Energy Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+
+df_power_blackscholes_v2_d2 = pd.DataFrame(ut_p.get_power_with_app('blackscholes', 128, 128))
+df_cycle_blackscholes_v2_d2 = ut_c.get_cycle_with_app('blackscholes', 128, 128)
+df_energy_blackscholes_v2_d2 = df_cycle_blackscholes_v2_d2 * df_power_blackscholes_v2_d2
+
+display(df_energy_blackscholes_v2_d2)
+display(df_cycle_blackscholes_v2_d2)
+plt.figure()
+df_energy_blackscholes_v2_d2.T.plot.bar(stacked=True, title="blackscholes V8-D2 : Energy Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+
+# %%
+
+
+# %%
+# FFTW3の電力を取得する
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import util_power as ut_p
+import util_cycle as ut_c
+import utils as ut
+
+df_power_fftw3_v8_d2 = pd.DataFrame(ut_p.get_power_with_app('fftw3', 512, 128))
+df_cycle_fftw3_v8_d2 = ut_c.get_cycle_with_app("fftw3", 512, 128)
+df_energy_fftw3_v8_d2 = df_cycle_fftw3_v8_d2 * df_power_fftw3_v8_d2
+
+display(df_power_fftw3_v8_d2)
+display(df_cycle_fftw3_v8_d2)
+display(df_energy_fftw3_v8_d2)
+plt.figure()
+df_energy_fftw3_v8_d2.T.plot.bar(stacked=True, title="FFTW3 V8-D2 : Energy Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+
 
 # %%
 # scatter_evalの電力を取得する
@@ -88,10 +115,18 @@ df_power_axpy_v8_d2.T.plot.bar(stacked=True, title="AXPY V8-D2 : Power Estimatio
 import pandas as pd
 import matplotlib.pyplot as plt
 import util_power as ut_p
+import util_cycle as ut_c
 import utils as ut
 
 df_power_scatter_v8_d2 = pd.DataFrame(ut_p.get_power_with_app('scatter_eval', 512, 128))
+df_cycle_scatter_v8_d2 = ut_c.get_cycle_with_app("scatter_eval", 512, 128)
+df_energy_scatter_v8_d2 = df_cycle_scatter_v8_d2 * df_power_scatter_v8_d2
 
 display(df_power_scatter_v8_d2)
+display(df_cycle_scatter_v8_d2)
+display(df_energy_scatter_v8_d2)
 plt.figure()
-df_power_scatter_v8_d2.T.plot.bar(stacked=True, title="Scatter Eval V8-D2 : Power Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+df_energy_scatter_v8_d2.T.plot.bar(stacked=True, title="scatter_eval V8-D2 : Energy Estimation").legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+
+# %%
+
