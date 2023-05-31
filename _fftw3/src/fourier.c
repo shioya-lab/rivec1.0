@@ -52,8 +52,6 @@ int main( void )
 
   // 1st-try
   fftw_execute(plan);
-  // 2nd-try
-  fftw_execute(plan);
 
   {
     start_cycle1   = get_cycle();
@@ -73,7 +71,7 @@ int main( void )
 
   printf("allinst = %lld\n", end_inst1 - start_inst1);
   printf("vecinst = %lld\n", end_vecinst1 - start_vecinst1);
-  printf("cycles  = %lld\n", end_cycle1 - start_cycle1);
+  printf("cycles = %lld\n", end_cycle1 - start_cycle1);
 
   // b[n]の値を表示
   int n;
