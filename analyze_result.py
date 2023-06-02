@@ -18,9 +18,9 @@ df_area_whole = pd.concat([df_area_v2_d2, df_area_v8_d2, df_area_v8_d8], axis=1)
 
 display(df_area_whole)
 # df_area_whole = df_area_whole.reindex(elem_index)
-df_area_whole.columns = ['V2-D2 Fence', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2-D2 OoO',
-                          'V8-D2 Fence', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',
-                          'V8-D8 Fence', 'V8-D8 NoMerge', 'V8-D8 Proposal', 'V8-D8 OoO',]
+df_area_whole.columns = ['V2-D2 Fence', 'V2-D2 LSUInO', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2-D2 OoO',
+                         'V8-D2 Fence', 'V8-D2 LSUInO', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',
+                         'V8-D8 Fence', 'V8-D8 LSUInO', 'V8-D8 NoMerge', 'V8-D8 Proposal', 'V8-D8 OoO',]
 display(df_area_whole)
 area_graph = df_area_whole.T.plot(title="Area estimation with each configuration", 
                                   kind='bar',
@@ -92,9 +92,9 @@ display(df_cycle_v8_d8_pct.loc['GeoMean'])
 # 全体的な性能グラフを作る
 
 df_cycle_whole = pd.concat([df_cycle_v2_d2, df_cycle_v8_d2, df_cycle_v8_d8], axis=1)
-df_cycle_whole.columns = ['V2-D2 Fence', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2-D2 OoO',
-                          'V8-D2 Fence', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',
-                          'V8-D8 Fence', 'V8-D8 NoMerge', 'V8-D8 Proposal', 'V8-D8 OoO',]
+df_cycle_whole.columns = ['V2-D2 Fence', 'V2-D2 LSUInO', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2-D2 OoO',
+                          'V8-D2 Fence', 'V8-D2 LSUInO', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',
+                          'V8-D8 Fence', 'V8-D8 LSUInO', 'V8-D8 NoMerge', 'V8-D8 Proposal', 'V8-D8 OoO',]
 
 df_cycle_whole_pct = np.reciprocal((df_cycle_whole.T / df_cycle_v2_d2["V2-D2 vio.v.fence"].T).T)
 df_cycle_means = df_cycle_whole_pct.mean()
@@ -247,9 +247,9 @@ df_power_whole.T.plot.bar(title="Power Estimation", stacked=True).legend(bbox_to
 #%%
 # 全部のエネルギーを計算
 df_energy_whole = pd.concat([df_energy_v2_d2, df_energy_v8_d2, df_energy_v8_d8], axis=1)
-df_energy_whole.columns = ['V2-D2 Fence', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2-D2 OoO',
-                           'V8-D2 Fence', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',
-                           'V8-D8 Fence', 'V8-D8 NoMerge', 'V8-D8 Proposal', 'V8-D8 OoO',]
+df_energy_whole.columns = ['V2-D2 Fence', 'V2-D2 LSUIno', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2-D2 OoO',
+                           'V8-D2 Fence', 'V8-D2 LSUIno', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',
+                           'V8-D8 Fence', 'V8-D8 LSUIno', 'V8-D8 NoMerge', 'V8-D8 Proposal', 'V8-D8 OoO',]
 display(df_energy_whole)
 energy_graph = df_energy_whole.T.plot(kind='bar', title="Energy Estimation", stacked=True)
 handles, labels = area_graph.get_legend_handles_labels()

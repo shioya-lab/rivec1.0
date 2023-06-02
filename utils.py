@@ -5,7 +5,7 @@ import glob
 
 import pandas as pd
 
-pipe_conf = ['vio.v.fence', 'vio.v.ngs', 'vio.v', 'ooo.v']
+pipe_conf = ['vio.v.fence', 'vio.v.lsu-inorder', 'vio.v.ngs', 'vio.v', 'ooo.v']
 benchmarks = ['axpy', 
               'blackscholes', 
               'canneal', 
@@ -14,8 +14,8 @@ benchmarks = ['axpy',
               'pathfinder', 
               'spmv', 
               'streamcluster',
-              'swaptions', 
-              'fftw3'] # , 'scatter_eval']
+              'swaptions'] 
+              # 'fftw3']
 
 def load_csv(conf, app="axpy"):
     base_dir = "_" + app + "/%s/" % conf
@@ -46,6 +46,9 @@ def load_csv(conf, app="axpy"):
     csv_data['s_to_v'] = pd.read_csv(base_dir  + 'scalar_to_vec/sim.stats.mcpat.output.csv', header=None).T.dropna()
     csv_data['s_to_v'].columns=['name', 'value']
 
+    csv_data['dcache'] = pd.read_csv(base_dir  + 'dcache/sim.stats.mcpat.output.csv', header=None).T.dropna()
+    csv_data['dcache'].columns=['name', 'value']
+
     return csv_data
 
 
@@ -70,9 +73,30 @@ e_elem['vio.v.fence']['Scalar FU']  = ['s_ooo:Floating_Point_Units__FPUs___Count
 #                                        ]
 e_elem['vio.v.fence']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['vio.v.fence']['Vector Registers'] = ['v_ino:Register_Files']
-e_elem['vio.v.fence']['L1D Cache'] = ['v_ooo:Data_Cache']
+e_elem['vio.v.fence']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['vio.v.fence']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', '-s_ooo:Data_Cache']
-e_elem['vio.v.fence']['Vector LSU'] = ['s_ooo:Load_Store_Unit', '-s_ooo:Data_Cache']
+e_elem['vio.v.fence']['Vector LSU'] = ['v_ino:Load_Store_Unit', '-v_ino:Data_Cache']
+
+# -----------------------------
+# Vector In-order / Scalar LSU InOrder
+# -----------------------------
+e_elem['vio.v.lsu-inorder'] = dict()
+e_elem['vio.v.lsu-inorder']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
+e_elem['vio.v.lsu-inorder']['Rename'] = ['s_ooo:Renaming_Unit']
+e_elem['vio.v.lsu-inorder']['Scheduler'] = ['s_ooo:Instruction_Window',
+                                  's_ooo:FP_Instruction_Window',
+                                  's_ooo:ROB']
+e_elem['vio.v.lsu-inorder']['Scalar FU']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
+                                 's_ooo:Integer_ALUs__Count',
+                                 's_ooo:Results_Broadcast_Bus',
+                                 's_ooo:Register_Files']
+# e_elem['vio.v']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
+#                                  'v_ooo:Results_Broadcast_Bus']
+e_elem['vio.v.lsu-inorder']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
+e_elem['vio.v.lsu-inorder']['Vector Registers'] = ['v_ino:Register_Files']
+e_elem['vio.v.lsu-inorder']['L1D Cache'] = ['dcache:Data_Cache']
+e_elem['vio.v.lsu-inorder']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', '-s_ooo:Data_Cache']
+e_elem['vio.v.lsu-inorder']['Vector LSU'] = ['v_ino:Load_Store_Unit', '-v_ino:Data_Cache']
 
 # -----------------------------
 # with Porposal and Non-GatherScatter Merge
@@ -91,9 +115,9 @@ e_elem['vio.v.ngs']['Scalar FU']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
 #                                      'v_ooo:Results_Broadcast_Bus']
 e_elem['vio.v.ngs']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['vio.v.ngs']['Vector Registers'] = ['v_ino:Register_Files']
-e_elem['vio.v.ngs']['L1D Cache'] = ['v_ooo:Data_Cache']
+e_elem['vio.v.ngs']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['vio.v.ngs']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s_ngs:LoadQ', '-s_ooo:Data_Cache']
-e_elem['vio.v.ngs']['Vector LSU'] = ['s_ooo:Load_Store_Unit', '-s_ooo:Data_Cache']
+e_elem['vio.v.ngs']['Vector LSU'] = ['v_ino:Load_Store_Unit', '-v_ino:Data_Cache']
 
 # -------------------------
 # Proposal
@@ -112,9 +136,9 @@ e_elem['vio.v']['Scalar FU']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['vio.v']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['vio.v']['Vector Registers'] = ['v_ino:Register_Files']
-e_elem['vio.v']['L1D Cache'] = ['v_ooo:Data_Cache']
+e_elem['vio.v']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['vio.v']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', '-s_ooo:Data_Cache']
-e_elem['vio.v']['Vector LSU'] = ['s_ooo:Load_Store_Unit', '-s_ooo:Data_Cache']
+e_elem['vio.v']['Vector LSU'] = ['v_ino:Load_Store_Unit', '-v_ino:Data_Cache']
 
 # -------------------------
 # All-OoO
@@ -135,7 +159,7 @@ e_elem['ooo.v']['Scalar FU']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['ooo.v']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['ooo.v']['Vector Registers'] = ['v_ooo:Register_Files']
-e_elem['ooo.v']['L1D Cache'] = ['v_ooo:Data_Cache']
+e_elem['ooo.v']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['ooo.v']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', 'v_to_s:StoreQ', '-s_ooo:Data_Cache']
 e_elem['ooo.v']['Vector LSU'] = ['v_ooo:Load_Store_Unit', 's_to_v:LoadQ', 's_to_v:StoreQ', '-v_ooo:Data_Cache']
 
@@ -143,14 +167,14 @@ e_elem['ooo.v']['Vector LSU'] = ['v_ooo:Load_Store_Unit', 's_to_v:LoadQ', 's_to_
 # 各モジュールにおいて、スケールを決める
 # ------------------------------------
 area_scale = dict()
-area_scale['v128_d128'] = {'Vector Registers': 1.0, 'Vector FU': 1.0}
-area_scale['v512_d128'] = {'Vector Registers': 4.0, 'Vector FU': 1.0}
-area_scale['v512_d512'] = {'Vector Registers': 4.0, 'Vector FU': 1.0}
+area_scale['v128_d128'] = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v512_d128'] = {'Vector Registers': 4.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v512_d512'] = {'Vector Registers': 4.0, 'Vector FU': 1.0, 'L1D Cache': 2}
 
 energy_scale = dict()
-energy_scale['v128_d128'] = {'Vector Registers': 1.0, 'Vector FU': 1.0}
-energy_scale['v512_d128'] = {'Vector Registers': 1.0, 'Vector FU': 1.0}
-energy_scale['v512_d512'] = {'Vector Registers': 1.0, 'Vector FU': 1.0}
+energy_scale['v128_d128'] = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v512_d128'] = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v512_d512'] = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
 
 
 #%%

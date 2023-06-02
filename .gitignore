@@ -32,3 +32,4 @@ bin/
 *.dmp
 *.log
 *.csv
+*.pdf

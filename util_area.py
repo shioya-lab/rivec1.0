@@ -25,7 +25,7 @@ def calc_group_area(conf):
     area_detail = dict()
     for e in ut.e_elem:
         e_name = e + "." + conf
-        print("calc_group_area : load csv %s", e_name)
+        print("calc_group_area : load csv " + e_name)
         csv_data = ut.load_csv(e_name)
         area_detail[e_name] = dict()
         for grp_name in ut.e_elem[e] :
