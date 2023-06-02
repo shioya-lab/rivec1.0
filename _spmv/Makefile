@@ -1,7 +1,7 @@
 .PONY: power
 
-rvv_target    = spmv_vector_vlen$(VLEN)
-serial_target = spmv_scalar_vlen$(VLEN)
+rvv_target    = spmv_vector
+serial_target = spmv_scalar
 
 run:
 	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-vio-fence-v runsniper-ino-v  runsniper-vio-ngs-v

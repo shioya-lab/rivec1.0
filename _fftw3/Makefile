@@ -1,8 +1,8 @@
 .PHONY: build_fftw3_vector_lib build_fftw3_scalar_lib
 
 #makefile
-rvv_target    = bin/rvv-test_vlen$(VLEN)
-serial_target = bin/serial-test_vlen$(VLEN)
+rvv_target    = bin/rvv-test
+serial_target = bin/serial-test
 
 # SPIKE_OPTS = 256
 # SPIKE_OPTS = 8

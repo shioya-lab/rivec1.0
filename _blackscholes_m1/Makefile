@@ -6,8 +6,8 @@ APP_NAME = blackscholes
 # SPIKE_OPTS = 1 ./input/in_512.input prices.txt
 SPIKE_OPTS = 1 ./input/in_8.input prices.txt
 
-rvv_target    = bin/rvv-test_vlen$(VLEN)
-serial_target = bin/serial-test_vlen$(VLEN)
+rvv_target    = bin/rvv-test
+serial_target = bin/serial-test
 
 include ../../scripts/runspike.mk
 
