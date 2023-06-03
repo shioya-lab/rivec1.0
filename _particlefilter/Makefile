@@ -17,12 +17,10 @@ $(serial_target):
 	mkdir -p bin
 	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include  -march=rv64g --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/particlefilter.scalar.o src/particlefilter.c
 	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include  -march=rv64g --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(serial_target) src/particlefilter.scalar.o -lm
-	rm src/*.scalar.o
 
 vector: $(rvv_target)
 $(rvv_target):
 	mkdir -p bin
-	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -DMVL_$$mvl -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -c -o src/particlefilter.v$(VLEN).o src/particlefilter.c
-	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -DMVL_$$mvl -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -o $(rvv_target) src/*.v$(VLEN).o -lm
+	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -DMVL_$$mvl -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -c -o src/particlefilter.vector.o src/particlefilter.c
+	${LLVM}/bin/clang -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -DMVL_$$mvl -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -o $(rvv_target) src/*.vector.o -lm
 	$(GCC_TOOLCHAIN_DIR)/bin/riscv64-unknown-elf-objdump -D $(rvv_target) > $(rvv_target).dmp
-	rm src/*.v$(VLEN).o

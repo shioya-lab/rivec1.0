@@ -1,24 +1,22 @@
-.PONY: power
-
-rvv_target    = spmv_vector
-serial_target = spmv_scalar
-
-run:
-	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-vio-fence-v runsniper-ino-v  runsniper-vio-ngs-v
-	$(MAKE) runsniper-ooo-s runsniper-ino-s
-
-SOURCE_FILES += spmv_main.c
-SOURCE_FILES += spmv_vector.S
+#makefile
+rvv_target    = bin/rvv-test
+serial_target = bin/serial-test
 
 APP_NAME = spmv
 
-RISCV_GCC_SCALAR_OPTS = \
-	-march=rv64g \
-	-O3 \
-	-funroll-loops \
-	-I/home/kimura/work/sniper/sniper/sniper/include/ \
-	-DPREALLOCATE=1 -mcmodel=medany
-
-include ../../microbenchmarks/microbenches.mk
-include ../../scripts/compile.mk
 include ../../scripts/runspike.mk
+
+scalar: $(serial_target)
+$(serial_target):
+	mkdir -p bin
+	${LLVM}/bin/clang  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64g -O2  --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -c -o src/spmv_main.o src/spmv_main.c
+	${LLVM}/bin/clang  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64g -O2  --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(serial_target) src/spmv_main.o
+	riscv64-unknown-elf-objdump -D $(serial_target) > $(serial_target).dmp
+
+vector: $(rvv_target)
+$(rvv_target): src/spmv_main.c src/spmv_vector.S
+	mkdir -p bin
+	${LLVM}/bin/clang  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gv1p0 -O1  --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -c -o src/spmv_vector.o src/spmv_vector.S
+	${LLVM}/bin/clang  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gv1p0 -O1  --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -c -o src/spmv_main.o src/spmv_main.c
+	${LLVM}/bin/clang  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gv1p0 -O1  --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -o $(rvv_target) src/spmv_vector.o src/spmv_main.o
+	riscv64-unknown-elf-objdump -D $(rvv_target) > $(rvv_target).dmp

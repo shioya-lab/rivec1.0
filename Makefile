@@ -5,23 +5,46 @@ APPLICATION_DIRS := _axpy _streamcluster _blackscholes _canneal _swaptions _part
 VLEN ?= 256
 DLEN ?= $(VLEN)
 
-all: $(subst _,,$(APPLICATION_DIRS))
+all: run_scalar runspike_v2 runspike_v4 runspike_v8 runspike_v16
+	$(MAKE) run_v2d2 run_v4d2 run_v8d2 run_v4d4 run_v8d4 run_v16d4
 
-# 	$(MAKE) perf
-# 	$(MAKE) power_filtered
-# 	$(MAKE) area
+run_scalar:
+	$(MAKE) $(subst _,scalar_,$(APPLICATION_DIRS))
+runspike_v2:
+	$(MAKE) VLEN=128 $(addsuffix _spike,$(APPLICATION_DIRS))
+runspike_v4:
+	$(MAKE) VLEN=256 $(addsuffix _spike,$(APPLICATION_DIRS))
+runspike_v8:
+	$(MAKE) VLEN=512 $(addsuffix _spike,$(APPLICATION_DIRS))
+runspike_v16:
+	$(MAKE) VLEN=1024 $(addsuffix _spike,$(APPLICATION_DIRS))
+
+run_v2d2 : 
+	$(MAKE) VLEN=128  DLEN=128 $(subst _,,$(APPLICATION_DIRS))
+run_v4d2 :
+	$(MAKE) VLEN=256  DLEN=128 $(subst _,,$(APPLICATION_DIRS))
+run_v8d2 :
+	$(MAKE) VLEN=512  DLEN=128 $(subst _,,$(APPLICATION_DIRS))
+run_v4d4 :
+	$(MAKE) VLEN=256  DLEN=256 $(subst _,,$(APPLICATION_DIRS))
+run_v8d4 :
+	$(MAKE) VLEN=512  DLEN=256 $(subst _,,$(APPLICATION_DIRS))
+run_v16d4:
+	$(MAKE) VLEN=1024 DLEN=256 $(subst _,,$(APPLICATION_DIRS))
+
 
 power: $(addprefix power,$(APPLICATION_DIRS))
 
 
 .PHONY: $(addsuffix _sniper, $(APPLICATION_DIRS))
 .PHONY: $(addsuffix _spike, $(APPLICATION_DIRS))
+.PHONY: $(subst _,scalar_,$(APPLICATION_DIRS))
 
 only_spike:
 	$(MAKE) $(addsuffix _spike, $(APPLICATION_DIRS))
 
 $(addsuffix _spike, $(APPLICATION_DIRS)):
-	$(MAKE) -C $(subst _spike,, $@) runspike-v runspike-s
+	$(MAKE) -C $(subst _spike,, $@) runspike-v
 
 only_sniper:
 	$(MAKE) $(addsuffix _sniper, $(APPLICATION_DIRS)) runsniper
@@ -39,9 +62,14 @@ runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-io-s
 
 $(subst _,,$(APPLICATION_DIRS)):
-	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runspike-v runspike-s
-	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runsniper-v runsniper-s
+	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runspike-v
+	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runsniper-v
 	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runmcpat
+
+$(subst _,scalar_,$(APPLICATION_DIRS)):
+	$(MAKE) -C _$(subst scalar_,,$@) runspike-s
+	$(MAKE) -C _$(subst scalar_,,$@) runsniper-s
+#	$(MAKE) -C _$@ runmcpat-s
 
 $(addprefix power,$(APPLICATION_DIRS)):
 	$(MAKE) -C $(subst power,,$@) VLEN=$(VLEN) DLEN=$(DLEN) runmcpat

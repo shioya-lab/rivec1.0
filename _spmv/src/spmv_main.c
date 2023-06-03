@@ -15,6 +15,7 @@
 // #include "dataset2.h"
 // #include "dataset1.h"
 // #include "dataset_small.h"
+#include <stdint.h>
 #include "dataset_1024x1024x0_25.h"
 #include "count_utils.h"
 #include "sim_api.h"
@@ -32,6 +33,12 @@ void spmv(int r, const double* val, const uint64_t* idx, const double* x,
   }
 }
 
+void spmv_vector(
+	int r,
+	const double* val,
+	const uint64_t* idx,
+	const double* x,
+	const uint64_t* ptr, double* y);
 
 //--------------------------------------------------------------------------
 // Main

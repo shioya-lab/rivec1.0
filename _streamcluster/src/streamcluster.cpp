@@ -658,7 +658,6 @@ void intshuffle(int *intarray, int length)
 /* compute Euclidean distance squared between two points */
 float dist(Point p1, Point p2, int dim )
 {
-  start_konatadump();
 #ifdef USE_RISCV_VECTOR
   float result=0.0;
   int i;
@@ -2090,7 +2089,7 @@ int main(int argc, char **argv)
 
 //#endif
     SimRoiStart();
-    // stop_konatadump moves to start point of dist()
+    start_konatadump();
     streamCluster(stream, kmin, kmax, dim, chunksize, clustersize, outfilename );
 
     SimRoiEnd();
