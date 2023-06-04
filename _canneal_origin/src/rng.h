@@ -59,7 +59,7 @@ public:
 protected:
 	//use same random seed for each run
 	static unsigned int seed;
-	static pthread_mutex_t seed_lock;
+	// static pthread_mutex_t seed_lock;
 	MTRand *_rng;
 };
 

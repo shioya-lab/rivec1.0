@@ -64,7 +64,7 @@ double relax_jacobi_vector (double *u, double *utmp, unsigned sizex, unsigned si
     int size_x = sizex-2;
 
     // unsigned long int gvl = __builtin_epi_vsetvl(size_y, __epi_e64, __epi_m1);
-    unsigned long int gvl = vsetvl_e64m1(size_y); //PLCT
+    unsigned long int gvl = __riscv_vsetvl_e64m1(size_y); //PLCT
     xConstant = _MM_SET_f64(0.25,gvl);
     xSum = _MM_SET_f64(0.0,gvl);
     xSum2 = _MM_SET_f64(0.0,gvl);
@@ -72,7 +72,7 @@ double relax_jacobi_vector (double *u, double *utmp, unsigned sizex, unsigned si
     for (int j=1; j<=size_x; j=j+gvl) 
     {
         // gvl = __builtin_epi_vsetvl(size_y-j+1, __epi_e64, __epi_m1);
-        gvl = vsetvl_e64m1(size_y-j+1); //PLCT
+        gvl = __riscv_vsetvl_e64m1(size_y-j+1); //PLCT
         
         xU = _MM_LOAD_f64(&u[sizey+j],gvl);
         xUtop = _MM_LOAD_f64(&u[j],gvl);
@@ -210,7 +210,7 @@ double relax_gauss_vector (double *u, unsigned sizex, unsigned sizey)
     double diff, sum=0.0;
 
     // unsigned long int gvl = __builtin_epi_vsetvl(size_x, __epi_e64, __epi_m1);
-    unsigned long int gvl = vsetvl_e64m1(size_x); //PLCT
+    unsigned long int gvl = __riscv_vsetvl_e64m1(size_x); //PLCT
     xConstant = _MM_SET_f64(0.25,gvl);
     xSum = _MM_SET_f64(0.0,gvl);
     xSum2 = _MM_SET_f64(0.0,gvl);
@@ -218,7 +218,7 @@ double relax_gauss_vector (double *u, unsigned sizex, unsigned sizey)
     for (int j=1; j<=size_x; j=j+gvl) 
     {
         // gvl = __builtin_epi_vsetvl(size_x-j, __epi_e64, __epi_m1);
-        gvl = vsetvl_e64m1(size_x-j); //PLCT
+        gvl = __riscv_vsetvl_e64m1(size_x-j); //PLCT
 
         xU = _MM_LOAD_f64(&u[sizey+j],gvl);
         xUtop = _MM_LOAD_f64(&u[j],gvl);

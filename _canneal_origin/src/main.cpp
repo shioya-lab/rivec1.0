@@ -81,8 +81,9 @@ int main (int argc, char * const argv[]) {
 	__parsec_bench_begin(__parsec_canneal);
 #endif
 
-	srandom(3);
-
+	// srandom(3);
+	srand(3);
+	
 	if(argc != 5 && argc != 6) {
 		cout << "Usage: " << argv[0] << " NTHREADS NSWAPS TEMP NETLIST [NSTEPS]" << endl;
 		exit(1);
