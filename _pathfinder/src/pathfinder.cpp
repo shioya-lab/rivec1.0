@@ -203,10 +203,10 @@ void run_vector()
 {
   int *dst;
 
+  printf("NUMBER OF RUNS VECTOR: %d\n",NUM_RUNS);
   long long start = get_time();
   long long start_cycle = get_cycle();
   long long start_vecinst = get_vecinst();
-  printf("NUMBER OF RUNS VECTOR: %d\n",NUM_RUNS);
   SimRoiStart();
   start_konatadump();
 

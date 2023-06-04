@@ -37,6 +37,9 @@
 #include <time.h>
 #include <sys/time.h>
 
+#include "sim_api.h"
+#include "count_utils.h"
+
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
 #include "../../common/vector_defines.h"
@@ -83,7 +86,7 @@ int main (int argc, char * const argv[]) {
 
 	// srandom(3);
 	srand(3);
-	
+
 	if(argc != 5 && argc != 6) {
 		cout << "Usage: " << argv[0] << " NTHREADS NSWAPS TEMP NETLIST [NSTEPS]" << endl;
 		exit(1);
@@ -141,6 +144,10 @@ int main (int argc, char * const argv[]) {
     struct timeval tv3, tv4;
     double elapsed2=0.0;
     gettimeofday(&tv3, &tz);
+    long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
+    SimRoiStart();
+    start_konatadump();
 //#endif
 
 
@@ -158,10 +165,16 @@ int main (int argc, char * const argv[]) {
 #endif
 
 
+    SimRoiEnd();
+    stop_konatadump();
 //#ifdef USE_RISCV_VECTOR
-    gettimeofday(&tv4, &tz);
-    elapsed2 = (double) (tv4.tv_sec-tv3.tv_sec) + (double) (tv4.tv_usec-tv3.tv_usec) * 1.e-6; 
+    // gettimeofday(&tv4, &tz);
+    long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst ();
+    elapsed2 = (double) (tv4.tv_sec-tv3.tv_sec) + (double) (tv4.tv_usec-tv3.tv_usec) * 1.e-6;
     printf("\n\nthread.Run() %8.8lf secs   \n", elapsed2 );
+    printf("cycles = %lld\n", end_cycle - start_cycle );
+    printf("vecinst = %lld\n", end_vecinst - start_vecinst );
 //#endif
 
 

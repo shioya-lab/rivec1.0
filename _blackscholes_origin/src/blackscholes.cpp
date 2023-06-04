@@ -15,6 +15,9 @@
 #include <time.h>
 #include <sys/time.h>
 
+#include "sim_api.h"
+#include "count_utils.h"
+
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
 #include "../../common/vector_defines.h"
@@ -649,6 +652,10 @@ int main (int argc, char **argv)
     struct timezone tz;
     double elapsed1=0.0;
     gettimeofday(&tv1, &tz);
+    SimRoiStart();
+    start_konatadump();
+    long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
 //#endif
 
 #ifdef ENABLE_PARSEC_HOOKS
@@ -707,7 +714,15 @@ int main (int argc, char **argv)
 
 //#ifdef USE_RISCV_VECTOR
     gettimeofday(&tv2, &tz);
-    elapsed1 = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6; 
+    SimRoiEnd();
+    stop_konatadump();
+
+    long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
+    elapsed1 = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
+    // printf("\n\nBlackScholes Kernel took %8.8lf secs   \n", elapsed1 );
+    printf("cycles = %lld\n", end_cycle - start_cycle);
+    printf("vecinst = %lld\n", end_vecinst - start_vecinst);
     printf("\n\nBlackScholes Kernel took %8.8lf secs   \n", elapsed1 );
 //#endif
 

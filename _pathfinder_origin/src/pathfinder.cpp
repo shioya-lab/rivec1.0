@@ -45,6 +45,10 @@ long long get_time() {
     gettimeofday(&tv, NULL);
     return (tv.tv_sec * 1000000) + tv.tv_usec;
 }
+
+#include "count_utils.h"
+#include "sim_api.h"
+
 // Returns the number of seconds elapsed between the two specified times
 float elapsed_time(long long start_time, long long end_time) {
         return (float) (end_time - start_time) / (1000 * 1000);
@@ -143,6 +147,10 @@ void run()
     
     printf("NUMBER OF RUNS: %d\n",NUM_RUNS);
     long long start = get_time();
+    long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
+     SimRoiStart();
+     start_konatadump();
 
     for (int j=0; j<NUM_RUNS; j++) {
         src = new int[cols];
@@ -168,8 +176,15 @@ void run()
         //delete src;
     }
 
+    SimRoiEnd();
+    stop_konatadump();
+
     long long end = get_time();
+    long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
     printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
+    printf("cycles = %lld\n", end_cycle - start_cycle);
+    printf("vecinst = %lld\n", end_vecinst - start_vecinst);
 
 #ifdef RESULT_PRINT
 
@@ -189,6 +204,10 @@ void run_vector()
 
     long long start = get_time();
     printf("NUMBER OF RUNS VECTOR: %d\n",NUM_RUNS);
+  long long start_cycle = get_cycle();
+  long long start_vecinst = get_vecinst();
+  SimRoiStart();
+  start_konatadump();
 
     for (int j=0; j<NUM_RUNS; j++) {
         for (int x = 0; x < cols; x++){
@@ -233,8 +252,15 @@ void run_vector()
 
         FENCE();
     }
-    long long end = get_time();
-    printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
+  SimRoiEnd();
+  stop_konatadump();
+
+  long long end = get_time();
+  long long end_cycle = get_cycle();
+  long long end_vecinst = get_vecinst();
+  printf("TIME TO FIND THE SMALLEST PATH: %f\n", elapsed_time(start, end));
+  printf("cycles = %lld\n", end_cycle - start_cycle);
+  printf("vecinst = %lld\n",  end_vecinst - start_vecinst);
 
 #ifdef RESULT_PRINT
 

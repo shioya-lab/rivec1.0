@@ -16,6 +16,9 @@
 #include <sys/resource.h>
 #include <limits.h>
 
+#include "sim_api.h"
+#include "count_utils.h"
+
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
 #include "../../common/vector_defines.h"
@@ -2080,13 +2083,22 @@ int main(int argc, char **argv)
     double elapsed=0.0;
     gettimeofday(&tv1, &tz);
 //#endif
+    long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
+
+//#endif
+    SimRoiStart();
+    start_konatadump();
 
   streamCluster(stream, kmin, kmax, dim, chunksize, clustersize, outfilename );
 
 //#ifdef USE_RISCV_VECTOR
-    gettimeofday(&tv2, &tz);
-    elapsed = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6; 
+    long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
+    elapsed = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
     printf("\n\nstreamCluster Kernel took %8.8lf secs   \n", elapsed );
+    printf("cycles = %ld\n",  end_cycle - start_cycle);
+    printf("vecinst = %ld\n",  end_vecinst - start_vecinst);
 //#endif
 
 #ifdef ENABLE_PARSEC_HOOKS

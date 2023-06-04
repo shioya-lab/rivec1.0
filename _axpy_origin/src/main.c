@@ -12,6 +12,9 @@
 #include <time.h>
 #include <sys/time.h>
 
+#include "sim_api.h"
+#include "count_utils.h"
+
 long long get_time() {
     struct timeval tv;
     gettimeofday(&tv, NULL);
@@ -83,10 +86,22 @@ int main(int argc, char *argv[])
 
     printf ("doing vector axpy\n");
     start = get_time();
+    long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
+
+    SimRoiStart();
+    start_konatadump();
     axpy_intrinsics(a, dx, dy, n);
+    SimRoiEnd();
+    stop_konatadump();
+
+    long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
     end = get_time();
     printf("axpy_intrinsics time: %f\n", elapsed_time(start, end));
-    
+    printf("cycles = %lld\n", end_cycle - start_cycle);
+    printf("vecinst = %lld\n", end_vecinst - start_vecinst);
+
     printf ("done\n");
     test_result(dy, dy_ref, n);
 

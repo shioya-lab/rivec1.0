@@ -38,6 +38,10 @@ long long get_time() {
     gettimeofday(&tv, NULL);
     return (tv.tv_sec * 1000000) + tv.tv_usec;
 }
+
+#include "count_utils.h"
+#include "sim_api.h"
+
 // Returns the number of seconds elapsed between the two specified times
 float elapsed_time(long long start_time, long long end_time) {
         return (float) (end_time - start_time) / (1000 * 1000);
@@ -955,6 +959,10 @@ int main(int argc, char * argv[]){
     //malloc matrix
     int * I = (int *)malloc(sizeof(int)*IszX*IszY*Nfr); // 128 * 128 * 10 = 163840 * sizeof(int)
     long long start = get_time();
+    long long start_cycle = get_cycle();
+    long long start_vecinst = get_vecinst();
+    SimRoiStart();
+    start_konatadump();
     //call video sequence
     videoSequence(I, IszX, IszY, Nfr, seed);
     long long endVideoSequence = get_time();
@@ -973,7 +981,11 @@ int main(int argc, char * argv[]){
     particleFilter(I, IszX, IszY, Nfr, seed, Nparticles);
     #endif
 
+    SimRoiEnd();
+    stop_konatadump();
     long long endParticleFilter = get_time();
+    long long end_cycle = get_cycle();
+    long long end_vecinst = get_vecinst();
     printf("PARTICLE FILTER TOOK %f\n", elapsed_time(endVideoSequence, endParticleFilter));
     printf("ENTIRE PROGRAM TOOK %f\n", elapsed_time(start, endParticleFilter));
     
