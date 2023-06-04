@@ -13,8 +13,8 @@ benchmarks = ['axpy',
               'particlefilter', 
               'pathfinder', 
               'spmv', 
-              'streamcluster',
               'swaptions'] 
+              # 'streamcluster',
               # 'fftw3']
 
 def load_csv(conf, app="axpy"):
@@ -167,14 +167,20 @@ e_elem['ooo.v']['Vector LSU'] = ['v_ooo:Load_Store_Unit', 's_to_v:LoadQ', 's_to_
 # 各モジュールにおいて、スケールを決める
 # ------------------------------------
 area_scale = dict()
-area_scale['v128_d128'] = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
-area_scale['v512_d128'] = {'Vector Registers': 4.0, 'Vector FU': 1.0, 'L1D Cache': 2}
-area_scale['v512_d512'] = {'Vector Registers': 4.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v128_d128']  = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v256_d128']  = {'Vector Registers': 2.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v512_d128']  = {'Vector Registers': 4.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v256_d256']  = {'Vector Registers': 2.0, 'Vector FU': 2.0, 'L1D Cache': 2}
+area_scale['v512_d256']  = {'Vector Registers': 4.0, 'Vector FU': 2.0, 'L1D Cache': 2}
+area_scale['v1024_d256'] = {'Vector Registers': 8.0, 'Vector FU': 2.0, 'L1D Cache': 2}
 
 energy_scale = dict()
-energy_scale['v128_d128'] = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v512_d128'] = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v512_d512'] = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v128_d128']  = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v256_d128']  = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v512_d128']  = {'Vector Registers': 1.0, 'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v256_d256']  = {'Vector Registers': 2.0, 'Vector FU': 2.0, 'L1D Cache': 2}
+energy_scale['v512_d256']  = {'Vector Registers': 4.0, 'Vector FU': 2.0, 'L1D Cache': 2}
+energy_scale['v1024_d256'] = {'Vector Registers': 8.0, 'Vector FU': 2.0, 'L1D Cache': 2}
 
 
 #%%
