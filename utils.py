@@ -6,16 +6,19 @@ import glob
 import pandas as pd
 
 pipe_conf = ['vio.v.fence', 'vio.v.lsu-inorder', 'vio.v.ngs', 'vio.v', 'ooo.v']
-benchmarks = ['axpy', 
+rivec_benchmarks = ['axpy', 
               'blackscholes', 
               'canneal', 
               'jacobi-2d', 
               'particlefilter', 
               'pathfinder', 
-              'spmv', 
-              'swaptions'] 
-              # 'streamcluster',
-              # 'fftw3']
+              'streamcluster',
+              'swaptions']
+
+benchmarks = rivec_benchmarks + ['spmv', 
+                                 'fftw3'
+]
+
 
 def load_csv(conf, app="axpy"):
     base_dir = "_" + app + "/%s/" % conf

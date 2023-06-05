@@ -163,7 +163,7 @@ df_cycle_means_d2.plot.bar(title="Relative Performance of V2-D2 / V4-D2 / V8-D2"
 plt.savefig("relative_performance.pdf", bbox_inches='tight')
 
 # D4シリーズ
-df_cycle_whole_d4 = pd.concat([df_cycle_v4_d4, df_cycle_v4_d4, df_cycle_v8_d4], axis=1)
+df_cycle_whole_d4 = pd.concat([df_cycle_v4_d4, df_cycle_v8_d4, df_cycle_v16_d4], axis=1)
 df_cycle_whole_d4.columns = ['V4-D4 Fence', 'V4-D4 LSUInO', 'V4-D4 NoMerge', 'V4-D4 Proposal', 'V4-D4 OoO',
                              'V8-D4 Fence', 'V8-D4 LSUInO', 'V8-D4 NoMerge', 'V8-D4 Proposal', 'V8-D4 OoO',
                              'V16-D4 Fence', 'V16-D4 LSUInO', 'V16-D4 NoMerge', 'V16-D4 Proposal', 'V16-D4 OoO',]
@@ -569,4 +569,24 @@ display(pd.concat([df_cycle_whole_d4_pct.mean(), df_energy_whole_d4_pct.sum(), d
 
 
 
+# %%
+# オリジナル実装のサイクル数を取得する
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import utils as ut
+import util_area as ut_a
+import util_cycle as ut_c
+import util_power as ut_p
+import numpy as np
+
+df_cycle_v8_d2  = pd.Series(list(map(lambda b: ut_c.get_cycle(b, 'ooo.v', 512, 128), ut.rivec_benchmarks)),
+                                        index=ut.rivec_benchmarks)
+
+df_cycle_origin_v8_d2  = pd.Series(list(map(lambda b: ut_c.get_cycle(b, 'ooo.v', 512, 128), map(lambda b: b + "_origin", ut.rivec_benchmarks))),
+                                        index=ut.rivec_benchmarks)
+
+t = df_cycle_origin_v8_d2 / df_cycle_v8_d2
+display(pd.concat([df_cycle_origin_v8_d2, df_cycle_v8_d2],axis=1))
+display(t)
 # %%

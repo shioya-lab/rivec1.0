@@ -32,6 +32,33 @@ run_v8d4 :
 run_v16d4:
 	$(MAKE) VLEN=1024 DLEN=256 $(subst _,,$(APPLICATION_DIRS))
 
+run_original: run_axpy_origin run_streamcluster_origin \
+				run_blackscholes_origin run_canneal_origin run_swaptions_origin \
+				run_particlefilter_origin run_pathfinder_origin run_jacobi-2d_origin
+run_axpy_origin:
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _axpy
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _axpy_origin
+run_streamcluster_origin:
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _streamcluster
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _streamcluster_origin
+run_blackscholes_origin:
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _blackscholes
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _blackscholes_origin
+run_canneal_origin:
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _canneal
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _canneal_origin
+run_swaptions_origin:
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _swaptions
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _swaptions_origin
+run_particlefilter_origin: 
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _particlefilter
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _particlefilter_origin
+run_pathfinder_origin:
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _pathfinder
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _pathfinder_origin
+run_jacobi-2d_origin:
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _jacobi-2d
+	$(MAKE) VLEN=512 DLEN=128 runsniper-ooo-v -C _jacobi-2d_origin
 
 power: $(addprefix power,$(APPLICATION_DIRS))
 
