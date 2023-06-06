@@ -4,7 +4,7 @@ serial_target = bin/serial-test
 
 # SPIKE_OPTS = 256
 # SPIKE_OPTS = 8
-SPIKE_OPTS = 16
+SPIKE_OPTS = 256
 
 APP_NAME = axpy
 

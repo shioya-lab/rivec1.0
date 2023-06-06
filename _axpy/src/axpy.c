@@ -5,7 +5,7 @@
 
 #ifdef USE_RISCV_VECTOR
 
-#include "../../common/vector_defines_m4.h"
+#include "../../common/vector_defines_m8.h"
 
 void axpy_intrinsics(double a, double *dx, double *dy, int n) {
   int i;

@@ -86,9 +86,9 @@ int main(int argc, char *argv[])
     init_vector(dx, n, 1.0);
     init_vector(dy, n, 2.0);
 
-    // Initial trial (Warmup)
-    axpy_intrinsics(a, dx, dy, n);
-    test_result(dy, dy_ref, n);
+    // // Initial trial (Warmup)
+    // axpy_intrinsics(a, dx, dy, n);
+    // test_result(dy, dy_ref, n);
 
     printf ("doing vector axpy\n");
     start = get_time();
