@@ -33,12 +33,14 @@ void spmv(int r, const double* val, const uint64_t* idx, const double* x,
   }
 }
 
+#ifdef USE_RISCV_VECTOR
 void spmv_vector(
 	int r,
 	const double* val,
 	const uint64_t* idx,
 	const double* x,
 	const uint64_t* ptr, double* y);
+#endif // USE_RISCV_VoECTOR
 
 //--------------------------------------------------------------------------
 // Main

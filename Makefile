@@ -1,6 +1,6 @@
 BASE_DIR := $(shell pwd)
 
-APPLICATION_DIRS := _axpy _streamcluster _blackscholes _canneal _swaptions _particlefilter _pathfinder _jacobi-2d _spmv
+APPLICATION_DIRS := _axpy _streamcluster _blackscholes _canneal _swaptions _particlefilter _pathfinder _jacobi-2d _spmv _fftw3
 
 VLEN ?= 256
 DLEN ?= $(VLEN)
