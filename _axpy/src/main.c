@@ -50,6 +50,11 @@ void init_vector(double *pv, long n, double value)
 //   }
 }
 
+double dx    [256 * 1024 / sizeof(double)];
+double dy    [256 * 1024 / sizeof(double)];
+double dy_ref[256 * 1024 / sizeof(double)];
+
+
 int main(int argc, char *argv[])
 {
     long long start,end;
@@ -62,13 +67,7 @@ int main(int argc, char *argv[])
       n = 1024*atol(argv[1]); // input argument: vector size in Ks
     else
       n = (30*1024);
-
-
-    /* Allocate the source and result vectors */
-    double *dx     = (double*)malloc(n*sizeof(double));
-    double *dy     = (double*)malloc(n*sizeof(double));
-    double *dy_ref = (double*)malloc(n*sizeof(double));
-
+    n = 256 * 1024 / sizeof(double);
 
     init_vector(dx, n, 1.0);
     init_vector(dy, n, 2.0);
@@ -110,7 +109,5 @@ int main(int argc, char *argv[])
 
     printf ("done\n");
 
-
-    free(dx); free(dy); free(dy_ref);
     return 0;
 }
