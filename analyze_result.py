@@ -151,32 +151,33 @@ display(df_cycle_v16_d4_pct.loc['GeoMean'])
 ## 全体的な性能グラフを作る
 # D2シリーズ
 df_cycle_whole_d2 = pd.concat([df_cycle_v2_d2, df_cycle_v4_d2, df_cycle_v8_d2], axis=1)
+display(df_cycle_whole_d2)
 df_cycle_whole_d2.columns = ['V2-D2 Fence', 'V2-D2 LSUInO', 'V2-D2 NoMerge', 'V2-D2 Proposal', 'V2-D2 OoO',
                              'V4-D2 Fence', 'V4-D2 LSUInO', 'V4-D2 NoMerge', 'V4-D2 Proposal', 'V4-D2 OoO',
-                             'V8-D2 Fence', 'V8-D2 LSUInO', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',]
+                             'V8-D2 Fence', 'V8-D2 LSUInO', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO']
 
 df_cycle_whole_d2_pct = np.reciprocal((df_cycle_whole_d2.T / df_cycle_v2_d2["V2-D2 vio.v.fence"].T).T)
 df_cycle_means_d2 = df_cycle_whole_d2_pct.mean()
 display(df_cycle_means_d2)
 plt.figure()
-df_cycle_means_d2.plot.bar(title="Relative Performance of V2-D2 / V4-D2 / V8-D2", figsize=(10, 3))
+df_cycle_means_d2.plot.line(style=['bo-'], title="Relative Performance of V2-D2 / V4-D2 / V8-D2", figsize=(10, 3))
 plt.savefig("relative_performance.pdf", bbox_inches='tight')
 
 # D4シリーズ
 df_cycle_whole_d4 = pd.concat([df_cycle_v4_d4, df_cycle_v8_d4, df_cycle_v16_d4], axis=1)
 df_cycle_whole_d4.columns = ['V4-D4 Fence', 'V4-D4 LSUInO', 'V4-D4 NoMerge', 'V4-D4 Proposal', 'V4-D4 OoO',
                              'V8-D4 Fence', 'V8-D4 LSUInO', 'V8-D4 NoMerge', 'V8-D4 Proposal', 'V8-D4 OoO',
-                             'V16-D4 Fence', 'V16-D4 LSUInO', 'V16-D4 NoMerge', 'V16-D4 Proposal', 'V16-D4 OoO',]
+                             'V16-D4 Fence', 'V16-D4 LSUInO', 'V16-D4 NoMerge', 'V16-D4 Proposal', 'V16-D4 OoO']
 
 df_cycle_whole_d4_pct = np.reciprocal((df_cycle_whole_d4.T / df_cycle_v4_d4["V4-D4 vio.v.fence"].T).T)
 df_cycle_means_d4 = df_cycle_whole_d4_pct.mean()
 display(df_cycle_means_d4)
 plt.figure()
-df_cycle_means_d4.plot.bar(title="Relative Performance of V4-D4 / V8-D4 / V16-D4", figsize=(10, 3))
+df_cycle_means_d4.plot.line(style=['bo-'], title="Relative Performance of V4-D4 / V8-D4 / V16-D4", figsize=(10, 3))
 plt.savefig("relative_performance.pdf", bbox_inches='tight')
 
 
-#%%
+  #%%
 # V4-D2のサイクル数でグラフを作る
 
 import pandas as pd
@@ -411,7 +412,7 @@ df_energy_whole_d2.columns = ['V2-D2 Fence', 'V2-D2 LSUInO', 'V2-D2 NoMerge', 'V
                               'V4-D2 Fence', 'V4-D2 LSUInO', 'V4-D2 NoMerge', 'V4-D2 Proposal', 'V4-D2 OoO',
                               'V8-D2 Fence', 'V8-D2 LSUInO', 'V8-D2 NoMerge', 'V8-D2 Proposal', 'V8-D2 OoO',]
 display(df_energy_whole_d2)
-energy_graph = df_energy_whole_d2.T.plot(kind='bar', title="Energy Estimation", stacked=True)
+energy_graph = df_energy_whole_d2.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4", stacked=True)
 handles, labels = energy_graph.get_legend_handles_labels()
 handles = handles[::-1]
 labels = labels[::-1]
@@ -424,6 +425,13 @@ df_energy_whole_d4 = pd.concat([df_energy_v4_d4, df_energy_v8_d4, df_energy_v16_
 df_energy_whole_d4.columns = ['V4-D4 Fence',  'V4-D4 LSUInO',  'V4-D4 NoMerge',  'V4-D4 Proposal',  'V4-D4 OoO',
                               'V8-D4 Fence',  'V8-D4 LSUInO',  'V8-D4 NoMerge',  'V8-D4 Proposal',  'V8-D4 OoO',
                               'V16-D4 Fence', 'V16-D4 LSUInO', 'V16-D4 NoMerge', 'V16-D4 Proposal', 'V16-D4 OoO',]
+display(df_energy_whole_d4)
+energy_graph = df_energy_whole_d4.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4", stacked=True)
+handles, labels = energy_graph.get_legend_handles_labels()
+handles = handles[::-1]
+labels = labels[::-1]
+energy_graph.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left', )
+plt.show()
 
 
 # %%
