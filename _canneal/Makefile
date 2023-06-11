@@ -5,6 +5,7 @@ serial_target = bin/serial-test
 APP_NAME = canneal
 
 SPIKE_OPTS = 1 100 300 input/100.nets 8
+# SPIKE_OPTS = 1 100 300 input/100000.nets 8
 
 include ../../scripts/runspike.mk
 

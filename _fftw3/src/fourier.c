@@ -16,7 +16,7 @@
 int main( void )
 {
 
-  int N = 32;
+  int N = 1024 * 16;
 
   // a,b は double _Complex 型のC99標準複素配列と実質的に同じ
   // double _Complex a[4] としても動くけど計算速度が低下する可能性あり
