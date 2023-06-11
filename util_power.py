@@ -56,7 +56,8 @@ def calc_group_power(conf, app):
                 else:
                     power_detail[e_name][m] = 0.0
             if grp_name in ut.energy_scale[conf]:
-                power_detail[e_name][grp_name] = power_detail[e_name][grp_name] * ut.energy_scale[conf][grp_name]
+                power_detail[e_name][grp_name] = power_detail[e_name][grp_name] * \
+                                                 ut.energy_scale[conf][grp_name]
     return power_detail
 
 
