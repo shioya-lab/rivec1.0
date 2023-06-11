@@ -40,7 +40,7 @@
 
 // RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
-#include "../../common/vector_defines_m2.h"
+#include "../../common/vector_defines_m1.h"
 #endif
 
 using threads::AtomicPtr;
