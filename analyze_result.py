@@ -10,17 +10,17 @@ import util_power as ut_p
 import numpy as np
 
 
-df_area_v2_d2 = pd.DataFrame(ut_a.calc_group_area("v128_d128"))
-df_area_v4_d2 = pd.DataFrame(ut_a.calc_group_area("v256_d128"))
-df_area_v8_d2 = pd.DataFrame(ut_a.calc_group_area("v512_d128"))
-df_area_v16_d2 = pd.DataFrame(ut_a.calc_group_area("v1024_d128"))
-df_area_whole_d2 = pd.concat([df_area_v2_d2, df_area_v4_d2, df_area_v8_d2, df_area_v16_d2], axis=1)
+df_area_d2_v2_d2 = pd.DataFrame(ut_a.calc_group_area("v128_d128"))
+df_area_d2_v4_d2 = pd.DataFrame(ut_a.calc_group_area("v256_d128"))
+df_area_d2_v8_d2 = pd.DataFrame(ut_a.calc_group_area("v512_d128"))
+df_area_d2_v16_d2 = pd.DataFrame(ut_a.calc_group_area("v1024_d128"))
+df_area_whole_d2 = pd.concat([df_area_d2_v2_d2, df_area_d2_v4_d2, df_area_d2_v8_d2, df_area_d2_v16_d2], axis=1)
 
-df_area_v4_d4  = pd.DataFrame(ut_a.calc_group_area("v256_d256"))
-df_area_v8_d4  = pd.DataFrame(ut_a.calc_group_area("v512_d256"))
-df_area_v16_d4 = pd.DataFrame(ut_a.calc_group_area("v1024_d256"))
-df_area_v32_d4 = pd.DataFrame(ut_a.calc_group_area("v2048_d256"))
-df_area_whole_d4 = pd.concat([df_area_v4_d4, df_area_v8_d4, df_area_v16_d4, df_area_v32_d4], axis=1)
+df_area_d2_v4_d4  = pd.DataFrame(ut_a.calc_group_area("v256_d256"))
+df_area_d2_v8_d4  = pd.DataFrame(ut_a.calc_group_area("v512_d256"))
+df_area_d2_v16_d4 = pd.DataFrame(ut_a.calc_group_area("v1024_d256"))
+df_area_d2_v32_d4 = pd.DataFrame(ut_a.calc_group_area("v2048_d256"))
+df_area_whole_d4 = pd.concat([df_area_d2_v4_d4, df_area_d2_v8_d4, df_area_d2_v16_d4, df_area_d2_v32_d4], axis=1)
 
 display(df_area_whole_d2)
 # df_area_whole_d2 = df_area_whole_d2.reindex(elem_index)
@@ -531,143 +531,185 @@ plt.show()
 
 
 # %%
-# 性能とエネルギーの分布図を作る
+# D2 : 性能とエネルギーの分布図を作る
 
 import numpy as np
 
 df_energy_whole_d2_pct = df_energy_whole_d2 / df_energy_whole_d2.sum().min()
-df_energy_whole_d4_pct = df_energy_whole_d4 / df_energy_whole_d4.sum().min()
 
-df_perf_fence = pd.DataFrame([df_cycle_whole_d2_pct['V2-D2 Fence'].mean(),
-                              df_cycle_whole_d2_pct['V4-D2 Fence'].mean(),
-                              df_cycle_whole_d2_pct['V8-D2 Fence'].mean(),
-                              df_cycle_whole_d2_pct['V16-D2 Fence'].mean()],
-                              columns=['VecInO Fence'],
-                              index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
-df_perf_nomerge = pd.DataFrame([df_cycle_whole_d2_pct['V2-D2 NoMerge'].mean(),
-                                df_cycle_whole_d2_pct['V4-D2 NoMerge'].mean(),
-                                df_cycle_whole_d2_pct['V8-D2 NoMerge'].mean(),
-                                df_cycle_whole_d2_pct['V16-D2 NoMerge'].mean()],
-                                columns=['VecInO NoMerge'],
-                             index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
-df_perf_proposal = pd.DataFrame([df_cycle_whole_d2_pct['V2-D2 Proposal'].mean(),
-                                 df_cycle_whole_d2_pct['V4-D2 Proposal'].mean(),
-                                 df_cycle_whole_d2_pct['V8-D2 Proposal'].mean(),
-                                 df_cycle_whole_d2_pct['V16-D2 Proposal'].mean()],
-                                 columns=['VecInO Proposal'],
-                             index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
-df_perf_ooo = pd.DataFrame([df_cycle_whole_d2_pct['V2-D2 OoO'].mean(),
-                            df_cycle_whole_d2_pct['V4-D2 OoO'].mean(),
-                            df_cycle_whole_d2_pct['V8-D2 OoO'].mean(),
-                            df_cycle_whole_d2_pct['V16-D2 OoO'].mean()],
-                            columns=['VecOoO'],
-                                   index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
+d2_index_list = ['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2']
 
-df_energy_fence = pd.DataFrame([df_energy_whole_d2_pct['V2-D2 Fence'].sum(),
-                                df_energy_whole_d2_pct['V4-D2 Fence'].sum(),
-                                df_energy_whole_d2_pct['V8-D2 Fence'].sum(),
-                                df_energy_whole_d2_pct['V16-D2 Fence'].sum()],
-                                columns=['VecInO Fence'],
-                                index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
-df_energy_nomerge = pd.DataFrame([df_energy_whole_d2_pct['V2-D2 NoMerge'].sum(),
-                                  df_energy_whole_d2_pct['V4-D2 NoMerge'].sum(),
-                                  df_energy_whole_d2_pct['V8-D2 NoMerge'].sum(),
-                                  df_energy_whole_d2_pct['V16-D2 NoMerge'].sum()],
-                                  columns=['VecInO NoMerge'],
-                                  index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
-df_energy_proposal = pd.DataFrame([df_energy_whole_d2_pct['V2-D2 Proposal'].sum(),
-                                   df_energy_whole_d2_pct['V4-D2 Proposal'].sum(),
-                                   df_energy_whole_d2_pct['V8-D2 Proposal'].sum(),
-                                   df_energy_whole_d2_pct['V16-D2 Proposal'].sum()],
-                                   columns=['VecInO Proposal'],
-                                index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
-df_energy_ooo = pd.DataFrame([df_energy_whole_d2_pct['V2-D2 OoO'].sum(),
-                              df_energy_whole_d2_pct['V4-D2 OoO'].sum(),
-                              df_energy_whole_d2_pct['V8-D2 OoO'].sum(),
-                              df_energy_whole_d2_pct['V16-D2 OoO'].sum()],
-                              columns=['VecOoO'],
-                                   index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
+df_perf_d2_fence    = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Fence$').mean(),    columns=['VecInO Fence']   ).set_axis(d2_index_list)
+df_perf_d2_lsuino   = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='LSUInO$').mean(),   columns=['VecInO LSUInO']  ).set_axis(d2_index_list)
+df_perf_d2_nomerge  = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='NoMerge$').mean(),  columns=['VecInO NoMerge'] ).set_axis(d2_index_list)
+df_perf_d2_proposal = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Proposal$').mean(), columns=['VecInO Proposal']).set_axis(d2_index_list)
+df_perf_d2_ooo      = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='OoO$').mean(),      columns=['VecOoO']         ).set_axis(d2_index_list)
 
-df_area_fence = pd.DataFrame([df_area_whole_d2['V2-D2 Fence'].sum(),
-                              df_area_whole_d2['V4-D2 Fence'].sum(),
-                              df_area_whole_d2['V8-D2 Fence'].sum(),
-                              df_area_whole_d2['V16-D2 Fence'].sum()],
-                              columns=['VecInO Fence'],
-                              index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
-df_area_nomerge = pd.DataFrame([df_area_whole_d2['V2-D2 NoMerge'].sum(),
-                                df_area_whole_d2['V4-D2 NoMerge'].sum(),
-                                df_area_whole_d2['V8-D2 NoMerge'].sum(),
-                                df_area_whole_d2['V16-D2 NoMerge'].sum()],
-                                columns=['VecInO NoMerge'],
-                                index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
-df_area_proposal = pd.DataFrame([df_area_whole_d2['V2-D2 Proposal'].sum(),
-                                df_area_whole_d2['V4-D2 Proposal'].sum(),
-                                df_area_whole_d2['V8-D2 Proposal'].sum(),
-                                df_area_whole_d2['V16-D2 Proposal'].sum()],
-                                columns=['VecInO Proposal'],
-                                index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
-df_area_ooo = pd.DataFrame([df_area_whole_d2['V2-D2 OoO'].sum(),
-                              df_area_whole_d2['V4-D2 OoO'].sum(),
-                              df_area_whole_d2['V8-D2 OoO'].sum(),
-                              df_area_whole_d2['V16-D2 OoO'].sum()],
-                              columns=['VecOoO'],
-                                   index=['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2'])
+df_energy_d2_fence    = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Fence$').sum(),    columns=['VecInO Fence']   ).set_axis(d2_index_list)
+df_energy_d2_lsuino   = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='LSUInO$').sum(),   columns=['VecInO LSUInO']  ).set_axis(d2_index_list)
+df_energy_d2_nomerge  = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='NoMerge$').sum(),  columns=['VecInO NoMerge'] ).set_axis(d2_index_list)
+df_energy_d2_proposal = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Proposal$').sum(), columns=['VecInO Proposal']).set_axis(d2_index_list)
+df_energy_d2_ooo      = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d2_index_list)
 
-plt.scatter(df_energy_fence, df_perf_fence, label='VecInO Fence', color='blue')
-plt.plot   (df_energy_fence, df_perf_fence, color='blue')
-plt.axline((0, 0), (df_energy_fence['VecInO Fence']['V4-D2'], 
-                    df_perf_fence  ['VecInO Fence']['V4-D2']), color='blue', lw=0.5)
+df_area_d2_fence    = pd.DataFrame(df_area_whole_d2.filter(regex='Fence$').sum(),    columns=['VecInO Fence']   ).set_axis(d2_index_list)
+df_area_d2_lsuino   = pd.DataFrame(df_area_whole_d2.filter(regex='LSUInO$').sum(),   columns=['VecInO LSUInO']  ).set_axis(d2_index_list)
+df_area_d2_nomerge  = pd.DataFrame(df_area_whole_d2.filter(regex='NoMerge$').sum(),  columns=['VecInO NoMerge'] ).set_axis(d2_index_list)
+df_area_d2_proposal = pd.DataFrame(df_area_whole_d2.filter(regex='Proposal$').sum(), columns=['VecInO Proposal']).set_axis(d2_index_list)
+df_area_d2_ooo      = pd.DataFrame(df_area_whole_d2.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d2_index_list)
 
-plt.scatter(df_energy_nomerge, df_perf_nomerge, label='VecInO NoMerge', color='green')
-plt.plot   (df_energy_nomerge, df_perf_nomerge, label='VecInO NoMerge', color='green')
-plt.axline((0, 0), (df_energy_nomerge['VecInO NoMerge']['V4-D2'], 
-                    df_perf_nomerge  ['VecInO NoMerge']['V4-D2']), color='green', lw=0.5)
+plt.scatter(df_energy_d2_fence, df_perf_d2_fence, label='VecInO Fence', color='blue')
+plt.plot   (df_energy_d2_fence, df_perf_d2_fence, color='blue')
+plt.axline((0, 0), (df_energy_d2_fence['VecInO Fence']['V4-D2'], 
+                    df_perf_d2_fence  ['VecInO Fence']['V4-D2']), color='blue', lw=0.5)
 
-plt.scatter(df_energy_proposal, df_perf_proposal, label='VecInO Proposal', color='purple')
-plt.plot   (df_energy_proposal, df_perf_proposal, label='VecInO Proposal', color='purple')
-plt.axline((0, 0), (df_energy_proposal['VecInO Proposal']['V4-D2'], 
-                    df_perf_proposal  ['VecInO Proposal']['V4-D2']), color='purple', lw=0.5)
+plt.scatter(df_energy_d2_nomerge, df_perf_d2_nomerge, label='VecInO NoMerge', color='green')
+plt.plot   (df_energy_d2_nomerge, df_perf_d2_nomerge, label='VecInO NoMerge', color='green')
+plt.axline((0, 0), (df_energy_d2_nomerge['VecInO NoMerge']['V4-D2'], 
+                    df_perf_d2_nomerge  ['VecInO NoMerge']['V4-D2']), color='green', lw=0.5)
 
-plt.scatter(df_energy_ooo, df_perf_ooo, label='VecOoO', color='red')
-plt.plot   (df_energy_ooo, df_perf_ooo, label='VecOoO', color='red')
-plt.axline((0, 0), (df_energy_ooo['VecOoO']['V4-D2'], 
-                    df_perf_ooo  ['VecOoO']['V4-D2']), color='red', lw=0.5)
+plt.scatter(df_energy_d2_proposal, df_perf_d2_proposal, label='VecInO Proposal', color='purple')
+plt.plot   (df_energy_d2_proposal, df_perf_d2_proposal, label='VecInO Proposal', color='purple')
+plt.axline((0, 0), (df_energy_d2_proposal['VecInO Proposal']['V4-D2'], 
+                    df_perf_d2_proposal  ['VecInO Proposal']['V4-D2']), color='purple', lw=0.5)
+
+plt.scatter(df_energy_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
+plt.plot   (df_energy_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
+plt.axline((0, 0), (df_energy_d2_ooo['VecOoO']['V4-D2'], 
+                    df_perf_d2_ooo  ['VecOoO']['V4-D2']), color='red', lw=0.5)
 
 plt.xlim(0.0, df_energy_whole_d2_pct.sum().max() * 1.1)
 plt.ylim(0.0, df_cycle_whole_d2_pct.mean().max() * 1.1)
 plt.xlabel("Energy (Lower is Better)")
 plt.ylabel("Performance (Higher is Better)")
-plt.savefig("energy_perf.pdf", bbox_inches='tight')
+plt.savefig("energy_perf_d2.pdf", bbox_inches='tight')
 
-display(df_cycle_whole_d2_pct)
-df_cycle_whole_d2_pct.mean().to_csv("relative_cycle.csv")
-df_energy_whole_d2_pct.mean().to_csv("relative_energy.csv")
+#%%
+# D4 : 性能とエネルギーの分布図を作る
 
+df_energy_whole_d4_pct = df_energy_whole_d4 / df_energy_whole_d4.sum().min()
+
+d4_index_list = ['V4-D4', 'V8-D4', 'V16-D4', 'V32-D4']
+
+df_perf_d4_fence    = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Fence$').mean(),    columns=['VecInO Fence']   ).set_axis(d4_index_list)
+df_perf_d4_lsuino   = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='LSUInO$').mean(),   columns=['VecInO LSUInO']  ).set_axis(d4_index_list)
+df_perf_d4_nomerge  = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='NoMerge$').mean(),  columns=['VecInO NoMerge'] ).set_axis(d4_index_list)
+df_perf_d4_proposal = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Proposal$').mean(), columns=['VecInO Proposal']).set_axis(d4_index_list)
+df_perf_d4_ooo      = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='OoO$').mean(),      columns=['VecOoO']         ).set_axis(d4_index_list)
+
+df_energy_d4_fence    = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Fence$').sum(),    columns=['VecInO Fence']   ).set_axis(d4_index_list)
+df_energy_d4_lsuino   = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='LSUInO$').sum(),   columns=['VecInO LSUInO']  ).set_axis(d4_index_list)
+df_energy_d4_nomerge  = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='NoMerge$').sum(),  columns=['VecInO NoMerge'] ).set_axis(d4_index_list)
+df_energy_d4_proposal = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Proposal$').sum(), columns=['VecInO Proposal']).set_axis(d4_index_list)
+df_energy_d4_ooo      = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d4_index_list)
+
+df_area_d4_fence    = pd.DataFrame(df_area_whole_d4.filter(regex='Fence$').sum(),    columns=['VecInO Fence']   ).set_axis(d4_index_list)
+df_area_d4_lsuino   = pd.DataFrame(df_area_whole_d4.filter(regex='LSUInO$').sum(),   columns=['VecInO LSUInO']  ).set_axis(d4_index_list)
+df_area_d4_nomerge  = pd.DataFrame(df_area_whole_d4.filter(regex='NoMerge$').sum(),  columns=['VecInO NoMerge'] ).set_axis(d4_index_list)
+df_area_d4_proposal = pd.DataFrame(df_area_whole_d4.filter(regex='Proposal$').sum(), columns=['VecInO Proposal']).set_axis(d4_index_list)
+df_area_d4_ooo      = pd.DataFrame(df_area_whole_d4.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d4_index_list)
+
+plt.scatter(df_energy_d4_fence, df_perf_d4_fence, label='VecInO Fence', color='blue')
+plt.plot   (df_energy_d4_fence, df_perf_d4_fence, color='blue')
+plt.axline((0, 0), (df_energy_d4_fence['VecInO Fence']['V4-D4'], 
+                    df_perf_d4_fence  ['VecInO Fence']['V4-D4']), color='blue', lw=0.5)
+
+plt.scatter(df_energy_d4_nomerge, df_perf_d4_nomerge, label='VecInO NoMerge', color='green')
+plt.plot   (df_energy_d4_nomerge, df_perf_d4_nomerge, label='VecInO NoMerge', color='green')
+plt.axline((0, 0), (df_energy_d4_nomerge['VecInO NoMerge']['V4-D4'], 
+                    df_perf_d4_nomerge  ['VecInO NoMerge']['V4-D4']), color='green', lw=0.5)
+
+plt.scatter(df_energy_d4_proposal, df_perf_d4_proposal, label='VecInO Proposal', color='purple')
+plt.plot   (df_energy_d4_proposal, df_perf_d4_proposal, label='VecInO Proposal', color='purple')
+plt.axline((0, 0), (df_energy_d4_proposal['VecInO Proposal']['V4-D4'], 
+                    df_perf_d4_proposal  ['VecInO Proposal']['V4-D4']), color='purple', lw=0.5)
+
+plt.scatter(df_energy_d4_ooo, df_perf_d4_ooo, label='VecOoO', color='red')
+plt.plot   (df_energy_d4_ooo, df_perf_d4_ooo, label='VecOoO', color='red')
+plt.axline((0, 0), (df_energy_d4_ooo['VecOoO']['V4-D4'], 
+                    df_perf_d4_ooo  ['VecOoO']['V4-D4']), color='red', lw=0.5)
+
+plt.xlim(0.0, df_energy_whole_d4_pct.sum().max() * 1.1)
+plt.ylim(0.0, df_cycle_whole_d4_pct.mean().max() * 1.1)
+plt.xlabel("Energy (Lower is Better)")
+plt.ylabel("Performance (Higher is Better)")
+plt.savefig("energy_perf_d4.pdf", bbox_inches='tight')
+
+
+# %%
+# 性能の折れ線グラフを作る
+import matplotlib.pyplot as plt
+
+plt.plot(df_perf_d2_fence)
+plt.plot(df_perf_d2_lsuino)
+plt.plot(df_perf_d2_nomerge)
+plt.plot(df_perf_d2_proposal)
+plt.plot(df_perf_d2_ooo)
+plt.ylim(0.0, 2.0)
+plt.show()
+
+plt.cla()
+
+plt.plot(df_perf_d4_fence)
+plt.plot(df_perf_d4_lsuino)
+plt.plot(df_perf_d4_nomerge)
+plt.plot(df_perf_d4_proposal)
+plt.plot(df_perf_d4_ooo)
+plt.ylim(0.0, 2.0)
+
+
+# %%
+# 各ベンチマークにおける相対性能グラフを作成
+
+for b in ut.benchmarks:
+  display(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Fence$")    .loc[b]).set_axis(d2_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Fence$")   .loc[b]).set_axis(d2_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="LSUInO$")  .loc[b]).set_axis(d2_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="NoMerge$") .loc[b]).set_axis(d2_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Proposal$").loc[b]).set_axis(d2_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="OoO$")     .loc[b]).set_axis(d2_index_list))
+  plt.title("Performance rate of %s with %s" % (b, d2_index_list))
+  plt.ylim(0.0)
+  plt.show()
+  plt.cla()
+
+for b in ut.benchmarks:
+  display(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Fence$")    .loc[b]).set_axis(d4_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Fence$")   .loc[b]).set_axis(d4_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="LSUInO$")  .loc[b]).set_axis(d4_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="NoMerge$") .loc[b]).set_axis(d4_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Proposal$").loc[b]).set_axis(d4_index_list))
+  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="OoO$")     .loc[b]).set_axis(d4_index_list))
+  plt.title("Performance rate of %s with %s" % (b, d4_index_list))
+  plt.ylim(0.0)
+  plt.show()
+  plt.cla()
+
+  
 # %%
 # 性能と面積の分布図を作る
 
 df_area_whole_d2_pct = df_area_whole_d2.sum() / df_area_whole_d2.sum().min()
 df_area_whole_d4_pct = df_area_whole_d4.sum() / df_area_whole_d4.sum().min()
 
-plt.scatter(df_area_fence, df_perf_fence, lw=2, label='VecInO Fence', color='blue')
-plt.plot   (df_area_fence, df_perf_fence, lw=2, color='blue')
-plt.axline((0, 0), (df_area_fence['VecInO Fence']['V4-D2'], 
-                    df_perf_fence['VecInO Fence']['V4-D2']), color='blue', lw=0.5)
+plt.scatter(df_area_d2_fence, df_perf_d2_fence, lw=2, label='VecInO Fence', color='blue')
+plt.plot   (df_area_d2_fence, df_perf_d2_fence, lw=2, color='blue')
+plt.axline((0, 0), (df_area_d2_fence['VecInO Fence']['V4-D2'], 
+                    df_perf_d2_fence['VecInO Fence']['V4-D2']), color='blue', lw=0.5)
 
-plt.scatter(df_area_nomerge, df_perf_nomerge, label='VecInO NoMerge', color='green')
-plt.plot   (df_area_nomerge, df_perf_nomerge, label='VecInO NoMerge', color='green')
-plt.axline((0, 0), (df_area_nomerge['VecInO NoMerge']['V4-D2'], 
-                    df_perf_nomerge['VecInO NoMerge']['V4-D2']), color='green', lw=0.5)
+plt.scatter(df_area_d2_nomerge, df_perf_d2_nomerge, label='VecInO NoMerge', color='green')
+plt.plot   (df_area_d2_nomerge, df_perf_d2_nomerge, label='VecInO NoMerge', color='green')
+plt.axline((0, 0), (df_area_d2_nomerge['VecInO NoMerge']['V4-D2'], 
+                    df_perf_d2_nomerge['VecInO NoMerge']['V4-D2']), color='green', lw=0.5)
 
-plt.scatter(df_area_proposal, df_perf_proposal, label='VecInO Proposal', color='purple')
-plt.plot   (df_area_proposal, df_perf_proposal, label='VecInO Proposal', color='purple')
-plt.axline((0, 0), (df_area_proposal['VecInO Proposal']['V4-D2'], 
-                    df_perf_proposal['VecInO Proposal']['V4-D2']), color='purple', lw=0.5)
+plt.scatter(df_area_d2_proposal, df_perf_d2_proposal, label='VecInO Proposal', color='purple')
+plt.plot   (df_area_d2_proposal, df_perf_d2_proposal, label='VecInO Proposal', color='purple')
+plt.axline((0, 0), (df_area_d2_proposal['VecInO Proposal']['V4-D2'], 
+                    df_perf_d2_proposal['VecInO Proposal']['V4-D2']), color='purple', lw=0.5)
 
-plt.scatter(df_area_ooo, df_perf_ooo, label='VecOoO', color='red')
-plt.plot   (df_area_ooo, df_perf_ooo, label='VecOoO', color='red')
-plt.axline((0, 0), (df_area_ooo['VecOoO']['V4-D2'], 
-                    df_perf_ooo['VecOoO']['V4-D2']), color='red', lw=0.5)
+plt.scatter(df_area_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
+plt.plot   (df_area_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
+plt.axline((0, 0), (df_area_d2_ooo['VecOoO']['V4-D2'], 
+                    df_perf_d2_ooo['VecOoO']['V4-D2']), color='red', lw=0.5)
 
 plt.xlabel("Area (Lower is Better)")
 plt.ylabel("Performance (Higher is Better)")
