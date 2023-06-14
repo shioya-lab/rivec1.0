@@ -6,6 +6,10 @@ import glob
 import pandas as pd
 
 pipe_conf = ['vio.v.fence', 'vio.v.lsu-inorder', 'vio.v.ngs', 'vio.v', 'ooo.v']
+pipe_conf2 = ['Fence', 'LSUInO', 'NoMerge', 'Proposal', 'OoO']
+d2_index2 = ['V%d-D2 %s' % (v, c) for v in [2,4,8,16] for c in pipe_conf2]
+d4_index2 = ['V%d-D4 %s' % (v, c) for v in [4,8,16,32] for c in pipe_conf2]
+
 rivec_benchmarks = ['axpy', 
               'blackscholes', 
               'canneal', 
@@ -103,21 +107,23 @@ e_elem['vio.v.fence']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', 
 # -----------------------------
 e_elem['vio.v.lsu-inorder'] = dict()
 e_elem['vio.v.lsu-inorder']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
-e_elem['vio.v.lsu-inorder']['Rename'] = ['s_ooo:Renaming_Unit']
+e_elem['vio.v.lsu-inorder']['Rename'] = ['s_ooo:Renaming_Unit',
+                              'v_ooo:Renaming_Unit']
 e_elem['vio.v.lsu-inorder']['Scheduler'] = ['s_ooo:Instruction_Window',
-                                  's_ooo:FP_Instruction_Window',
-                                  's_ooo:ROB']
+                                's_ooo:FP_Instruction_Window',
+                                'v_ooo:FP_Instruction_Window',
+                                's_ooo:ROB']
 e_elem['vio.v.lsu-inorder']['Scalar FU']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
                                  's_ooo:Integer_ALUs__Count',
                                  's_ooo:Results_Broadcast_Bus',
                                  's_ooo:Register_Files']
-# e_elem['vio.v']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
+# e_elem['vio.v.lsu-inorder']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['vio.v.lsu-inorder']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
-e_elem['vio.v.lsu-inorder']['Vector Registers'] = ['v_ino:Register_Files']
+e_elem['vio.v.lsu-inorder']['Vector Registers'] = ['v_ooo:Register_Files']
 e_elem['vio.v.lsu-inorder']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['vio.v.lsu-inorder']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', '-s_ooo:Data_Cache']
-e_elem['vio.v.lsu-inorder']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ino:Data_Cache']
+e_elem['vio.v.lsu-inorder']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:Data_Cache']
 
 # -----------------------------
 # with Porposal and Non-GatherScatter Merge

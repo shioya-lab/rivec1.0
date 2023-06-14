@@ -22,12 +22,8 @@ df_area_d2_v16_d4 = pd.DataFrame(ut_a.calc_group_area("v1024_d256"))
 df_area_d2_v32_d4 = pd.DataFrame(ut_a.calc_group_area("v2048_d256"))
 df_area_whole_d4 = pd.concat([df_area_d2_v4_d4, df_area_d2_v8_d4, df_area_d2_v16_d4, df_area_d2_v32_d4], axis=1)
 
+df_area_whole_d2.columns = ut.d2_index2
 display(df_area_whole_d2)
-# df_area_whole_d2 = df_area_whole_d2.reindex(elem_index)
-df_area_whole_d2.columns = ['V2-D2 Fence',  'V2-D2 LSUInO',  'V2-D2 NoMerge',  'V2-D2 Proposal',  'V2-D2 OoO',
-                            'V4-D2 Fence',  'V4-D2 LSUInO',  'V4-D2 NoMerge',  'V4-D2 Proposal',  'V4-D2 OoO',
-                            'V8-D2 Fence',  'V8-D2 LSUInO',  'V8-D2 NoMerge',  'V8-D2 Proposal',  'V8-D2 OoO',
-                            'V16-D2 Fence', 'V16-D2 LSUInO', 'V16-D2 NoMerge', 'V16-D2 Proposal', 'V16-D2 OoO',]
 area_graph_d2 = df_area_whole_d2.T.plot(title="Area estimation with each configuration", 
                                   kind='bar',
                                   stacked=True)
@@ -40,11 +36,8 @@ plt.show()
 plt.savefig("area_d2.pdf", bbox_inches='tight')
 plt.savefig("area_d2.png", bbox_inches='tight')
 
+df_area_whole_d4.columns = ut.d4_index2
 display(df_area_whole_d4)
-df_area_whole_d4.columns = ['V4-D4 Fence',  'V4-D4 LSUInO',  'V4-D4 NoMerge',  'V4-D4 Proposal',  'V4-D4 OoO',
-                            'V8-D4 Fence',  'V8-D4 LSUInO',  'V8-D4 NoMerge',  'V8-D4 Proposal',  'V8-D4 OoO',
-                            'V16-D4 Fence', 'V16-D4 LSUInO', 'V16-D4 NoMerge', 'V16-D4 Proposal', 'V16-D4 OoO',
-                            'V32-D4 Fence', 'V32-D4 LSUInO', 'V32-D4 NoMerge', 'V32-D4 Proposal', 'V32-D4 OoO',]
 area_graph_d4 = df_area_whole_d4.T.plot(title="Area estimation with each configuration", 
                                         kind='bar',
                                         stacked=True)
@@ -183,10 +176,7 @@ display(df_cycle_v32_d4_pct.loc['GeoMean'])
 # D2シリーズ
 df_cycle_whole_d2 = pd.concat([df_cycle_v2_d2, df_cycle_v4_d2, df_cycle_v8_d2, df_cycle_v16_d2], axis=1)
 display(df_cycle_whole_d2)
-df_cycle_whole_d2.columns = ['V2-D2 Fence',  'V2-D2 LSUInO',  'V2-D2 NoMerge',  'V2-D2 Proposal',  'V2-D2 OoO',
-                             'V4-D2 Fence',  'V4-D2 LSUInO',  'V4-D2 NoMerge',  'V4-D2 Proposal',  'V4-D2 OoO',
-                             'V8-D2 Fence',  'V8-D2 LSUInO',  'V8-D2 NoMerge',  'V8-D2 Proposal',  'V8-D2 OoO',
-                             'V16-D2 Fence', 'V16-D2 LSUInO', 'V16-D2 NoMerge', 'V16-D2 Proposal', 'V16-D2 OoO']
+df_cycle_whole_d2.columns = ut.d2_index2
 
 df_cycle_whole_d2_pct = np.reciprocal((df_cycle_whole_d2.T / df_cycle_v2_d2["V2-D2 vio.v.fence"].T).T)
 df_cycle_means_d2 = df_cycle_whole_d2_pct.mean()
@@ -198,10 +188,7 @@ plt.savefig("relative_performance.pdf", bbox_inches='tight')
 # D4シリーズ
 df_cycle_whole_d4 = pd.concat([df_cycle_v4_d4, df_cycle_v8_d4, df_cycle_v16_d4, df_cycle_v32_d4], axis=1)
 display(df_cycle_whole_d4)
-df_cycle_whole_d4.columns = ['V4-D4 Fence',  'V4-D4 LSUInO',  'V4-D4 NoMerge',  'V4-D4 Proposal',  'V4-D4 OoO',
-                             'V8-D4 Fence',  'V8-D4 LSUInO',  'V8-D4 NoMerge',  'V8-D4 Proposal',  'V8-D4 OoO',
-                             'V16-D4 Fence', 'V16-D4 LSUInO', 'V16-D4 NoMerge', 'V16-D4 Proposal', 'V16-D4 OoO',
-                             'V32-D4 Fence', 'V32-D4 LSUInO', 'V32-D4 NoMerge', 'V32-D4 Proposal', 'V32-D4 OoO']
+df_cycle_whole_d4.columns = ut.d4_index2
 
 df_cycle_whole_d4_pct = np.reciprocal((df_cycle_whole_d4.T / df_cycle_v4_d4["V4-D4 vio.v.fence"].T).T)
 df_cycle_means_d4 = df_cycle_whole_d4_pct.mean()
@@ -232,6 +219,11 @@ df_power_detail_v8_d2 = pd.DataFrame(map(lambda i: pd.DataFrame(v8_d2_power[i]).
 df_power_detail_v8_d2.columns = list(map(lambda b: "V8-D2 " + b, ut.pipe_conf))
 df_power_detail_v8_d2.index = ut.benchmarks
 
+v16_d2_power = ut_p.get_power_with_vlen_dlen(1024, 128)
+df_power_detail_v16_d2 = pd.DataFrame(map(lambda i: pd.DataFrame(v16_d2_power[i]).fillna(0.0).sum(), range(len(ut.benchmarks))))
+df_power_detail_v16_d2.columns = list(map(lambda b: "V16-D2 " + b, ut.pipe_conf))
+df_power_detail_v16_d2.index = ut.benchmarks
+
 df_energy_v2_d2 = df_power_detail_v2_d2 * df_cycle_v2_d2
 df_energy_v2_d2 = df_energy_v2_d2.sum()
 
@@ -241,12 +233,20 @@ df_energy_v4_d2 = df_energy_v4_d2.sum()
 df_energy_v8_d2 = df_power_detail_v8_d2 * df_cycle_v8_d2
 df_energy_v8_d2 = df_energy_v8_d2.sum()
 
+df_energy_v16_d2 = df_power_detail_v16_d2 * df_cycle_v16_d2
+df_energy_v16_d2 = df_energy_v16_d2.sum()
+
 #%%
 
 df_power_detail_all = pd.concat([df_power_detail_v2_d2,
-                          df_power_detail_v4_d2,
-                          df_power_detail_v8_d2])
-display(df_power_detail_all.sum())
+                                 df_power_detail_v4_d2,
+                                 df_power_detail_v8_d2,
+                                 df_power_detail_v16_d2])
+display(df_power_detail_v2_d2)
+display(df_power_detail_v4_d2)
+display(df_power_detail_v8_d2)
+display(df_power_detail_v16_d2)
+
 df_power_detail_all.sum().plot.bar(title="Power Estimation", figsize=(10, 3))
 
 #%%
@@ -499,16 +499,10 @@ plt.ylim(0.0, df_power_whole_d4.sum().max()*1.1)
 #%%
 # 全部のエネルギーを計算
 df_energy_whole_d2 = pd.concat([df_energy_v2_d2, df_energy_v4_d2, df_energy_v8_d2, df_energy_v16_d2], axis=1)
-df_energy_whole_d2.columns = ['V2-D2 Fence',  'V2-D2 LSUInO',  'V2-D2 NoMerge',  'V2-D2 Proposal',  'V2-D2 OoO',
-                              'V4-D2 Fence',  'V4-D2 LSUInO',  'V4-D2 NoMerge',  'V4-D2 Proposal',  'V4-D2 OoO',
-                              'V8-D2 Fence',  'V8-D2 LSUInO',  'V8-D2 NoMerge',  'V8-D2 Proposal',  'V8-D2 OoO',
-                              'V16-D2 Fence', 'V16-D2 LSUInO', 'V16-D2 NoMerge', 'V16-D2 Proposal', 'V16-D2 OoO',]
+df_energy_whole_d2.columns = ut.d2_index2
 
 df_energy_whole_d4 = pd.concat([df_energy_v4_d4, df_energy_v8_d4, df_energy_v16_d4, df_energy_v32_d4], axis=1)
-df_energy_whole_d4.columns = ['V4-D4 Fence',  'V4-D4 LSUInO',  'V4-D4 NoMerge',  'V4-D4 Proposal',  'V4-D4 OoO',
-                              'V8-D4 Fence',  'V8-D4 LSUInO',  'V8-D4 NoMerge',  'V8-D4 Proposal',  'V8-D4 OoO',
-                              'V16-D4 Fence', 'V16-D4 LSUInO', 'V16-D4 NoMerge', 'V16-D4 Proposal', 'V16-D4 OoO',
-                              'V32-D4 Fence', 'V32-D4 LSUInO', 'V32-D4 NoMerge', 'V32-D4 Proposal', 'V32-D4 OoO',]
+df_energy_whole_d4.columns = ut.d4_index2
 
 display(df_energy_whole_d2)
 energy_graph = df_energy_whole_d2.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4", stacked=True)
@@ -722,9 +716,15 @@ df_area_whole_d2_pct.to_csv("relative_area.csv")
 # %%
 # 全体表示用の一覧を出力
 
-display(pd.concat([df_cycle_whole_d2_pct.mean(), df_energy_whole_d2_pct.sum(), df_area_whole_d2_pct], axis=1))
-display(pd.concat([df_cycle_whole_d4_pct.mean(), df_energy_whole_d4_pct.sum(), df_area_whole_d4_pct], axis=1))
+import utils as ut
 
+df_d2_balance = pd.concat([df_cycle_whole_d2_pct.mean(), df_energy_whole_d2_pct.sum(), df_area_whole_d2_pct], axis=1)
+df_d2_balance = df_d2_balance.reindex(["V%d-D2 %s" % (v, c) for c in ut.pipe_conf2 for v in (2, 4, 8, 16)], axis=0)
+print(df_d2_balance)
+
+df_d4_balance = pd.concat([df_cycle_whole_d4_pct.mean(), df_energy_whole_d4_pct.sum(), df_area_whole_d4_pct], axis=1)
+df_d4_balance = df_d4_balance.reindex(["V%d-D4 %s" % (v, c) for c in ut.pipe_conf2 for v in (4, 8, 16, 32)], axis=0)
+print(df_d4_balance)
 
 
 # %%

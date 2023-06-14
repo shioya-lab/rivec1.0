@@ -16,7 +16,10 @@
 #include "sim_api.h"
 #include "count_utils.h"
 
+#ifdef USE_RISCV_VECTOR
 #include "../../common/vector_defines_m4.h"
+#endif // USE_RISCV_VECTOR
+
 
 long long get_time() {
     // struct timeval tv;
@@ -31,7 +34,7 @@ float elapsed_time(long long start_time, long long end_time) {
 }
 /*************************************************************************/
 
-#define ARRAY_SIZE (256 * 1024 / sizeof(uint64_t))
+#define ARRAY_SIZE (256 * 256 * 1024 / sizeof(uint64_t))
 uint64_t load_region[ARRAY_SIZE];
 
 int main(int argc, char *argv[])
@@ -42,12 +45,14 @@ int main(int argc, char *argv[])
 
     uint64_t *p = load_region;
 
+#ifdef USE_RISCV_VECTOR
     long vlmax = __riscv_vsetvlmax_e64m8();
 
     for (int i = 0; i < ARRAY_SIZE; i+=vlmax) {
         asm volatile ("vle64.v v8, (%0)"::"r"(p));
         p+= vlmax;
     }
+#endif // USE_RISCV_VECTOR
 
     SimRoiEnd();
     stop_konatadump();
