@@ -150,6 +150,8 @@ int main (int argc, char** argv)
     Start_Timer();
     start_instret = get_instret();
     start_vecinst = get_vecinst();
+    SimRoiStart();
+    start_konatadump();
 
     for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index)
     {
@@ -159,7 +161,11 @@ int main (int argc, char** argv)
 	/* Ch_1_Glob == 'A', Ch_2_Glob == 'B', Bool_Glob == true */
       Int_1_Loc = 2;
       Int_2_Loc = 3;
+#ifdef USE_RISCV_VECTOR
+      rvv_strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 2'ND STRING");
+#else // USE_RISCV_VECTOR
       strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 2'ND STRING");
+#endif // USE_RISCV_VECTOR
       Enum_Loc = Ident_2;
       Bool_Glob = ! Func_2 (Str_1_Loc, Str_2_Loc);
 	/* Bool_Glob == 1 */
@@ -182,7 +188,11 @@ int main (int argc, char** argv)
 	    /* then, not executed */
 	  {
 	  Proc_6 (Ident_1, &Enum_Loc);
+#ifdef USE_RISCV_VECTOR
+	  rvv_strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 3'RD STRING");
+#else // USE_RISCV_VECTOR
 	  strcpy (Str_2_Loc, "DHRYSTONE PROGRAM, 3'RD STRING");
+#endif // USE_RISCV_VECTOR
 	  Int_2_Loc = Run_Index;
 	  Int_Glob = Run_Index;
 	  }
@@ -202,6 +212,9 @@ int main (int argc, char** argv)
     /**************/
 
     Stop_Timer();
+    SimRoiEnd();
+    stop_konatadump();
+
     stop_instret = get_instret();
     stop_vecinst = get_vecinst();
     // setStats(0);

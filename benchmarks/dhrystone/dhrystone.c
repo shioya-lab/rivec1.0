@@ -154,7 +154,11 @@ Str_30  Str_2_Par_Ref;
     return (true);
   else /* executed */
   {
+#ifdef USE_RISCV_VECTOR
+    if (rvv_strcmp (Str_1_Par_Ref, Str_2_Par_Ref) > 0)
+#else USE_RISCV_VECTOR
     if (strcmp (Str_1_Par_Ref, Str_2_Par_Ref) > 0)
+#endif USE_RISCV_VECTOR
       /* then, not executed */
     {
       Int_Loc += 7;
