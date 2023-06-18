@@ -33,8 +33,9 @@ labels = labels[::-1]
 area_graph_d2.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left', )
 plt.ylim(0.0, df_area_whole_d4.sum().max()*1.1)
 plt.show()
-plt.savefig("area_d2.pdf", bbox_inches='tight')
-plt.savefig("area_d2.png", bbox_inches='tight')
+# plt.savefig("area_d2.pdf", bbox_inches='tight')
+# plt.savefig("area_d2.png", bbox_inches='tight')
+df_area_whole_d2.to_csv("area_d2.csv")
 
 df_area_whole_d4.columns = ut.d4_index2
 display(df_area_whole_d4)
@@ -46,8 +47,9 @@ handles = handles[::-1]
 labels = labels[::-1]
 area_graph_d4.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left', )
 plt.show()
-plt.savefig("area_d4.pdf", bbox_inches='tight')
-plt.savefig("area_d4.png", bbox_inches='tight')
+# plt.savefig("area_d4.pdf", bbox_inches='tight')
+# plt.savefig("area_d4.png", bbox_inches='tight')
+df_area_whole_d4.to_csv("area_d4.csv")
 
 
 #%%
@@ -83,10 +85,10 @@ df_cycle_v32_d4 = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 2048, 25
 # V2-D2のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v2_d2_pct = np.reciprocal((df_cycle_v2_d2.T / df_cycle_v2_d2["V2-D2 ooo.v"].T).T)
+df_cycle_v2_d2_pct = np.reciprocal((df_cycle_v2_d2.T / df_cycle_v2_d2["V2-D2 OoO"].T).T)
 df_cycle_v2_d2_pct.loc['GeoMean'] = df_cycle_v2_d2_pct.mean()
 df_cycle_v2_d2_pct.plot.bar(title="V2-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.savefig("v2_d2_perf.pdf", bbox_inches='tight')
+# plt.savefig("v2_d2_perf.pdf", bbox_inches='tight')
 
 display(df_cycle_v2_d2)
 display(df_cycle_v2_d2_pct.loc['GeoMean'])
@@ -94,10 +96,10 @@ display(df_cycle_v2_d2_pct.loc['GeoMean'])
 # V4-D2のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v4_d2_pct = np.reciprocal((df_cycle_v4_d2.T / df_cycle_v4_d2["V4-D2 ooo.v"].T).T)
+df_cycle_v4_d2_pct = np.reciprocal((df_cycle_v4_d2.T / df_cycle_v4_d2["V4-D2 OoO"].T).T)
 df_cycle_v4_d2_pct.loc['GeoMean'] = df_cycle_v4_d2_pct.mean()
 df_cycle_v4_d2_pct.plot.bar(title="V4-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.savefig("v4_d2_perf.pdf", bbox_inches='tight')
+# plt.savefig("v4_d2_perf.pdf", bbox_inches='tight')
 
 display(df_cycle_v4_d2)
 display(df_cycle_v4_d2_pct.loc['GeoMean'])
@@ -105,10 +107,10 @@ display(df_cycle_v4_d2_pct.loc['GeoMean'])
 # V8-D2のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v8_d2_pct = np.reciprocal((df_cycle_v8_d2.T / df_cycle_v8_d2["V8-D2 ooo.v"].T).T)
+df_cycle_v8_d2_pct = np.reciprocal((df_cycle_v8_d2.T / df_cycle_v8_d2["V8-D2 OoO"].T).T)
 df_cycle_v8_d2_pct.loc['GeoMean'] = df_cycle_v8_d2_pct.mean()
 df_cycle_v8_d2_pct.plot.bar(title="V8-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.savefig("v8_d2_perf.pdf", bbox_inches='tight')
+# plt.savefig("v8_d2_perf.pdf", bbox_inches='tight')
 
 display(df_cycle_v8_d2)
 display(df_cycle_v8_d2_pct.loc['GeoMean'])
@@ -116,10 +118,10 @@ display(df_cycle_v8_d2_pct.loc['GeoMean'])
 # V16-D2のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v16_d2_pct = np.reciprocal((df_cycle_v16_d2.T / df_cycle_v16_d2["V16-D2 ooo.v"].T).T)
+df_cycle_v16_d2_pct = np.reciprocal((df_cycle_v16_d2.T / df_cycle_v16_d2["V16-D2 OoO"].T).T)
 df_cycle_v16_d2_pct.loc['GeoMean'] = df_cycle_v16_d2_pct.mean()
 df_cycle_v16_d2_pct.plot.bar(title="V16-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.savefig("v16_d2_perf.pdf", bbox_inches='tight')
+# plt.savefig("v16_d2_perf.pdf", bbox_inches='tight')
 
 display(df_cycle_v16_d2)
 display(df_cycle_v16_d2_pct.loc['GeoMean'])
@@ -129,10 +131,10 @@ display(df_cycle_v16_d2_pct.loc['GeoMean'])
 # V4-D4のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v4_d4_pct = np.reciprocal((df_cycle_v4_d4.T / df_cycle_v4_d4["V4-D4 ooo.v"].T).T)
+df_cycle_v4_d4_pct = np.reciprocal((df_cycle_v4_d4.T / df_cycle_v4_d4["V4-D4 OoO"].T).T)
 df_cycle_v4_d4_pct.loc['GeoMean'] = df_cycle_v4_d4_pct.mean()
 df_cycle_v4_d4_pct.plot.bar(title="V4-D4 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.savefig("v4_d4_perf.pdf", bbox_inches='tight')
+# plt.savefig("v4_d4_perf.pdf", bbox_inches='tight')
 
 display(df_cycle_v4_d4)
 display(df_cycle_v4_d4_pct.loc['GeoMean'])
@@ -140,10 +142,10 @@ display(df_cycle_v4_d4_pct.loc['GeoMean'])
 # V8-D4のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v8_d4_pct = np.reciprocal((df_cycle_v8_d4.T / df_cycle_v8_d4["V8-D4 ooo.v"].T).T)
+df_cycle_v8_d4_pct = np.reciprocal((df_cycle_v8_d4.T / df_cycle_v8_d4["V8-D4 OoO"].T).T)
 df_cycle_v8_d4_pct.loc['GeoMean'] = df_cycle_v8_d4_pct.mean()
 df_cycle_v8_d4_pct.plot.bar(title="V8-D4 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.savefig("v8_d4_perf.pdf", bbox_inches='tight')
+# plt.savefig("v8_d4_perf.pdf", bbox_inches='tight')
 
 display(df_cycle_v8_d4)
 display(df_cycle_v8_d4_pct.loc['GeoMean'])
@@ -151,10 +153,10 @@ display(df_cycle_v8_d4_pct.loc['GeoMean'])
 # V16-D4のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v16_d4_pct = np.reciprocal((df_cycle_v16_d4.T / df_cycle_v16_d4["V16-D4 ooo.v"].T).T)
+df_cycle_v16_d4_pct = np.reciprocal((df_cycle_v16_d4.T / df_cycle_v16_d4["V16-D4 OoO"].T).T)
 df_cycle_v16_d4_pct.loc['GeoMean'] = df_cycle_v16_d4_pct.mean()
 df_cycle_v16_d4_pct.plot.bar(title="V16-D4 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.savefig("v16_d4_perf.pdf", bbox_inches='tight')
+# plt.savefig("v16_d4_perf.pdf", bbox_inches='tight')
 
 display(df_cycle_v16_d4)
 display(df_cycle_v16_d4_pct.loc['GeoMean'])
@@ -162,10 +164,10 @@ display(df_cycle_v16_d4_pct.loc['GeoMean'])
 # V32-D4のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v32_d4_pct = np.reciprocal((df_cycle_v32_d4.T / df_cycle_v32_d4["V32-D4 ooo.v"].T).T)
+df_cycle_v32_d4_pct = np.reciprocal((df_cycle_v32_d4.T / df_cycle_v32_d4["V32-D4 OoO"].T).T)
 df_cycle_v32_d4_pct.loc['GeoMean'] = df_cycle_v32_d4_pct.mean()
 df_cycle_v32_d4_pct.plot.bar(title="V32-D4 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.savefig("v32_d4_perf.pdf", bbox_inches='tight')
+# plt.savefig("v32_d4_perf.pdf", bbox_inches='tight')
 
 display(df_cycle_v32_d4)
 display(df_cycle_v32_d4_pct.loc['GeoMean'])
@@ -178,7 +180,7 @@ df_cycle_whole_d2 = pd.concat([df_cycle_v2_d2, df_cycle_v4_d2, df_cycle_v8_d2, d
 display(df_cycle_whole_d2)
 df_cycle_whole_d2.columns = ut.d2_index2
 
-df_cycle_whole_d2_pct = np.reciprocal((df_cycle_whole_d2.T / df_cycle_v2_d2["V2-D2 vio.v.fence"].T).T)
+df_cycle_whole_d2_pct = np.reciprocal((df_cycle_whole_d2.T / df_cycle_v2_d2["V2-D2 SV Fence"].T).T)
 df_cycle_means_d2 = df_cycle_whole_d2_pct.mean()
 display(df_cycle_means_d2)
 plt.figure()
@@ -190,7 +192,7 @@ df_cycle_whole_d4 = pd.concat([df_cycle_v4_d4, df_cycle_v8_d4, df_cycle_v16_d4, 
 display(df_cycle_whole_d4)
 df_cycle_whole_d4.columns = ut.d4_index2
 
-df_cycle_whole_d4_pct = np.reciprocal((df_cycle_whole_d4.T / df_cycle_v4_d4["V4-D4 vio.v.fence"].T).T)
+df_cycle_whole_d4_pct = np.reciprocal((df_cycle_whole_d4.T / df_cycle_v4_d4["V4-D4 SV Fence"].T).T)
 df_cycle_means_d4 = df_cycle_whole_d4_pct.mean()
 display(df_cycle_means_d4)
 plt.figure()
@@ -198,7 +200,7 @@ df_cycle_means_d4.plot.line(style=['bo-'], title="Relative Performance of V4-D4 
 plt.savefig("relative_performance.pdf", bbox_inches='tight')
 
 
-  #%%
+#%%
 # V4-D2のサイクル数でグラフを作る
 
 import pandas as pd
@@ -206,48 +208,35 @@ import util_power as ut_p
 
 v2_d2_power = ut_p.get_power_with_vlen_dlen(128, 128)
 df_power_detail_v2_d2 = pd.DataFrame(map(lambda i: pd.DataFrame(v2_d2_power[i]).fillna(0.0).sum(), range(len(ut.benchmarks))))
-df_power_detail_v2_d2.columns = list(map(lambda b: "V2-D2 " + b, ut.pipe_conf))
+df_power_detail_v2_d2.columns = list(map(lambda b: "V2-D2 " + b, ut.pipe_conf2))
 df_power_detail_v2_d2.index = ut.benchmarks
 
 v4_d2_power = ut_p.get_power_with_vlen_dlen(256, 128)
 df_power_detail_v4_d2 = pd.DataFrame(map(lambda i: pd.DataFrame(v4_d2_power[i]).fillna(0.0).sum(), range(len(ut.benchmarks))))
-df_power_detail_v4_d2.columns = list(map(lambda b: "V4-D2 " + b, ut.pipe_conf))
+df_power_detail_v4_d2.columns = list(map(lambda b: "V4-D2 " + b, ut.pipe_conf2))
 df_power_detail_v4_d2.index = ut.benchmarks
 
 v8_d2_power = ut_p.get_power_with_vlen_dlen(512, 128)
 df_power_detail_v8_d2 = pd.DataFrame(map(lambda i: pd.DataFrame(v8_d2_power[i]).fillna(0.0).sum(), range(len(ut.benchmarks))))
-df_power_detail_v8_d2.columns = list(map(lambda b: "V8-D2 " + b, ut.pipe_conf))
+df_power_detail_v8_d2.columns = list(map(lambda b: "V8-D2 " + b, ut.pipe_conf2))
 df_power_detail_v8_d2.index = ut.benchmarks
 
 v16_d2_power = ut_p.get_power_with_vlen_dlen(1024, 128)
 df_power_detail_v16_d2 = pd.DataFrame(map(lambda i: pd.DataFrame(v16_d2_power[i]).fillna(0.0).sum(), range(len(ut.benchmarks))))
-df_power_detail_v16_d2.columns = list(map(lambda b: "V16-D2 " + b, ut.pipe_conf))
+df_power_detail_v16_d2.columns = list(map(lambda b: "V16-D2 " + b, ut.pipe_conf2))
 df_power_detail_v16_d2.index = ut.benchmarks
 
 df_energy_v2_d2 = df_power_detail_v2_d2 * df_cycle_v2_d2
-df_energy_v2_d2 = df_energy_v2_d2.sum()
+df_sum_energy_v2_d2 = df_energy_v2_d2.sum()
 
 df_energy_v4_d2 = df_power_detail_v4_d2 * df_cycle_v4_d2
-df_energy_v4_d2 = df_energy_v4_d2.sum()
+df_sum_energy_v4_d2 = df_energy_v4_d2.sum()
 
 df_energy_v8_d2 = df_power_detail_v8_d2 * df_cycle_v8_d2
-df_energy_v8_d2 = df_energy_v8_d2.sum()
+df_sum_energy_v8_d2 = df_energy_v8_d2.sum()
 
 df_energy_v16_d2 = df_power_detail_v16_d2 * df_cycle_v16_d2
-df_energy_v16_d2 = df_energy_v16_d2.sum()
-
-#%%
-
-df_power_detail_all = pd.concat([df_power_detail_v2_d2,
-                                 df_power_detail_v4_d2,
-                                 df_power_detail_v8_d2,
-                                 df_power_detail_v16_d2])
-display(df_power_detail_v2_d2)
-display(df_power_detail_v4_d2)
-display(df_power_detail_v8_d2)
-display(df_power_detail_v16_d2)
-
-df_power_detail_all.sum().plot.bar(title="Power Estimation", figsize=(10, 3))
+df_sum_energy_v16_d2 = df_energy_v16_d2.sum()
 
 #%%
 # V2-D2のエネルギー詳細を取得する
@@ -278,8 +267,6 @@ for c in df_power_detail_v2_d2.columns:
   df_energy_v2_d2 = pd.concat([df_energy_v2_d2, e], axis=1)
 
 
-#%%
-
 # V4-D2のエネルギー詳細を取得する
 # 作りたいもの：
 #  行：各モジュールの消費エネルギー(各ベンチマークのものの総合計)
@@ -306,8 +293,6 @@ for c in df_power_detail_v4_d2.columns:
   # 行の追加
   df_power_v4_d2  = pd.concat([df_power_v4_d2, p],  axis=1)
   df_energy_v4_d2 = pd.concat([df_energy_v4_d2, e], axis=1)
-
-#%%
 
 # V8-D2のエネルギー詳細を取得する
 # 作りたいもの：
@@ -364,8 +349,6 @@ for c in df_power_detail_v16_d2.columns:
   df_energy_v16_d2 = pd.concat([df_energy_v16_d2, e], axis=1)
 
 
-
-#%%
 # V4-D4のエネルギー詳細を取得する
 # 作りたいもの：
 #  行：各モジュールの消費エネルギー(各ベンチマークのものの総合計)
@@ -394,8 +377,6 @@ for c in df_power_detail_v4_d4.columns:
   df_energy_v4_d4 = pd.concat([df_energy_v4_d4, e], axis=1)
 
 
-#%%
-
 # V8-D4のエネルギー詳細を取得する
 # 作りたいもの：
 #  行：各モジュールの消費エネルギー(各ベンチマークのものの総合計)
@@ -423,7 +404,6 @@ for c in df_power_detail_v8_d4.columns:
   df_power_v8_d4  = pd.concat([df_power_v8_d4, p],  axis=1)
   df_energy_v8_d4 = pd.concat([df_energy_v8_d4, e], axis=1)
 
-#%%
 
 # V16-D4のエネルギー詳細を取得する
 # 作りたいもの：
@@ -499,10 +479,10 @@ plt.ylim(0.0, df_power_whole_d4.sum().max()*1.1)
 #%%
 # 全部のエネルギーを計算
 df_energy_whole_d2 = pd.concat([df_energy_v2_d2, df_energy_v4_d2, df_energy_v8_d2, df_energy_v16_d2], axis=1)
-df_energy_whole_d2.columns = ut.d2_index2
+# df_energy_whole_d2.columns = ut.d2_index2
 
 df_energy_whole_d4 = pd.concat([df_energy_v4_d4, df_energy_v8_d4, df_energy_v16_d4, df_energy_v32_d4], axis=1)
-df_energy_whole_d4.columns = ut.d4_index2
+# df_energy_whole_d4.columns = ut.d4_index2
 
 display(df_energy_whole_d2)
 energy_graph = df_energy_whole_d2.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4", stacked=True)
@@ -513,7 +493,7 @@ energy_graph.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left
 plt.ylim(0.0, df_energy_whole_d4.sum().max() * 1.1)
 plt.show()
 
-plt.savefig("relative_energy.pdf", bbox_inches='tight')
+# plt.savefig("relative_energy.pdf", bbox_inches='tight')
 
 display(df_energy_whole_d4)
 energy_graph = df_energy_whole_d4.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4", stacked=True)
@@ -575,7 +555,7 @@ plt.xlim(0.0, df_energy_whole_d2_pct.sum().max() * 1.1)
 plt.ylim(0.0, df_cycle_whole_d2_pct.mean().max() * 1.1)
 plt.xlabel("Energy (Lower is Better)")
 plt.ylabel("Performance (Higher is Better)")
-plt.savefig("energy_perf_d2.pdf", bbox_inches='tight')
+# plt.savefig("energy_perf_d2.pdf", bbox_inches='tight')
 
 #%%
 # D4 : 性能とエネルギーの分布図を作る
@@ -626,7 +606,7 @@ plt.xlim(0.0, df_energy_whole_d4_pct.sum().max() * 1.1)
 plt.ylim(0.0, df_cycle_whole_d4_pct.mean().max() * 1.1)
 plt.xlabel("Energy (Lower is Better)")
 plt.ylabel("Performance (Higher is Better)")
-plt.savefig("energy_perf_d4.pdf", bbox_inches='tight')
+# plt.savefig("energy_perf_d4.pdf", bbox_inches='tight')
 
 
 # %%
@@ -709,9 +689,9 @@ plt.xlabel("Area (Lower is Better)")
 plt.ylabel("Performance (Higher is Better)")
 plt.xlim(0.0, df_area_whole_d2.sum().max() * 1.1)
 plt.ylim(0.0, df_cycle_whole_d2_pct.mean().max() * 1.1)
-plt.savefig("area_perf.pdf", bbox_inches='tight')
+# plt.savefig("area_perf.pdf", bbox_inches='tight')
 
-df_area_whole_d2_pct.to_csv("relative_area.csv")
+# df_area_whole_d2_pct.to_csv("relative_area.csv")
 
 # %%
 # 全体表示用の一覧を出力
@@ -827,3 +807,54 @@ display(df_dc_insts_v32_d4)
 display((df_dc_load_misses_v32_d4 + df_dc_store_misses_v32_d4) / df_dc_insts_v32_d4 * 1000)
 
 # %%
+
+# df_vec_ooo_fence    = df_vec_ooo.filter(regex='fence$')
+# df_vec_ooo_lsu_ino  = df_vec_ooo.filter(regex='lsu-inorder$')
+# df_vec_ooo_ngs      = df_vec_ooo.filter(regex='ngs$')
+# df_vec_ooo_vio      = df_vec_ooo.filter(regex='vio.v$')
+# df_vec_ooo_ooo      = df_vec_ooo.filter(regex='ooo.v$')
+# 
+# df_scalar_ooo_fence    = df_scalar_ooo.filter(regex='fence$')
+# df_scalar_ooo_lsu_ino  = df_scalar_ooo.filter(regex='lsu-inorder$')
+# df_scalar_ooo_ngs      = df_scalar_ooo.filter(regex='ngs$')
+# df_scalar_ooo_vio      = df_scalar_ooo.filter(regex='vio.v$')
+# df_scalar_ooo_ooo      = df_scalar_ooo.filter(regex='ooo.v$')
+# 
+# display(pd.concat([pd.DataFrame(df_vec_ooo_fence  ), pd.DataFrame(df_scalar_ooo_fence  ), pd.DataFrame(df_all_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_lsu_ino), pd.DataFrame(df_scalar_ooo_lsu_ino), pd.DataFrame(df_all_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_ngs    ), pd.DataFrame(df_scalar_ooo_ngs    ), pd.DataFrame(df_all_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_vio    ), pd.DataFrame(df_scalar_ooo_vio    ), pd.DataFrame(df_all_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_ooo    ), pd.DataFrame(df_scalar_ooo_ooo    ), pd.DataFrame(df_all_uops)], axis=1))
+# 
+# display(pd.concat([pd.DataFrame(df_vec_ooo_fence  ), pd.DataFrame(df_vec_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_lsu_ino), pd.DataFrame(df_vec_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_ngs    ), pd.DataFrame(df_vec_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_vio    ), pd.DataFrame(df_vec_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_ooo    ), pd.DataFrame(df_vec_uops)], axis=1))
+
+# %%
+
+# 追い越しを行った回数を記録する
+
+scalar_ooo_issue = [sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['stop'] - sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['start']     if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('scalar-vec-ooo-issue')    else 0 for b in ut.bench_and_dhry]
+vec_ooo_issue    = [sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['stop']    - sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['start']        if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('vec-vec-ooo-issue')       else 0 for b in ut.bench_and_dhry]
+uops_total       = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
+
+pd.concat([pd.DataFrame(scalar_ooo_issue , index=ut.bench_and_dhry, columns=["スカラ命令が古い命令を追い越して発行した回数"]),
+           pd.DataFrame(vec_ooo_issue    , index=ut.bench_and_dhry, columns=["ベクトル命令が古い命令を追い越して発行した回数"]),
+           pd.DataFrame(uops_total       , index=ut.bench_and_dhry, columns=["全体命令数"])], axis=1)
+
+# %%
+# 各ベンチマークにおけるスカラ命令とベクトル命令の割合を表示する
+
+uops_vec_arith = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_arith']['stop']  if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_arith')  else 0 for b in ut.bench_and_dhry]
+uops_vec_mem   = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_memacc']['stop'] if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_memacc') else 0 for b in ut.bench_and_dhry]
+uops_total     = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
+
+uops_vec_rate = ((pd.DataFrame(uops_vec_arith).T + pd.DataFrame(uops_vec_mem).T) / pd.DataFrame(uops_total).T).T
+uops_vec_rate.columns=["V16-D2"]
+uops_vec_rate.index=ut.bench_and_dhry
+
+uops_vec_rate = uops_vec_rate.sort_values('V16-D2', ascending=False)
+display(uops_vec_rate)
+
