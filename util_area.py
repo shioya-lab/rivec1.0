@@ -6,8 +6,8 @@ import utils as ut
 def calc_area(conf):
     area_detail = dict()
     for e in ut.e_elem:
-        e_name = e
-        csv_data = ut.load_csv(ut.conf_filename[e] + "." + conf)
+        e_name = e + "." + conf
+        csv_data = ut.load_csv(e_name)
         area_detail[e_name] = dict()
         for grp_name in ut.e_elem[e] :
             for m in ut.e_elem[e][grp_name] :
@@ -24,9 +24,9 @@ def calc_area(conf):
 def calc_group_area(conf):
     area_detail = dict()
     for e in ut.e_elem:
-        e_name = e
-        print("calc_group_area : load csv " + ut.conf_filename[e] + "." + conf)
-        csv_data = ut.load_csv(ut.conf_filename[e] + "." + conf)
+        e_name = e + "." + conf
+        print("calc_group_area : load csv " + e_name)
+        csv_data = ut.load_csv(e_name)
         area_detail[e_name] = dict()
         for grp_name in ut.e_elem[e] :
             for m in ut.e_elem[e][grp_name] :
