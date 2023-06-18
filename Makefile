@@ -5,9 +5,12 @@ APPLICATION_DIRS := _axpy _streamcluster _blackscholes _canneal _swaptions _part
 VLEN ?= 256
 DLEN ?= $(VLEN)
 
-all: run_scalar runspike_v2 runspike_v4 runspike_v8 runspike_v16 runspike_v32
+all: build_tests
+	$(MAKE) run_scalar runspike_v2 runspike_v4 runspike_v8 runspike_v16 runspike_v32
 	$(MAKE) run_v2d2 run_v4d2 run_v8d2 run_v16d2 run_v4d4 run_v8d4 run_v16d4 run_v32d4
 
+build_tests:
+	$(MAKE) $(addsuffix _build,$(APPLICATION_DIRS))
 run_scalar:
 	$(MAKE) $(subst _,scalar_,$(APPLICATION_DIRS))
 runspike_v2:
@@ -75,6 +78,9 @@ power: $(addprefix power,$(APPLICATION_DIRS))
 
 only_spike:
 	$(MAKE) $(addsuffix _spike, $(APPLICATION_DIRS))
+
+$(addsuffix _build, $(APPLICATION_DIRS)):
+	$(MAKE) -C $(subst _build,, $@) vector scalar
 
 $(addsuffix _spike, $(APPLICATION_DIRS)):
 	$(MAKE) -C $(subst _spike,, $@) runspike-v

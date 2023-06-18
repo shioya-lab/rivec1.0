@@ -14,14 +14,16 @@ $(serial_target):
 	mkdir -p bin
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.scalar.o src/jacobi-2d.cpp; \
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64gc --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -march=rv64g -O2 -o $(serial_target) src/*.scalar.o -lm; \
-	riscv64-unknown-elf-objdump -d $(serial_target) > bin/jacobi-2d_serial.dump
+
+#	riscv64-unknown-elf-objdump -d $(serial_target) > bin/jacobi-2d_serial.dump
 
 vector: $(rvv_target)
 $(rvv_target):
 	mkdir -p bin
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/jacobi-2d.vector.o src/jacobi-2d.cpp; \
 	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(rvv_target) src/*.vector.o -lm ; \
-	riscv64-unknown-elf-objdump -d $(rvv_target) > bin/jacobi-2d_vector.dump
+
+#	riscv64-unknown-elf-objdump -d $(rvv_target) > bin/jacobi-2d_vector.dump
 
 host:
 	g++ -O2 -g -Wall -std=c99 -c -o  src/jacobi-2d.vector.o  src/jacobi-2d.cpp ; \
