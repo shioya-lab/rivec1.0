@@ -100,18 +100,16 @@ e_elem['vio.v.fence']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count
 e_elem['vio.v.fence']['Vector Registers'] = ['v_ino:Register_Files']
 e_elem['vio.v.fence']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['vio.v.fence']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', '-s_ooo:Data_Cache']
-e_elem['vio.v.fence']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ino:Data_Cache']
+e_elem['vio.v.fence']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
 
 # -----------------------------
 # Vector In-order / Scalar LSU InOrder
 # -----------------------------
 e_elem['vio.v.lsu-inorder'] = dict()
 e_elem['vio.v.lsu-inorder']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
-e_elem['vio.v.lsu-inorder']['Rename'] = ['s_ooo:Renaming_Unit',
-                              'v_ooo:Renaming_Unit']
+e_elem['vio.v.lsu-inorder']['Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['vio.v.lsu-inorder']['Scheduler'] = ['s_ooo:Instruction_Window',
                                 's_ooo:FP_Instruction_Window',
-                                'v_ooo:FP_Instruction_Window',
                                 's_ooo:ROB']
 e_elem['vio.v.lsu-inorder']['Scalar FU']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
                                  's_ooo:Integer_ALUs__Count',
@@ -120,10 +118,10 @@ e_elem['vio.v.lsu-inorder']['Scalar FU']  = ['s_ooo:Floating_Point_Units__FPUs__
 # e_elem['vio.v.lsu-inorder']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['vio.v.lsu-inorder']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
-e_elem['vio.v.lsu-inorder']['Vector Registers'] = ['v_ooo:Register_Files']
+e_elem['vio.v.lsu-inorder']['Vector Registers'] = ['v_ino:Register_Files']
 e_elem['vio.v.lsu-inorder']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['vio.v.lsu-inorder']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', '-s_ooo:Data_Cache']
-e_elem['vio.v.lsu-inorder']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:Data_Cache']
+e_elem['vio.v.lsu-inorder']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
 
 # -----------------------------
 # with Porposal and Non-GatherScatter Merge
@@ -144,7 +142,7 @@ e_elem['vio.v.ngs']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['vio.v.ngs']['Vector Registers'] = ['v_ino:Register_Files']
 e_elem['vio.v.ngs']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['vio.v.ngs']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s_ngs:LoadQ', '-s_ooo:Data_Cache']
-e_elem['vio.v.ngs']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ino:Data_Cache']
+e_elem['vio.v.ngs']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
 
 # -------------------------
 # Proposal
@@ -165,7 +163,7 @@ e_elem['vio.v']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['vio.v']['Vector Registers'] = ['v_ino:Register_Files']
 e_elem['vio.v']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['vio.v']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', '-s_ooo:Data_Cache']
-e_elem['vio.v']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ino:Data_Cache']
+e_elem['vio.v']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
 
 # -------------------------
 # All-OoO
