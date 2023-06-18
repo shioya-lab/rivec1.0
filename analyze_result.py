@@ -1,6 +1,5 @@
 #%%
-# 面積を算出
-
+# SQLからデータをロードする
 import pandas as pd
 import matplotlib.pyplot as plt
 import utils as ut
@@ -8,7 +7,13 @@ import util_area as ut_a
 import util_cycle as ut_c
 import util_power as ut_p
 import numpy as np
+from IPython.display import display
 
+# SQLからすべての情報を取得する
+sql_info  = {d: {v: {b: {c: ut.get_sqlite_info(b, v, d, c) for c in ut.pipe_conf} for b in ut.bench_and_dhry} for v in [d*1, d*2, d*4, d*8]} for d in [128, 256]}
+
+#%%
+# 面積を算出
 
 df_area_d2_v2_d2 = pd.DataFrame(ut_a.calc_group_area("v128_d128"))
 df_area_d2_v4_d2 = pd.DataFrame(ut_a.calc_group_area("v256_d128"))
@@ -60,24 +65,16 @@ import utils as ut
 import util_cycle as ut_c
 
 def get_cycle_with_app(app, vlen, dlen):
-    return list(map(lambda p: ut_c.get_cycle(app, p, vlen, dlen) / 100000, ut.pipe_conf))
-    
-df_cycle_v2_d2  = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 128, 128), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V2-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_cycle_v4_d2  = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 256, 128), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V4-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_cycle_v8_d2  = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 512, 128), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V8-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_cycle_v16_d2  = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 1024, 128), ut.benchmarks)), 
-                                     columns=(map(lambda b: "V16-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_cycle_v4_d4  = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 256, 256), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V4-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_cycle_v8_d4  = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 512, 256), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V8-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_cycle_v16_d4 = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 1024, 256), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V16-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_cycle_v32_d4 = pd.DataFrame(list(map(lambda b: get_cycle_with_app(b, 2048, 256), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V32-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
+  return [ut_c.get_cycle(sql_info, app, p, vlen, dlen) / 100000 for p in ut.pipe_conf]
+
+df_cycle_v2_d2   = pd.DataFrame([get_cycle_with_app(b,  128, 128) for b in ut.benchmarks], columns=["V2-D2 "  + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_cycle_v4_d2   = pd.DataFrame([get_cycle_with_app(b,  256, 128) for b in ut.benchmarks], columns=["V4-D2 "  + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_cycle_v8_d2   = pd.DataFrame([get_cycle_with_app(b,  512, 128) for b in ut.benchmarks], columns=["V8-D2 "  + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_cycle_v16_d2  = pd.DataFrame([get_cycle_with_app(b, 1024, 128) for b in ut.benchmarks], columns=["V16-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_cycle_v4_d4   = pd.DataFrame([get_cycle_with_app(b,  256, 256) for b in ut.benchmarks], columns=["V4-D4 "  + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_cycle_v8_d4   = pd.DataFrame([get_cycle_with_app(b,  512, 256) for b in ut.benchmarks], columns=["V8-D4 "  + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_cycle_v16_d4  = pd.DataFrame([get_cycle_with_app(b, 1024, 256) for b in ut.benchmarks], columns=["V16-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_cycle_v32_d4  = pd.DataFrame([get_cycle_with_app(b, 2048, 256) for b in ut.benchmarks], columns=["V32-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
 
 #%%
 # V4-D2 のテーブルを作る
@@ -183,9 +180,9 @@ df_cycle_whole_d2.columns = ut.d2_index2
 df_cycle_whole_d2_pct = np.reciprocal((df_cycle_whole_d2.T / df_cycle_v2_d2["V2-D2 SV Fence"].T).T)
 df_cycle_means_d2 = df_cycle_whole_d2_pct.mean()
 display(df_cycle_means_d2)
-plt.figure()
-df_cycle_means_d2.plot.line(style=['bo-'], title="Relative Performance of V2-D2 / V4-D2 / V8-D2 / V16-D2", figsize=(10, 3))
-plt.savefig("relative_performance.pdf", bbox_inches='tight')
+# plt.figure()
+# df_cycle_means_d2.plot.line(style=['bo-'], title="Relative Performance of V2-D2 / V4-D2 / V8-D2 / V16-D2", figsize=(10, 3))
+# plt.savefig("relative_performance.pdf", bbox_inches='tight')
 
 # D4シリーズ
 df_cycle_whole_d4 = pd.concat([df_cycle_v4_d4, df_cycle_v8_d4, df_cycle_v16_d4, df_cycle_v32_d4], axis=1)
@@ -195,9 +192,9 @@ df_cycle_whole_d4.columns = ut.d4_index2
 df_cycle_whole_d4_pct = np.reciprocal((df_cycle_whole_d4.T / df_cycle_v4_d4["V4-D4 SV Fence"].T).T)
 df_cycle_means_d4 = df_cycle_whole_d4_pct.mean()
 display(df_cycle_means_d4)
-plt.figure()
-df_cycle_means_d4.plot.line(style=['bo-'], title="Relative Performance of V4-D4 / V8-D4 / V16-D4 / V32-D2", figsize=(10, 3))
-plt.savefig("relative_performance.pdf", bbox_inches='tight')
+# plt.figure()
+# df_cycle_means_d4.plot.line(style=['bo-'], title="Relative Performance of V4-D4 / V8-D4 / V16-D4 / V32-D2", figsize=(10, 3))
+# plt.savefig("relative_performance.pdf", bbox_inches='tight')
 
 
 #%%
@@ -464,8 +461,8 @@ for c in df_power_detail_v32_d4.columns:
 #%%
 # 全部の電力を比較
 
-df_power_whole_d2 = pd.concat([df_power_v2_d2, df_power_v4_d2, df_power_v8_d2], axis=1)
-df_power_whole_d4 = pd.concat([df_power_v4_d4, df_power_v8_d4, df_power_v16_d4], axis=1)
+df_power_whole_d2 = pd.concat([df_power_v2_d2, df_power_v4_d2, df_power_v8_d2 , df_power_v16_d2], axis=1)
+df_power_whole_d4 = pd.concat([df_power_v4_d4, df_power_v8_d4, df_power_v16_d4, df_power_v32_d4], axis=1)
 
 display(df_power_whole_d2)
 df_power_whole_d2.T.plot.bar(title="Power Estimation of V2-D2 / V4-D2 / V8-D2 / V16-D2", stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
@@ -485,7 +482,7 @@ df_energy_whole_d4 = pd.concat([df_energy_v4_d4, df_energy_v8_d4, df_energy_v16_
 # df_energy_whole_d4.columns = ut.d4_index2
 
 display(df_energy_whole_d2)
-energy_graph = df_energy_whole_d2.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4", stacked=True)
+energy_graph = df_energy_whole_d2.T.plot(kind='bar', title="Energy Estimation of V2-D2 V4-D2 V8-D2 V16-D2", stacked=True)
 handles, labels = energy_graph.get_legend_handles_labels()
 handles = handles[::-1]
 labels = labels[::-1]
@@ -496,7 +493,7 @@ plt.show()
 # plt.savefig("relative_energy.pdf", bbox_inches='tight')
 
 display(df_energy_whole_d4)
-energy_graph = df_energy_whole_d4.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4", stacked=True)
+energy_graph = df_energy_whole_d4.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4 V32-D4", stacked=True)
 handles, labels = energy_graph.get_legend_handles_labels()
 handles = handles[::-1]
 labels = labels[::-1]
@@ -513,38 +510,38 @@ df_energy_whole_d2_pct = df_energy_whole_d2 / df_energy_whole_d2.sum().min()
 
 d2_index_list = ['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2']
 
-df_perf_d2_fence    = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Fence$').mean(),    columns=['VecInO Fence']   ).set_axis(d2_index_list)
-df_perf_d2_lsuino   = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='LSUInO$').mean(),   columns=['VecInO LSUInO']  ).set_axis(d2_index_list)
-df_perf_d2_nomerge  = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='NoMerge$').mean(),  columns=['VecInO NoMerge'] ).set_axis(d2_index_list)
-df_perf_d2_proposal = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Proposal$').mean(), columns=['VecInO Proposal']).set_axis(d2_index_list)
-df_perf_d2_ooo      = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='OoO$').mean(),      columns=['VecOoO']         ).set_axis(d2_index_list)
+df_perf_d2_fence    = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='SV Fence$').mean(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
+df_perf_d2_lsuino   = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='SV MEM Fence$').mean(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
+df_perf_d2_nomerge  = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Prop1$').mean(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
+df_perf_d2_proposal = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Prop1\+Prop2$').mean(), columns=['Prop1+Prop2'] ).set_axis(d2_index_list, axis=0)
+df_perf_d2_ooo      = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='OoO$').mean(),          columns=['VecOoO']      ).set_axis(d2_index_list, axis=0)
 
-df_energy_d2_fence    = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Fence$').sum(),    columns=['VecInO Fence']   ).set_axis(d2_index_list)
-df_energy_d2_lsuino   = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='LSUInO$').sum(),   columns=['VecInO LSUInO']  ).set_axis(d2_index_list)
-df_energy_d2_nomerge  = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='NoMerge$').sum(),  columns=['VecInO NoMerge'] ).set_axis(d2_index_list)
-df_energy_d2_proposal = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Proposal$').sum(), columns=['VecInO Proposal']).set_axis(d2_index_list)
-df_energy_d2_ooo      = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d2_index_list)
+df_energy_d2_fence    = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='SV Fence$').sum(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
+df_energy_d2_lsuino   = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='SV MEM Fence$').sum(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
+df_energy_d2_nomerge  = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Prop1$').sum(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
+df_energy_d2_proposal = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Prop1\+Prop2$').sum(), columns=['Prop1+Prop2'] ).set_axis(d2_index_list, axis=0)
+df_energy_d2_ooo      = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='OoO$').sum(),          columns=['VecOoO']      ).set_axis(d2_index_list, axis=0)
 
-df_area_d2_fence    = pd.DataFrame(df_area_whole_d2.filter(regex='Fence$').sum(),    columns=['VecInO Fence']   ).set_axis(d2_index_list)
-df_area_d2_lsuino   = pd.DataFrame(df_area_whole_d2.filter(regex='LSUInO$').sum(),   columns=['VecInO LSUInO']  ).set_axis(d2_index_list)
-df_area_d2_nomerge  = pd.DataFrame(df_area_whole_d2.filter(regex='NoMerge$').sum(),  columns=['VecInO NoMerge'] ).set_axis(d2_index_list)
-df_area_d2_proposal = pd.DataFrame(df_area_whole_d2.filter(regex='Proposal$').sum(), columns=['VecInO Proposal']).set_axis(d2_index_list)
-df_area_d2_ooo      = pd.DataFrame(df_area_whole_d2.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d2_index_list)
+df_area_d2_fence    = pd.DataFrame(df_area_whole_d2.filter(regex='SV Fence$').sum(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
+df_area_d2_lsuino   = pd.DataFrame(df_area_whole_d2.filter(regex='SV MEM Fence$').sum(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
+df_area_d2_nomerge  = pd.DataFrame(df_area_whole_d2.filter(regex='Prop1$').sum(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
+df_area_d2_proposal = pd.DataFrame(df_area_whole_d2.filter(regex='Prop1\+Prop2$').sum(), columns=['Prop1+Prop2'] ).set_axis(d2_index_list, axis=0)
+df_area_d2_ooo      = pd.DataFrame(df_area_whole_d2.filter(regex='OoO$').sum(),          columns=['VecOoO']      ).set_axis(d2_index_list, axis=0)
 
-plt.scatter(df_energy_d2_fence, df_perf_d2_fence, label='VecInO Fence', color='blue')
+plt.scatter(df_energy_d2_fence, df_perf_d2_fence, label='SV Fence', color='blue')
 plt.plot   (df_energy_d2_fence, df_perf_d2_fence, color='blue')
-plt.axline((0, 0), (df_energy_d2_fence['VecInO Fence']['V4-D2'], 
-                    df_perf_d2_fence  ['VecInO Fence']['V4-D2']), color='blue', lw=0.5)
+plt.axline((0, 0), (df_energy_d2_fence['SV Fence']['V4-D2'], 
+                    df_perf_d2_fence  ['SV Fence']['V4-D2']), color='blue', lw=0.5)
 
-plt.scatter(df_energy_d2_nomerge, df_perf_d2_nomerge, label='VecInO NoMerge', color='green')
-plt.plot   (df_energy_d2_nomerge, df_perf_d2_nomerge, label='VecInO NoMerge', color='green')
-plt.axline((0, 0), (df_energy_d2_nomerge['VecInO NoMerge']['V4-D2'], 
-                    df_perf_d2_nomerge  ['VecInO NoMerge']['V4-D2']), color='green', lw=0.5)
+plt.scatter(df_energy_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
+plt.plot   (df_energy_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
+plt.axline((0, 0), (df_energy_d2_nomerge['Prop1']['V4-D2'], 
+                    df_perf_d2_nomerge  ['Prop1']['V4-D2']), color='green', lw=0.5)
 
-plt.scatter(df_energy_d2_proposal, df_perf_d2_proposal, label='VecInO Proposal', color='purple')
-plt.plot   (df_energy_d2_proposal, df_perf_d2_proposal, label='VecInO Proposal', color='purple')
-plt.axline((0, 0), (df_energy_d2_proposal['VecInO Proposal']['V4-D2'], 
-                    df_perf_d2_proposal  ['VecInO Proposal']['V4-D2']), color='purple', lw=0.5)
+plt.scatter(df_energy_d2_proposal, df_perf_d2_proposal, label='Prop1+Prop2', color='purple')
+plt.plot   (df_energy_d2_proposal, df_perf_d2_proposal, label='Prop1+Prop2', color='purple')
+plt.axline((0, 0), (df_energy_d2_proposal['Prop1+Prop2']['V4-D2'], 
+                    df_perf_d2_proposal  ['Prop1+Prop2']['V4-D2']), color='purple', lw=0.5)
 
 plt.scatter(df_energy_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
 plt.plot   (df_energy_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
@@ -564,38 +561,38 @@ df_energy_whole_d4_pct = df_energy_whole_d4 / df_energy_whole_d4.sum().min()
 
 d4_index_list = ['V4-D4', 'V8-D4', 'V16-D4', 'V32-D4']
 
-df_perf_d4_fence    = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Fence$').mean(),    columns=['VecInO Fence']   ).set_axis(d4_index_list)
-df_perf_d4_lsuino   = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='LSUInO$').mean(),   columns=['VecInO LSUInO']  ).set_axis(d4_index_list)
-df_perf_d4_nomerge  = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='NoMerge$').mean(),  columns=['VecInO NoMerge'] ).set_axis(d4_index_list)
-df_perf_d4_proposal = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Proposal$').mean(), columns=['VecInO Proposal']).set_axis(d4_index_list)
-df_perf_d4_ooo      = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='OoO$').mean(),      columns=['VecOoO']         ).set_axis(d4_index_list)
+df_perf_d4_fence    = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='SV Fence$').mean(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
+df_perf_d4_lsuino   = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='SV MEM Fence$').mean(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
+df_perf_d4_nomerge  = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Prop1$').mean(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
+df_perf_d4_proposal = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Prop1\+Prop2$').mean(), columns=['Prop1+Prop2']).set_axis(d4_index_list, axis=0)
+df_perf_d4_ooo      = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='OoO$').mean(),      columns=['VecOoO']         ).set_axis(d4_index_list, axis=0)
 
-df_energy_d4_fence    = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Fence$').sum(),    columns=['VecInO Fence']   ).set_axis(d4_index_list)
-df_energy_d4_lsuino   = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='LSUInO$').sum(),   columns=['VecInO LSUInO']  ).set_axis(d4_index_list)
-df_energy_d4_nomerge  = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='NoMerge$').sum(),  columns=['VecInO NoMerge'] ).set_axis(d4_index_list)
-df_energy_d4_proposal = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Proposal$').sum(), columns=['VecInO Proposal']).set_axis(d4_index_list)
-df_energy_d4_ooo      = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d4_index_list)
+df_energy_d4_fence    = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='SV Fence$').sum(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
+df_energy_d4_lsuino   = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='SV MEM Fence$').sum(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
+df_energy_d4_nomerge  = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Prop1$').sum(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
+df_energy_d4_proposal = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Prop1\+Prop2$').sum(), columns=['Prop1+Prop2']).set_axis(d4_index_list, axis=0)
+df_energy_d4_ooo      = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d4_index_list, axis=0)
 
-df_area_d4_fence    = pd.DataFrame(df_area_whole_d4.filter(regex='Fence$').sum(),    columns=['VecInO Fence']   ).set_axis(d4_index_list)
-df_area_d4_lsuino   = pd.DataFrame(df_area_whole_d4.filter(regex='LSUInO$').sum(),   columns=['VecInO LSUInO']  ).set_axis(d4_index_list)
-df_area_d4_nomerge  = pd.DataFrame(df_area_whole_d4.filter(regex='NoMerge$').sum(),  columns=['VecInO NoMerge'] ).set_axis(d4_index_list)
-df_area_d4_proposal = pd.DataFrame(df_area_whole_d4.filter(regex='Proposal$').sum(), columns=['VecInO Proposal']).set_axis(d4_index_list)
-df_area_d4_ooo      = pd.DataFrame(df_area_whole_d4.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d4_index_list)
+df_area_d4_fence    = pd.DataFrame(df_area_whole_d4.filter(regex='SV Fence$').sum(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
+df_area_d4_lsuino   = pd.DataFrame(df_area_whole_d4.filter(regex='SV MEM Fence$').sum(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
+df_area_d4_nomerge  = pd.DataFrame(df_area_whole_d4.filter(regex='Prop1$').sum(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
+df_area_d4_proposal = pd.DataFrame(df_area_whole_d4.filter(regex='Prop1\+Prop2$').sum(), columns=['Prop1+Prop2']).set_axis(d4_index_list, axis=0)
+df_area_d4_ooo      = pd.DataFrame(df_area_whole_d4.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d4_index_list, axis=0)
 
-plt.scatter(df_energy_d4_fence, df_perf_d4_fence, label='VecInO Fence', color='blue')
+plt.scatter(df_energy_d4_fence, df_perf_d4_fence, label='SV Fence', color='blue')
 plt.plot   (df_energy_d4_fence, df_perf_d4_fence, color='blue')
-plt.axline((0, 0), (df_energy_d4_fence['VecInO Fence']['V4-D4'], 
-                    df_perf_d4_fence  ['VecInO Fence']['V4-D4']), color='blue', lw=0.5)
+plt.axline((0, 0), (df_energy_d4_fence['SV Fence']['V4-D4'], 
+                    df_perf_d4_fence  ['SV Fence']['V4-D4']), color='blue', lw=0.5)
 
-plt.scatter(df_energy_d4_nomerge, df_perf_d4_nomerge, label='VecInO NoMerge', color='green')
-plt.plot   (df_energy_d4_nomerge, df_perf_d4_nomerge, label='VecInO NoMerge', color='green')
-plt.axline((0, 0), (df_energy_d4_nomerge['VecInO NoMerge']['V4-D4'], 
-                    df_perf_d4_nomerge  ['VecInO NoMerge']['V4-D4']), color='green', lw=0.5)
+plt.scatter(df_energy_d4_nomerge, df_perf_d4_nomerge, label='Prop1', color='green')
+plt.plot   (df_energy_d4_nomerge, df_perf_d4_nomerge, label='Prop1', color='green')
+plt.axline((0, 0), (df_energy_d4_nomerge['Prop1']['V4-D4'], 
+                    df_perf_d4_nomerge  ['Prop1']['V4-D4']), color='green', lw=0.5)
 
-plt.scatter(df_energy_d4_proposal, df_perf_d4_proposal, label='VecInO Proposal', color='purple')
-plt.plot   (df_energy_d4_proposal, df_perf_d4_proposal, label='VecInO Proposal', color='purple')
-plt.axline((0, 0), (df_energy_d4_proposal['VecInO Proposal']['V4-D4'], 
-                    df_perf_d4_proposal  ['VecInO Proposal']['V4-D4']), color='purple', lw=0.5)
+plt.scatter(df_energy_d4_proposal, df_perf_d4_proposal, label='Prop1+Prop2', color='purple')
+plt.plot   (df_energy_d4_proposal, df_perf_d4_proposal, label='Prop1+Prop2', color='purple')
+plt.axline((0, 0), (df_energy_d4_proposal['Prop1+Prop2']['V4-D4'], 
+                    df_perf_d4_proposal  ['Prop1+Prop2']['V4-D4']), color='purple', lw=0.5)
 
 plt.scatter(df_energy_d4_ooo, df_perf_d4_ooo, label='VecOoO', color='red')
 plt.plot   (df_energy_d4_ooo, df_perf_d4_ooo, label='VecOoO', color='red')
@@ -633,30 +630,30 @@ plt.ylim(0.0, 2.0)
 
 # %%
 # 各ベンチマークにおける相対性能グラフを作成
-
-for b in ut.benchmarks:
-  display(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Fence$")    .loc[b]).set_axis(d2_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Fence$")   .loc[b]).set_axis(d2_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="LSUInO$")  .loc[b]).set_axis(d2_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="NoMerge$") .loc[b]).set_axis(d2_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Proposal$").loc[b]).set_axis(d2_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="OoO$")     .loc[b]).set_axis(d2_index_list))
-  plt.title("Performance rate of %s with %s" % (b, d2_index_list))
-  plt.ylim(0.0)
-  plt.show()
-  plt.cla()
-
-for b in ut.benchmarks:
-  display(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Fence$")    .loc[b]).set_axis(d4_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Fence$")   .loc[b]).set_axis(d4_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="LSUInO$")  .loc[b]).set_axis(d4_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="NoMerge$") .loc[b]).set_axis(d4_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Proposal$").loc[b]).set_axis(d4_index_list))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="OoO$")     .loc[b]).set_axis(d4_index_list))
-  plt.title("Performance rate of %s with %s" % (b, d4_index_list))
-  plt.ylim(0.0)
-  plt.show()
-  plt.cla()
+# 
+# for b in ut.benchmarks:
+#   display(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV Fence$")    .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV Fence$")   .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV MEM Fence$")  .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Prop1$") .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Prop1+Prop2$").loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="OoO$")     .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.title("Performance rate of %s with %s" % (b, d2_index_list))
+#   plt.ylim(0.0)
+#   plt.show()
+#   plt.cla()
+# 
+# for b in ut.benchmarks:
+#   display(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV Fence$")    .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV Fence$")   .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV MEM Fence$")  .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Prop1$") .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Prop1+Prop2$").loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="OoO$")     .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.title("Performance rate of %s with %s" % (b, d4_index_list))
+#   plt.ylim(0.0)
+#   plt.show()
+#   plt.cla()
 
   
 # %%
@@ -665,20 +662,20 @@ for b in ut.benchmarks:
 df_area_whole_d2_pct = df_area_whole_d2.sum() / df_area_whole_d2.sum().min()
 df_area_whole_d4_pct = df_area_whole_d4.sum() / df_area_whole_d4.sum().min()
 
-plt.scatter(df_area_d2_fence, df_perf_d2_fence, lw=2, label='VecInO Fence', color='blue')
+plt.scatter(df_area_d2_fence, df_perf_d2_fence, lw=2, label='SV Fence', color='blue')
 plt.plot   (df_area_d2_fence, df_perf_d2_fence, lw=2, color='blue')
-plt.axline((0, 0), (df_area_d2_fence['VecInO Fence']['V4-D2'], 
-                    df_perf_d2_fence['VecInO Fence']['V4-D2']), color='blue', lw=0.5)
+plt.axline((0, 0), (df_area_d2_fence['SV Fence']['V4-D2'], 
+                    df_perf_d2_fence['SV Fence']['V4-D2']), color='blue', lw=0.5)
 
-plt.scatter(df_area_d2_nomerge, df_perf_d2_nomerge, label='VecInO NoMerge', color='green')
-plt.plot   (df_area_d2_nomerge, df_perf_d2_nomerge, label='VecInO NoMerge', color='green')
-plt.axline((0, 0), (df_area_d2_nomerge['VecInO NoMerge']['V4-D2'], 
-                    df_perf_d2_nomerge['VecInO NoMerge']['V4-D2']), color='green', lw=0.5)
+plt.scatter(df_area_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
+plt.plot   (df_area_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
+plt.axline((0, 0), (df_area_d2_nomerge['Prop1']['V4-D2'], 
+                    df_perf_d2_nomerge['Prop1']['V4-D2']), color='green', lw=0.5)
 
-plt.scatter(df_area_d2_proposal, df_perf_d2_proposal, label='VecInO Proposal', color='purple')
-plt.plot   (df_area_d2_proposal, df_perf_d2_proposal, label='VecInO Proposal', color='purple')
-plt.axline((0, 0), (df_area_d2_proposal['VecInO Proposal']['V4-D2'], 
-                    df_perf_d2_proposal['VecInO Proposal']['V4-D2']), color='purple', lw=0.5)
+plt.scatter(df_area_d2_proposal, df_perf_d2_proposal, label='Prop1+Prop2', color='purple')
+plt.plot   (df_area_d2_proposal, df_perf_d2_proposal, label='Prop1+Prop2', color='purple')
+plt.axline((0, 0), (df_area_d2_proposal['Prop1+Prop2']['V4-D2'], 
+                    df_perf_d2_proposal['Prop1+Prop2']['V4-D2']), color='purple', lw=0.5)
 
 plt.scatter(df_area_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
 plt.plot   (df_area_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
@@ -710,23 +707,21 @@ print(df_d4_balance)
 # %%
 # オリジナル実装のサイクル数を取得する
 
-import pandas as pd
-import matplotlib.pyplot as plt
-import utils as ut
-import util_area as ut_a
-import util_cycle as ut_c
-import util_power as ut_p
-import numpy as np
+# import pandas as pd
+# import matplotlib.pyplot as plt
+# import utils as ut
+# import util_area as ut_a
+# import util_cycle as ut_c
+# import util_power as ut_p
+# import numpy as np
+# 
+# df_cycle_v8_d2        = pd.Series([ut_c.get_cycle(sql_info, b, 'vio.v', 512, 128) for b in ut.rivec_benchmarks], index=ut.rivec_benchmarks)
+# df_cycle_origin_v8_d2 = pd.Series([ut_c.get_cycle(sql_info, b + '_origin', 'vio.v', 512, 128) for b in ut.rivec_benchmarks], index=ut.rivec_benchmarks)
+# 
+# t = df_cycle_origin_v8_d2 / df_cycle_v8_d2
+# display(pd.concat([df_cycle_origin_v8_d2, df_cycle_v8_d2],axis=1))
+# display(t)
 
-df_cycle_v8_d2  = pd.Series(list(map(lambda b: ut_c.get_cycle(b, 'vio.v', 512, 128), ut.rivec_benchmarks)),
-                                        index=ut.rivec_benchmarks)
-
-df_cycle_origin_v8_d2  = pd.Series(list(map(lambda b: ut_c.get_cycle(b, 'vio.v', 512, 128), map(lambda b: b + "_origin", ut.rivec_benchmarks))),
-                                        index=ut.rivec_benchmarks)
-
-t = df_cycle_origin_v8_d2 / df_cycle_v8_d2
-display(pd.concat([df_cycle_origin_v8_d2, df_cycle_v8_d2],axis=1))
-display(t)
 # %%
 # L1Dの情報を取得する
 
@@ -736,77 +731,132 @@ import utils as ut
 import util_cycle as ut_c
 
 def get_dcache_info_with_app(app, vlen, dlen, op):
-    return list(map(lambda p: dc.get_dcache_info(app, p, vlen, dlen, op), ut.pipe_conf))
+    return [dc.get_dcache_info(sql_info, app, p, vlen, dlen, op) for p in ut.pipe_conf]
 def get_insts_with_app(app, vlen, dlen):
-    return list(map(lambda p: ut_c.get_insts(app, p, vlen, dlen), ut.pipe_conf))
+    return [ut_c.get_insts(sql_info, app, p, vlen, dlen) for p in ut.pipe_conf]
     
-df_dc_loads_v2_d2  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 128, 128, 'loads'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V2-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-
-df_dc_stores_v2_d2  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 128, 128, 'stores'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V2-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-
-df_dc_load_misses_v2_d2  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 128, 128, 'load-misses'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V2-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-
-df_dc_store_misses_v2_d2  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 128, 128, 'store-misses'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V2-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_dc_insts_v2_d2  = pd.DataFrame(list(map(lambda b: get_insts_with_app(b, 128, 128), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V2-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
+df_dc_loads_v2_d2         = pd.DataFrame([get_dcache_info_with_app(b, 128, 128, 'loads')        for b in ut.benchmarks], columns=["V2-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_stores_v2_d2        = pd.DataFrame([get_dcache_info_with_app(b, 128, 128, 'stores')       for b in ut.benchmarks], columns=["V2-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_load_misses_v2_d2   = pd.DataFrame([get_dcache_info_with_app(b, 128, 128, 'load-misses')  for b in ut.benchmarks], columns=["V2-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_store_misses_v2_d2  = pd.DataFrame([get_dcache_info_with_app(b, 128, 128, 'store-misses') for b in ut.benchmarks], columns=["V2-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_insts_v2_d2         = pd.DataFrame([get_insts_with_app(b, 128, 128)                       for b in ut.benchmarks], columns=["V2-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
 
 # display(df_dc_loads_v16_d2)
 # display(df_dc_stores_v16_d2)
-display(df_dc_loads_v2_d2)
-display(df_dc_load_misses_v2_d2)
-display(df_dc_insts_v2_d2)
+# display(df_dc_loads_v2_d2)
+# display(df_dc_load_misses_v2_d2)
+# display(df_dc_insts_v2_d2)
 display((df_dc_load_misses_v2_d2 + df_dc_store_misses_v2_d2) / df_dc_insts_v2_d2 * 1000)
 
-df_dc_loads_v16_d2  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 1024, 128, 'loads'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V16-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_dc_load_misses_v16_d2  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 1024, 128, 'load-misses'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V16-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_dc_store_misses_v16_d2  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 1024, 128, 'store-misses'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V16-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_dc_insts_v16_d2  = pd.DataFrame(list(map(lambda b: get_insts_with_app(b, 1024, 128), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V16-D2 " + b, ut.pipe_conf)), index=ut.benchmarks)
-display(df_dc_loads_v16_d2)
-display(df_dc_load_misses_v16_d2)
-display(df_dc_insts_v16_d2)
+df_dc_loads_v16_d2        = pd.DataFrame([get_dcache_info_with_app(b, 1024, 128, 'loads')        for b in ut.benchmarks], columns=["V16-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_load_misses_v16_d2  = pd.DataFrame([get_dcache_info_with_app(b, 1024, 128, 'load-misses')  for b in ut.benchmarks], columns=["V16-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_store_misses_v16_d2 = pd.DataFrame([get_dcache_info_with_app(b, 1024, 128, 'store-misses') for b in ut.benchmarks], columns=["V16-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_insts_v16_d2        = pd.DataFrame([get_insts_with_app(b, 1024, 128)                       for b in ut.benchmarks], columns=["V16-D2 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+
+# display(df_dc_loads_v16_d2)
+# display(df_dc_load_misses_v16_d2)
+# display(df_dc_insts_v16_d2)
 display((df_dc_load_misses_v16_d2 + df_dc_store_misses_v16_d2) / df_dc_insts_v16_d2 * 1000)
 
-df_dc_loads_v4_d4  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 256, 256, 'loads'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V4-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
+df_dc_loads_v4_d4        = pd.DataFrame([get_dcache_info_with_app(b, 256, 256, 'loads')        for b in ut.benchmarks], columns=["V4-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_stores_v4_d4       = pd.DataFrame([get_dcache_info_with_app(b, 256, 256, 'stores')       for b in ut.benchmarks], columns=["V4-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_load_misses_v4_d4  = pd.DataFrame([get_dcache_info_with_app(b, 256, 256, 'load-misses')  for b in ut.benchmarks], columns=["V4-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_store_misses_v4_d4 = pd.DataFrame([get_dcache_info_with_app(b, 256, 256, 'store-misses') for b in ut.benchmarks], columns=["V4-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_insts_v4_d4        = pd.DataFrame([get_insts_with_app(b, 256, 256)                       for b in ut.benchmarks], columns=["V4-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
 
-df_dc_stores_v4_d4  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 256, 256, 'stores'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V4-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-
-df_dc_load_misses_v4_d4  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 256, 256, 'load-misses'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V4-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-
-df_dc_store_misses_v4_d4  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 256, 256, 'store-misses'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V4-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_dc_insts_v4_d4  = pd.DataFrame(list(map(lambda b: get_insts_with_app(b, 256, 256), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V4-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-
-display(df_dc_loads_v4_d4)
-display(df_dc_load_misses_v4_d4)
-display(df_dc_insts_v4_d4)
+# display(df_dc_loads_v4_d4)
+# display(df_dc_load_misses_v4_d4)
+# display(df_dc_insts_v4_d4)
 display((df_dc_load_misses_v4_d4 + df_dc_store_misses_v4_d4) / df_dc_insts_v4_d4 * 1000)
 
-df_dc_loads_v32_d4  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 2048, 256, 'loads'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V32-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_dc_load_misses_v32_d4  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 2048, 256, 'load-misses'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V32-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_dc_store_misses_v32_d4  = pd.DataFrame(list(map(lambda b: get_dcache_info_with_app(b, 2048, 256, 'store-misses'), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V32-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-df_dc_insts_v32_d4  = pd.DataFrame(list(map(lambda b: get_insts_with_app(b, 2048, 256), ut.benchmarks)), 
-                                    columns=(map(lambda b: "V32-D4 " + b, ut.pipe_conf)), index=ut.benchmarks)
-display(df_dc_loads_v32_d4)
-display(df_dc_load_misses_v32_d4)
-display(df_dc_insts_v32_d4)
+df_dc_loads_v32_d4        = pd.DataFrame([get_dcache_info_with_app(b, 2048, 256, 'loads')        for b in ut.benchmarks], columns=["V32-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_load_misses_v32_d4  = pd.DataFrame([get_dcache_info_with_app(b, 2048, 256, 'load-misses')  for b in ut.benchmarks], columns=["V32-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_store_misses_v32_d4 = pd.DataFrame([get_dcache_info_with_app(b, 2048, 256, 'store-misses') for b in ut.benchmarks], columns=["V32-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+df_dc_insts_v32_d4        = pd.DataFrame([get_insts_with_app(b, 2048, 256)                       for b in ut.benchmarks], columns=["V32-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
+
+# display(df_dc_loads_v32_d4)
+# display(df_dc_load_misses_v32_d4)
+# display(df_dc_insts_v32_d4)
 display((df_dc_load_misses_v32_d4 + df_dc_store_misses_v32_d4) / df_dc_insts_v32_d4 * 1000)
 
 # %%
+
+# 追い越しを行った回数を記録する
+
+import pandas as pd
+import utils as ut
+import util_cycle as ut_c
+
+df_vec_ooo_issue  = [pd.DataFrame([[ut_c.get_vec_ooo_issue(sql_info, b, c, v, 128) for c in ut.pipe_conf] for b in ut.benchmarks],
+                                  columns=["V" + str(v) + "-D2 " + c for c in ut.pipe_conf2], index=ut.benchmarks) for v in [128, 256, 512, 1024]]
+df_scalar_ooo_issue  = [pd.DataFrame([[ut_c.get_scalar_ooo_issue(sql_info, b, c, v, 128) for c in ut.pipe_conf] for b in ut.benchmarks],
+                                  columns=["V" + str(v) + "-D2 " + c for c in ut.pipe_conf2], index=ut.benchmarks) for v in [128, 256, 512, 1024]]
+df_all_uops_each = [pd.DataFrame([ut_c.get_whole_uops(sql_info, b, 'vio.v', v, 128) for b in ut.benchmarks],
+                                  columns=["V" + str(v) + "-D2 "], index=ut.benchmarks) for v in [128, 256, 512, 1024]]
+df_vec_uops_each = [pd.DataFrame([ut_c.get_vec_uops(sql_info, b, 'vio.v', v, 128) for b in ut.benchmarks],
+                                  columns=["V" + str(v) + "-D2 "], index=ut.benchmarks) for v in [128, 256, 512, 1024]]
+
+df_vec_ooo = pd.concat(df_vec_ooo_issue, axis=1)
+df_scalar_ooo = pd.concat(df_scalar_ooo_issue, axis=1)
+df_all_uops = pd.concat(df_all_uops_each, axis=1)
+df_vec_uops = pd.concat(df_vec_uops_each, axis=1)
+
+display(df_vec_ooo)
+display(df_scalar_ooo)
+display(df_all_uops)
+
+# %%
+
+# df_vec_ooo_fence    = df_vec_ooo.filter(regex='fence$')
+# df_vec_ooo_lsu_ino  = df_vec_ooo.filter(regex='lsu-inorder$')
+# df_vec_ooo_ngs      = df_vec_ooo.filter(regex='ngs$')
+# df_vec_ooo_vio      = df_vec_ooo.filter(regex='vio.v$')
+# df_vec_ooo_ooo      = df_vec_ooo.filter(regex='ooo.v$')
+# 
+# df_scalar_ooo_fence    = df_scalar_ooo.filter(regex='fence$')
+# df_scalar_ooo_lsu_ino  = df_scalar_ooo.filter(regex='lsu-inorder$')
+# df_scalar_ooo_ngs      = df_scalar_ooo.filter(regex='ngs$')
+# df_scalar_ooo_vio      = df_scalar_ooo.filter(regex='vio.v$')
+# df_scalar_ooo_ooo      = df_scalar_ooo.filter(regex='ooo.v$')
+# 
+# display(pd.concat([pd.DataFrame(df_vec_ooo_fence  ), pd.DataFrame(df_scalar_ooo_fence  ), pd.DataFrame(df_all_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_lsu_ino), pd.DataFrame(df_scalar_ooo_lsu_ino), pd.DataFrame(df_all_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_ngs    ), pd.DataFrame(df_scalar_ooo_ngs    ), pd.DataFrame(df_all_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_vio    ), pd.DataFrame(df_scalar_ooo_vio    ), pd.DataFrame(df_all_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_ooo    ), pd.DataFrame(df_scalar_ooo_ooo    ), pd.DataFrame(df_all_uops)], axis=1))
+# 
+# display(pd.concat([pd.DataFrame(df_vec_ooo_fence  ), pd.DataFrame(df_vec_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_lsu_ino), pd.DataFrame(df_vec_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_ngs    ), pd.DataFrame(df_vec_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_vio    ), pd.DataFrame(df_vec_uops)], axis=1))
+# display(pd.concat([pd.DataFrame(df_vec_ooo_ooo    ), pd.DataFrame(df_vec_uops)], axis=1))
+
+# %%
+
+# 追い越しを行った回数を記録する
+
+scalar_ooo_issue = [sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['stop'] - sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['start']     if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('scalar-vec-ooo-issue')    else 0 for b in ut.bench_and_dhry]
+vec_ooo_issue    = [sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['stop']    - sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['start']        if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('vec-vec-ooo-issue')       else 0 for b in ut.bench_and_dhry]
+uops_total       = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
+
+pd.concat([pd.DataFrame(scalar_ooo_issue , index=ut.bench_and_dhry, columns=["スカラ命令が古い命令を追い越して発行した回数"]),
+           pd.DataFrame(vec_ooo_issue    , index=ut.bench_and_dhry, columns=["ベクトル命令が古い命令を追い越して発行した回数"]),
+           pd.DataFrame(uops_total       , index=ut.bench_and_dhry, columns=["全体命令数"])], axis=1)
+
+# %%
+# 各ベンチマークにおけるスカラ命令とベクトル命令の割合を表示する
+
+uops_vec_arith = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_arith']['stop']  if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_arith')  else 0 for b in ut.bench_and_dhry]
+uops_vec_mem   = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_memacc']['stop'] if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_memacc') else 0 for b in ut.bench_and_dhry]
+uops_total     = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
+
+uops_vec_rate = ((pd.DataFrame(uops_vec_arith).T + pd.DataFrame(uops_vec_mem).T) / pd.DataFrame(uops_total).T).T
+uops_vec_rate.columns=["V16-D2"]
+uops_vec_rate.index=ut.bench_and_dhry
+
+uops_vec_rate = uops_vec_rate.sort_values('V16-D2', ascending=False)
+display(uops_vec_rate)
+
 
 # df_vec_ooo_fence    = df_vec_ooo.filter(regex='fence$')
 # df_vec_ooo_lsu_ino  = df_vec_ooo.filter(regex='lsu-inorder$')

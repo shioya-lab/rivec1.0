@@ -7,7 +7,7 @@ def calc_power(conf, app):
     power_detail = dict()
     for e in ut.e_elem:
         e_name = e
-        csv_data = ut.load_csv(e_name + "." + conf , app)
+        csv_data = ut.load_csv(ut.conf_filename[e_name] + "." + conf , app)
         power_detail[e_name] = dict()
         for p in ut.e_elem[e]:
             for m in ut.e_elem[e][p] :
@@ -33,7 +33,7 @@ def calc_group_power(conf, app):
     power_detail = dict()
     for e in ut.e_elem:
         e_name = e
-        csv_data = ut.load_csv(e_name + "." + conf , app)
+        csv_data = ut.load_csv(ut.conf_filename[e_name] + "." + conf , app)
         power_detail[e_name] = dict()
         for grp_name in ut.e_elem[e]:
             for m in ut.e_elem[e][grp_name] :
