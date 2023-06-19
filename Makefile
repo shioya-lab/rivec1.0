@@ -113,6 +113,25 @@ $(subst _,scalar_,$(APPLICATION_DIRS)):
 $(addprefix power,$(APPLICATION_DIRS)):
 	$(MAKE) -C $(subst power,,$@) VLEN=$(VLEN) DLEN=$(DLEN) runmcpat
 
+vlen_list = 128 256 512 1024 2048
+
+inst:
+	for dir in $(APPLICATION_DIRS); do \
+		echo -n $${dir} "\t"; \
+		for v in $(vlen_list); do \
+			grep "cycles = "  $${dir}/spike-v.$${v}.log | sed 's/cycles = //g'  | xargs echo -n; echo -n "\t"; \
+		done; \
+		echo ''; \
+	done > inst.csv
+	for dir in $(APPLICATION_DIRS); do \
+		echo -n $${dir} "\t"; \
+		for v in $(vlen_list); do \
+			grep "vecinst = "  $${dir}/spike-v.$${v}.log | sed 's/vecinst = //g'  | xargs echo -n; echo -n "\t"; \
+		done; \
+		echo ''; \
+	done > vecinst.csv
+
+
 clean:
 	for dir in $(APPLICATION_DIRS); do \
 		$(MAKE) clean -C $${dir}; \
