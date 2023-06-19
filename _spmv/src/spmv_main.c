@@ -16,7 +16,7 @@
 // #include "dataset1.h"
 // #include "dataset_small.h"
 #include <stdint.h>
-#include "dataset_1024x1024x0_25.h"
+#include "dataset_2048x2048x0_25.h"
 #include "count_utils.h"
 #include "sim_api.h"
 
@@ -45,11 +45,13 @@ void spmv_vector(
 //--------------------------------------------------------------------------
 // Main
 
+#define PREALLOCATE
+
 int __attribute__((optimize("O0"))) main()
 {
   double y[R];
 
-#if PREALLOCATE
+#ifdef PREALLOCATE
 #ifdef USE_RISCV_VECTOR
   spmv_vector(R, val, idx, x, ptr, y);
 #else // USE_RISCV_VECTOR
