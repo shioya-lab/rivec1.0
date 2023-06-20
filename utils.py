@@ -6,12 +6,12 @@ import glob
 import pandas as pd
 
 pipe_conf = ['vio.v.fence', 'vio.v.lsu-inorder', 'vio.v.ngs', 'vio.v', 'ooo.v']
-pipe_conf2 = ['SV Fence', 'SV MEM Fence', 'Prop1', 'Prop1+Prop2', 'OoO']
+pipe_conf2 = ['SV Fence', 'SV MEM Fence', 'Prop1', 'PROP', 'BASE']
 conf_filename = {'SV Fence': 'vio.v.fence', 
                  'SV MEM Fence': 'vio.v.lsu-inorder', 
                  'Prop1': 'vio.v.ngs', 
-                 'Prop1+Prop2': 'vio.v', 
-                 'OoO': 'ooo.v'
+                 'PROP': 'vio.v', 
+                 'BASE': 'ooo.v'
                  }
 d2_index2 = ['V%d-D2 %s' % (v, c) for v in [2,4,8,16] for c in pipe_conf2]
 d4_index2 = ['V%d-D4 %s' % (v, c) for v in [4,8,16,32] for c in pipe_conf2]
@@ -157,46 +157,46 @@ e_elem['Prop1']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_oo
 # -------------------------
 # Proposal
 # -------------------------
-e_elem['Prop1+Prop2'] = dict()
-e_elem['Prop1+Prop2']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
-e_elem['Prop1+Prop2']['Rename'] = ['s_ooo:Renaming_Unit']
-e_elem['Prop1+Prop2']['Scheduler'] = ['s_ooo:Instruction_Window',
+e_elem['PROP'] = dict()
+e_elem['PROP']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
+e_elem['PROP']['Rename'] = ['s_ooo:Renaming_Unit']
+e_elem['PROP']['Scheduler'] = ['s_ooo:Instruction_Window',
                                   's_ooo:FP_Instruction_Window',
                                   's_ooo:ROB']
-e_elem['Prop1+Prop2']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
+e_elem['PROP']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
                                  's_ooo:Integer_ALUs__Count',
                                  's_ooo:Results_Broadcast_Bus',
                                  's_ooo:Register_Files']
-# e_elem['Prop1+Prop2']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
+# e_elem['PROP']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
-e_elem['Prop1+Prop2']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
-e_elem['Prop1+Prop2']['Vecotr RF'] = ['v_ino:Register_Files']
-e_elem['Prop1+Prop2']['L1D Cache'] = ['dcache:Data_Cache']
-e_elem['Prop1+Prop2']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', '-s_ooo:Data_Cache']
-e_elem['Prop1+Prop2']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
+e_elem['PROP']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
+e_elem['PROP']['Vecotr RF'] = ['v_ino:Register_Files']
+e_elem['PROP']['L1D Cache'] = ['dcache:Data_Cache']
+e_elem['PROP']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', '-s_ooo:Data_Cache']
+e_elem['PROP']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
 
 # -------------------------
 # All-OoO
 # -------------------------
-e_elem['OoO'] = dict()
-e_elem['OoO']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
-e_elem['OoO']['Rename'] = ['s_ooo:Renaming_Unit',
+e_elem['BASE'] = dict()
+e_elem['BASE']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
+e_elem['BASE']['Rename'] = ['s_ooo:Renaming_Unit',
                               'v_ooo:Renaming_Unit']
-e_elem['OoO']['Scheduler'] = ['s_ooo:Instruction_Window',
+e_elem['BASE']['Scheduler'] = ['s_ooo:Instruction_Window',
                                 's_ooo:FP_Instruction_Window',
                                 'v_ooo:FP_Instruction_Window',
                                 's_ooo:ROB']
-e_elem['OoO']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
+e_elem['BASE']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
                                  's_ooo:Integer_ALUs__Count',
                                  's_ooo:Results_Broadcast_Bus',
                                  's_ooo:Register_Files']
-# e_elem['OoO']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
+# e_elem['BASE']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
-e_elem['OoO']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
-e_elem['OoO']['Vecotr RF'] = ['v_ooo:Register_Files']
-e_elem['OoO']['L1D Cache'] = ['dcache:Data_Cache']
-e_elem['OoO']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', 'v_to_s:StoreQ', '-s_ooo:Data_Cache']
-e_elem['OoO']['Vector LSU'] = ['v_ooo:Load_Store_Unit', 's_to_v:LoadQ', 's_to_v:StoreQ', '-v_ooo:Data_Cache']
+e_elem['BASE']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
+e_elem['BASE']['Vecotr RF'] = ['v_ooo:Register_Files']
+e_elem['BASE']['L1D Cache'] = ['dcache:Data_Cache']
+e_elem['BASE']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', 'v_to_s:StoreQ', '-s_ooo:Data_Cache']
+e_elem['BASE']['Vector LSU'] = ['v_ooo:Load_Store_Unit', 's_to_v:LoadQ', 's_to_v:StoreQ', '-v_ooo:Data_Cache']
 
 # ------------------------------------
 # 各モジュールにおいて、スケールを決める
@@ -224,7 +224,7 @@ energy_scale['v2048_d256'] = {'Vecotr RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 
 #%%
 from itertools import chain
 
-keys = list(e_elem['OoO'].keys())
+keys = list(e_elem['BASE'].keys())
 l = []
 for k in keys:
     p = []

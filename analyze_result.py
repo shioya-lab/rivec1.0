@@ -83,7 +83,7 @@ df_cycle_v32_d4  = pd.DataFrame([get_cycle_with_app(b, 2048, 256) for b in ut.be
 # V2-D2のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v2_d2_pct = np.reciprocal((df_cycle_v2_d2.T / df_cycle_v2_d2["V2-D2 OoO"].T).T)
+df_cycle_v2_d2_pct = np.reciprocal((df_cycle_v2_d2.T / df_cycle_v2_d2["V2-D2 BASE"].T).T)
 df_cycle_v2_d2_pct.loc['GeoMean'] = df_cycle_v2_d2_pct.mean()
 df_cycle_v2_d2_pct.plot.bar(title="V2-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 df_cycle_v2_d2_pct.to_csv('csv/df_cycle_v2_d2.csv')
@@ -94,7 +94,7 @@ display(df_cycle_v2_d2_pct.loc['GeoMean'])
 # V4-D2のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v4_d2_pct = np.reciprocal((df_cycle_v4_d2.T / df_cycle_v4_d2["V4-D2 OoO"].T).T)
+df_cycle_v4_d2_pct = np.reciprocal((df_cycle_v4_d2.T / df_cycle_v4_d2["V4-D2 BASE"].T).T)
 df_cycle_v4_d2_pct.loc['GeoMean'] = df_cycle_v4_d2_pct.mean()
 df_cycle_v4_d2_pct.plot.bar(title="V4-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 df_cycle_v4_d2_pct.to_csv('csv/df_cycle_v4_d2.csv')
@@ -105,7 +105,7 @@ display(df_cycle_v4_d2_pct.loc['GeoMean'])
 # V8-D2のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v8_d2_pct = np.reciprocal((df_cycle_v8_d2.T / df_cycle_v8_d2["V8-D2 OoO"].T).T)
+df_cycle_v8_d2_pct = np.reciprocal((df_cycle_v8_d2.T / df_cycle_v8_d2["V8-D2 BASE"].T).T)
 df_cycle_v8_d2_pct.loc['GeoMean'] = df_cycle_v8_d2_pct.mean()
 df_cycle_v8_d2_pct.plot.bar(title="V8-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 df_cycle_v8_d2_pct.to_csv('csv/df_cycle_v8_d2.csv')
@@ -116,7 +116,7 @@ display(df_cycle_v8_d2_pct.loc['GeoMean'])
 # V16-D2のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v16_d2_pct = np.reciprocal((df_cycle_v16_d2.T / df_cycle_v16_d2["V16-D2 OoO"].T).T)
+df_cycle_v16_d2_pct = np.reciprocal((df_cycle_v16_d2.T / df_cycle_v16_d2["V16-D2 BASE"].T).T)
 df_cycle_v16_d2_pct.loc['GeoMean'] = df_cycle_v16_d2_pct.mean()
 df_cycle_v16_d2_pct.plot.bar(title="V16-D2 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 df_cycle_v16_d2_pct.to_csv('csv/df_cycle_v16_d2.csv')
@@ -129,7 +129,7 @@ display(df_cycle_v16_d2_pct.loc['GeoMean'])
 # V4-D4のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v4_d4_pct = np.reciprocal((df_cycle_v4_d4.T / df_cycle_v4_d4["V4-D4 OoO"].T).T)
+df_cycle_v4_d4_pct = np.reciprocal((df_cycle_v4_d4.T / df_cycle_v4_d4["V4-D4 BASE"].T).T)
 df_cycle_v4_d4_pct.loc['GeoMean'] = df_cycle_v4_d4_pct.mean()
 df_cycle_v4_d4_pct.plot.bar(title="V4-D4 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 df_cycle_v4_d4_pct.to_csv('csv/df_cycle_v4_d4.csv')
@@ -140,7 +140,7 @@ display(df_cycle_v4_d4_pct.loc['GeoMean'])
 # V8-D4のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v8_d4_pct = np.reciprocal((df_cycle_v8_d4.T / df_cycle_v8_d4["V8-D4 OoO"].T).T)
+df_cycle_v8_d4_pct = np.reciprocal((df_cycle_v8_d4.T / df_cycle_v8_d4["V8-D4 BASE"].T).T)
 df_cycle_v8_d4_pct.loc['GeoMean'] = df_cycle_v8_d4_pct.mean()
 df_cycle_v8_d4_pct.plot.bar(title="V8-D4 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 df_cycle_v8_d4_pct.to_csv('csv/df_cycle_v8_d4.csv')
@@ -151,7 +151,7 @@ display(df_cycle_v8_d4_pct.loc['GeoMean'])
 # V16-D4のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v16_d4_pct = np.reciprocal((df_cycle_v16_d4.T / df_cycle_v16_d4["V16-D4 OoO"].T).T)
+df_cycle_v16_d4_pct = np.reciprocal((df_cycle_v16_d4.T / df_cycle_v16_d4["V16-D4 BASE"].T).T)
 df_cycle_v16_d4_pct.loc['GeoMean'] = df_cycle_v16_d4_pct.mean()
 df_cycle_v16_d4_pct.plot.bar(title="V16-D4 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 df_cycle_v16_d4_pct.to_csv('csv/df_cycle_v16_d4.csv')
@@ -162,7 +162,7 @@ display(df_cycle_v16_d4_pct.loc['GeoMean'])
 # V32-D4のサイクル数でグラフを作る
 
 plt.figure()
-df_cycle_v32_d4_pct = np.reciprocal((df_cycle_v32_d4.T / df_cycle_v32_d4["V32-D4 OoO"].T).T)
+df_cycle_v32_d4_pct = np.reciprocal((df_cycle_v32_d4.T / df_cycle_v32_d4["V32-D4 BASE"].T).T)
 df_cycle_v32_d4_pct.loc['GeoMean'] = df_cycle_v32_d4_pct.mean()
 df_cycle_v32_d4_pct.plot.bar(title="V32-D4 Performance", figsize=(10, 3)).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
 df_cycle_v32_d4_pct.to_csv('csv/df_cycle_v32_d4.csv')
@@ -247,8 +247,8 @@ power_group_v2_d2 = ut_p.get_group_power_with_vlen_dlen(128, 128)
 df_power_group_v2_d2 = pd.DataFrame(power_group_v2_d2, index=ut.benchmarks).fillna(0.0) 
 df_power_group_v2_d2.columns = list(map(lambda b: "V2-D2 " + b, df_power_group_v2_d2.columns))
 
-df_power_v2_d2  = pd.DataFrame()
-df_energy_v2_d2 = pd.DataFrame()
+df_power_group_bench_sum_v2_d2  = pd.DataFrame()
+df_energy_group_bench_sum_v2_d2 = pd.DataFrame()
 
 for c in df_power_group_v2_d2.columns:
   p = pd.Series(name=c)
@@ -260,8 +260,8 @@ for c in df_power_group_v2_d2.columns:
       p.loc[d[0]] = p.get(d[0], 0) + d[1]
       e.loc[d[0]] = e.get(d[0], 0) + d[1] * df_cycle_v2_d2.loc[b].loc[c]
   # 行の追加
-  df_power_v2_d2  = pd.concat([df_power_v2_d2, p], axis=1)
-  df_energy_v2_d2 = pd.concat([df_energy_v2_d2, e], axis=1)
+  df_power_group_bench_sum_v2_d2  = pd.concat([df_power_group_bench_sum_v2_d2 , p], axis=1)
+  df_energy_group_bench_sum_v2_d2 = pd.concat([df_energy_group_bench_sum_v2_d2, e], axis=1)
 
 # 各アプリケーション毎に電力グラフを作る
 
@@ -296,8 +296,8 @@ power_group_v4_d2 = ut_p.get_group_power_with_vlen_dlen(256, 128)
 df_power_group_v4_d2 = pd.DataFrame(power_group_v4_d2, index=ut.benchmarks).fillna(0.0) 
 df_power_group_v4_d2.columns = list(map(lambda b: "V4-D2 " + b, df_power_group_v4_d2.columns))
 
-df_power_group_v4_d2  = pd.DataFrame()
-df_energy_group_v4_d2 = pd.DataFrame()
+df_power_group_bench_sum_v4_d2  = pd.DataFrame()
+df_energy_group_bench_sum_v4_d2 = pd.DataFrame()
 
 for c in df_power_group_v4_d2.columns:
   p = pd.Series(name=c)
@@ -309,8 +309,8 @@ for c in df_power_group_v4_d2.columns:
       p.loc[d[0]] = p.get(d[0], 0) + d[1]
       e.loc[d[0]] = e.get(d[0], 0) + d[1] * df_cycle_v4_d2.loc[b].loc[c]
   # 行の追加
-  df_power_group_v4_d2  = pd.concat([df_power_group_v4_d2, p],  axis=1)
-  df_energy_group_v4_d2 = pd.concat([df_energy_group_v4_d2, e], axis=1)
+  df_power_group_bench_sum_v4_d2  = pd.concat([df_power_group_bench_sum_v4_d2, p],  axis=1)
+  df_energy_group_bench_sum_v4_d2 = pd.concat([df_energy_group_bench_sum_v4_d2, e], axis=1)
 
 # V8-D2のエネルギー詳細を取得する
 # 作りたいもの：
@@ -322,8 +322,8 @@ power_group_v8_d2 = ut_p.get_group_power_with_vlen_dlen(512, 128)
 df_power_group_v8_d2 = pd.DataFrame(power_group_v8_d2, index=ut.benchmarks).fillna(0.0) 
 df_power_group_v8_d2.columns = list(map(lambda b: "V8-D2 " + b, df_power_group_v8_d2.columns))
 
-df_power_group_v8_d2  = pd.DataFrame()
-df_energy_group_v8_d2 = pd.DataFrame()
+df_power_group_bench_sum_v8_d2  = pd.DataFrame()
+df_energy_group_bench_sum_v8_d2 = pd.DataFrame()
 
 for c in df_power_group_v8_d2.columns:
   p = pd.Series(name=c)
@@ -335,8 +335,8 @@ for c in df_power_group_v8_d2.columns:
       p.loc[d[0]] = p.get(d[0], 0) + d[1]
       e.loc[d[0]] = e.get(d[0], 0) + d[1] * df_cycle_v8_d2.loc[b].loc[c]
   # 行の追加
-  df_power_group_v8_d2  = pd.concat([df_power_group_v8_d2, p], axis=1)
-  df_energy_group_v8_d2 = pd.concat([df_energy_group_v8_d2, e], axis=1)
+  df_power_group_bench_sum_v8_d2  = pd.concat([df_power_group_bench_sum_v8_d2, p], axis=1)
+  df_energy_group_bench_sum_v8_d2 = pd.concat([df_energy_group_bench_sum_v8_d2, e], axis=1)
 
 # v16-D2のエネルギー詳細を取得する
 # 作りたいもの：
@@ -348,8 +348,8 @@ power_group_v16_d2 = ut_p.get_group_power_with_vlen_dlen(1024, 128)
 df_power_group_v16_d2 = pd.DataFrame(power_group_v16_d2, index=ut.benchmarks).fillna(0.0) 
 df_power_group_v16_d2.columns = list(map(lambda b: "V16-D2 " + b, df_power_group_v16_d2.columns))
 
-df_power_group_v16_d2  = pd.DataFrame()
-df_energy_group_v16_d2 = pd.DataFrame()
+df_power_group_bench_sum_v16_d2  = pd.DataFrame()
+df_energy_group_bench_sum_v16_d2 = pd.DataFrame()
 
 for c in df_power_group_v16_d2.columns:
   p = pd.Series(name=c)
@@ -361,8 +361,8 @@ for c in df_power_group_v16_d2.columns:
       p.loc[d[0]] = p.get(d[0], 0) + d[1]
       e.loc[d[0]] = e.get(d[0], 0) + d[1] * df_cycle_v16_d2.loc[b].loc[c]
   # 行の追加
-  df_power_group_v16_d2  = pd.concat([df_power_group_v16_d2, p], axis=1)
-  df_energy_group_v16_d2 = pd.concat([df_energy_group_v16_d2, e], axis=1)
+  df_power_group_bench_sum_v16_d2  = pd.concat([df_power_group_bench_sum_v16_d2, p], axis=1)
+  df_energy_group_bench_sum_v16_d2 = pd.concat([df_energy_group_bench_sum_v16_d2, e], axis=1)
 
 
 # V4-D4のエネルギー詳細を取得する
@@ -375,8 +375,8 @@ power_group_v4_d4 = ut_p.get_group_power_with_vlen_dlen(256, 256)
 df_power_group_v4_d4 = pd.DataFrame(power_group_v4_d4, index=ut.benchmarks).fillna(0.0) 
 df_power_group_v4_d4.columns = list(map(lambda b: "V4-D4 " + b, df_power_group_v4_d4.columns))
 
-df_power_group_v4_d4 = pd.DataFrame()
-df_energy_group_v4_d4 = pd.DataFrame()
+df_power_group_bench_sum_v4_d4 = pd.DataFrame()
+df_energy_group_bench_sum_v4_d4 = pd.DataFrame()
 
 for c in df_power_group_v4_d4.columns:
   p = pd.Series(name=c)
@@ -388,8 +388,8 @@ for c in df_power_group_v4_d4.columns:
       p.loc[d[0]] = p.get(d[0], 0) + d[1]
       e.loc[d[0]] = e.get(d[0], 0) + d[1] * df_cycle_v4_d4.loc[b].loc[c]
   # 行の追加
-  df_power_group_v4_d4  = pd.concat([df_power_group_v4_d4, p], axis=1)
-  df_energy_group_v4_d4 = pd.concat([df_energy_group_v4_d4, e], axis=1)
+  df_power_group_bench_sum_v4_d4  = pd.concat([df_power_group_bench_sum_v4_d4, p], axis=1)
+  df_energy_group_bench_sum_v4_d4 = pd.concat([df_energy_group_bench_sum_v4_d4, e], axis=1)
 
 
 # V8-D4のエネルギー詳細を取得する
@@ -402,8 +402,8 @@ power_group_v8_d4 = ut_p.get_group_power_with_vlen_dlen(512, 256)
 df_power_group_v8_d4 = pd.DataFrame(power_group_v8_d4, index=ut.benchmarks).fillna(0.0) 
 df_power_group_v8_d4.columns = list(map(lambda b: "V8-D4 " + b, df_power_group_v8_d4.columns))
 
-df_power_group_v8_d4  = pd.DataFrame()
-df_energy_group_v8_d4 = pd.DataFrame()
+df_power_group_bench_sum_v8_d4  = pd.DataFrame()
+df_energy_group_bench_sum_v8_d4 = pd.DataFrame()
 
 for c in df_power_group_v8_d4.columns:
   p = pd.Series(name=c)
@@ -415,8 +415,8 @@ for c in df_power_group_v8_d4.columns:
       p.loc[d[0]] = p.get(d[0], 0) + d[1]
       e.loc[d[0]] = e.get(d[0], 0) + d[1] * df_cycle_v8_d4.loc[b].loc[c]
   # 行の追加
-  df_power_group_v8_d4  = pd.concat([df_power_group_v8_d4, p],  axis=1)
-  df_energy_group_v8_d4 = pd.concat([df_energy_group_v8_d4, e], axis=1)
+  df_power_group_bench_sum_v8_d4  = pd.concat([df_power_group_bench_sum_v8_d4, p],  axis=1)
+  df_energy_group_bench_sum_v8_d4 = pd.concat([df_energy_group_bench_sum_v8_d4, e], axis=1)
 
 
 # V16-D4のエネルギー詳細を取得する
@@ -429,8 +429,8 @@ power_group_v16_d4 = ut_p.get_group_power_with_vlen_dlen(1024, 256)
 df_power_group_v16_d4 = pd.DataFrame(power_group_v16_d4, index=ut.benchmarks).fillna(0.0) 
 df_power_group_v16_d4.columns = list(map(lambda b: "V16-D4 " + b, df_power_group_v16_d4.columns))
 
-df_power_group_v16_d4  = pd.DataFrame()
-df_energy_group_v16_d4 = pd.DataFrame()
+df_power_group_bench_sum_v16_d4  = pd.DataFrame()
+df_energy_group_bench_sum_v16_d4 = pd.DataFrame()
 
 for c in df_power_group_v16_d4.columns:
   p = pd.Series(name=c)
@@ -442,8 +442,8 @@ for c in df_power_group_v16_d4.columns:
       p.loc[d[0]] = p.get(d[0], 0) + d[1]
       e.loc[d[0]] = e.get(d[0], 0) + d[1] * df_cycle_v16_d4.loc[b].loc[c]
   # 行の追加
-  df_power_group_v16_d4  = pd.concat([df_power_group_v16_d4, p], axis=1)
-  df_energy_group_v16_d4 = pd.concat([df_energy_group_v16_d4, e], axis=1)
+  df_power_group_bench_sum_v16_d4  = pd.concat([df_power_group_bench_sum_v16_d4, p], axis=1)
+  df_energy_group_bench_sum_v16_d4 = pd.concat([df_energy_group_bench_sum_v16_d4, e], axis=1)
 
 
 # V32-D4のエネルギー詳細を取得する
@@ -456,8 +456,8 @@ power_group_v32_d4 = ut_p.get_group_power_with_vlen_dlen(2048, 256)
 df_power_group_v32_d4 = pd.DataFrame(power_group_v32_d4, index=ut.benchmarks).fillna(0.0) 
 df_power_group_v32_d4.columns = list(map(lambda b: "V32-D4 " + b, df_power_group_v32_d4.columns))
 
-df_power_group_v32_d4  = pd.DataFrame()
-df_energy_group_v32_d4 = pd.DataFrame()
+df_power_group_bench_sum_v32_d4  = pd.DataFrame()
+df_energy_group_bench_sum_v32_d4 = pd.DataFrame()
 
 for c in df_power_group_v32_d4.columns:
   p = pd.Series(name=c)
@@ -469,31 +469,37 @@ for c in df_power_group_v32_d4.columns:
       p.loc[d[0]] = p.get(d[0], 0) + d[1]
       e.loc[d[0]] = e.get(d[0], 0) + d[1] * df_cycle_v32_d4.loc[b].loc[c]
   # 行の追加
-  df_power_group_v32_d4  = pd.concat([df_power_group_v32_d4, p], axis=1)
-  df_energy_group_v32_d4 = pd.concat([df_energy_group_v32_d4, e], axis=1)
+  df_power_group_bench_sum_v32_d4  = pd.concat([df_power_group_bench_sum_v32_d4, p], axis=1)
+  df_energy_group_bench_sum_v32_d4 = pd.concat([df_energy_group_bench_sum_v32_d4, e], axis=1)
 
 
 #%%
 # 全部の電力を比較
 
-df_power_whole_d2 = pd.concat([df_power_group_v2_d2, df_power_group_v4_d2, df_power_group_v8_d2 , df_power_group_v16_d2], axis=1)
-df_power_whole_d4 = pd.concat([df_power_group_v4_d4, df_power_group_v8_d4, df_power_group_v16_d4, df_power_group_v32_d4], axis=1)
-
-display(df_power_whole_d2)
-df_power_whole_d2.T.plot.bar(title="Power Estimation of V2-D2 / V4-D2 / V8-D2 / V16-D2", stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.ylim(0.0, df_power_whole_d4.sum().max()*1.1)
-
-display(df_power_whole_d4)
-df_power_whole_d4.T.plot.bar(title="Power Estimation of V4-D4 / V8-D4 / V8-D4 / V32-D4", stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-plt.ylim(0.0, df_power_whole_d4.sum().max()*1.1)
+# df_power_whole_d2 = pd.concat([df_power_group_v2_d2, df_power_group_v4_d2, df_power_group_v8_d2 , df_power_group_v16_d2], axis=1)
+# df_power_whole_d4 = pd.concat([df_power_group_v4_d4, df_power_group_v8_d4, df_power_group_v16_d4, df_power_group_v32_d4], axis=1)
+# 
+# display(df_power_whole_d2)
+# df_power_whole_d2.T.plot.bar(title="Power Estimation of V2-D2 / V4-D2 / V8-D2 / V16-D2", stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+# plt.ylim(0.0, df_power_whole_d4.sum().max()*1.1)
+# 
+# display(df_power_whole_d4)
+# df_power_whole_d4.T.plot.bar(title="Power Estimation of V4-D4 / V8-D4 / V8-D4 / V32-D4", stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+# plt.ylim(0.0, df_power_whole_d4.sum().max()*1.1)
 
 
 #%%
 # 全部のエネルギーを計算
-df_energy_whole_d2 = pd.concat([df_energy_v2_d2, df_energy_v4_d2, df_energy_v8_d2, df_energy_v16_d2], axis=1)
+df_energy_whole_d2 = pd.concat([df_energy_group_bench_sum_v2_d2, 
+                                df_energy_group_bench_sum_v4_d2,
+                                df_energy_group_bench_sum_v8_d2,
+                                df_energy_group_bench_sum_v16_d2], axis=1)
 # df_energy_whole_d2.columns = ut.d2_index2
 
-df_energy_whole_d4 = pd.concat([df_energy_v4_d4, df_energy_v8_d4, df_energy_v16_d4, df_energy_v32_d4], axis=1)
+df_energy_whole_d4 = pd.concat([df_energy_group_bench_sum_v4_d4,
+                                df_energy_group_bench_sum_v8_d4,
+                                df_energy_group_bench_sum_v16_d4,
+                                df_energy_group_bench_sum_v32_d4], axis=1)
 # df_energy_whole_d4.columns = ut.d4_index2
 
 display(df_energy_whole_d2)
@@ -528,20 +534,20 @@ d2_index_list = ['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2']
 df_perf_d2_fence    = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='SV Fence$').mean(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
 df_perf_d2_lsuino   = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='SV MEM Fence$').mean(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
 df_perf_d2_nomerge  = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Prop1$').mean(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
-df_perf_d2_proposal = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Prop1\+Prop2$').mean(), columns=['Prop1+Prop2'] ).set_axis(d2_index_list, axis=0)
-df_perf_d2_ooo      = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='OoO$').mean(),          columns=['VecOoO']      ).set_axis(d2_index_list, axis=0)
+df_perf_d2_proposal = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='PROP$').mean(), columns=['PROP'] ).set_axis(d2_index_list, axis=0)
+df_perf_d2_ooo      = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='BASE$').mean(),          columns=['BASE']      ).set_axis(d2_index_list, axis=0)
 
 df_energy_d2_fence    = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='SV Fence$').sum(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
 df_energy_d2_lsuino   = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='SV MEM Fence$').sum(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
 df_energy_d2_nomerge  = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Prop1$').sum(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
-df_energy_d2_proposal = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Prop1\+Prop2$').sum(), columns=['Prop1+Prop2'] ).set_axis(d2_index_list, axis=0)
-df_energy_d2_ooo      = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='OoO$').sum(),          columns=['VecOoO']      ).set_axis(d2_index_list, axis=0)
+df_energy_d2_proposal = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='PROP$').sum(), columns=['PROP'] ).set_axis(d2_index_list, axis=0)
+df_energy_d2_ooo      = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='BASE$').sum(),          columns=['BASE']      ).set_axis(d2_index_list, axis=0)
 
 df_area_d2_fence    = pd.DataFrame(df_area_whole_d2.filter(regex='SV Fence$').sum(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
 df_area_d2_lsuino   = pd.DataFrame(df_area_whole_d2.filter(regex='SV MEM Fence$').sum(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
 df_area_d2_nomerge  = pd.DataFrame(df_area_whole_d2.filter(regex='Prop1$').sum(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
-df_area_d2_proposal = pd.DataFrame(df_area_whole_d2.filter(regex='Prop1\+Prop2$').sum(), columns=['Prop1+Prop2'] ).set_axis(d2_index_list, axis=0)
-df_area_d2_ooo      = pd.DataFrame(df_area_whole_d2.filter(regex='OoO$').sum(),          columns=['VecOoO']      ).set_axis(d2_index_list, axis=0)
+df_area_d2_proposal = pd.DataFrame(df_area_whole_d2.filter(regex='PROP$').sum(), columns=['PROP'] ).set_axis(d2_index_list, axis=0)
+df_area_d2_ooo      = pd.DataFrame(df_area_whole_d2.filter(regex='BASE$').sum(),          columns=['BASE']      ).set_axis(d2_index_list, axis=0)
 
 plt.scatter(df_energy_d2_fence, df_perf_d2_fence, label='SV Fence', color='blue')
 plt.plot   (df_energy_d2_fence, df_perf_d2_fence, color='blue')
@@ -553,15 +559,15 @@ plt.plot   (df_energy_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='gree
 plt.axline((0, 0), (df_energy_d2_nomerge['Prop1']['V4-D2'], 
                     df_perf_d2_nomerge  ['Prop1']['V4-D2']), color='green', lw=0.5)
 
-plt.scatter(df_energy_d2_proposal, df_perf_d2_proposal, label='Prop1+Prop2', color='purple')
-plt.plot   (df_energy_d2_proposal, df_perf_d2_proposal, label='Prop1+Prop2', color='purple')
-plt.axline((0, 0), (df_energy_d2_proposal['Prop1+Prop2']['V4-D2'], 
-                    df_perf_d2_proposal  ['Prop1+Prop2']['V4-D2']), color='purple', lw=0.5)
+plt.scatter(df_energy_d2_proposal, df_perf_d2_proposal, label='PROP', color='purple')
+plt.plot   (df_energy_d2_proposal, df_perf_d2_proposal, label='PROP', color='purple')
+plt.axline((0, 0), (df_energy_d2_proposal['PROP']['V4-D2'], 
+                    df_perf_d2_proposal  ['PROP']['V4-D2']), color='purple', lw=0.5)
 
-plt.scatter(df_energy_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
-plt.plot   (df_energy_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
-plt.axline((0, 0), (df_energy_d2_ooo['VecOoO']['V4-D2'], 
-                    df_perf_d2_ooo  ['VecOoO']['V4-D2']), color='red', lw=0.5)
+plt.scatter(df_energy_d2_ooo, df_perf_d2_ooo, label='BASE', color='red')
+plt.plot   (df_energy_d2_ooo, df_perf_d2_ooo, label='BASE', color='red')
+plt.axline((0, 0), (df_energy_d2_ooo['BASE']['V4-D2'], 
+                    df_perf_d2_ooo  ['BASE']['V4-D2']), color='red', lw=0.5)
 
 plt.xlim(0.0, df_energy_whole_d2_pct.sum().max() * 1.1)
 plt.ylim(0.0, df_cycle_whole_d2_pct.mean().max() * 1.1)
@@ -579,20 +585,20 @@ d4_index_list = ['V4-D4', 'V8-D4', 'V16-D4', 'V32-D4']
 df_perf_d4_fence    = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='SV Fence$').mean(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
 df_perf_d4_lsuino   = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='SV MEM Fence$').mean(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
 df_perf_d4_nomerge  = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Prop1$').mean(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
-df_perf_d4_proposal = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Prop1\+Prop2$').mean(), columns=['Prop1+Prop2']).set_axis(d4_index_list, axis=0)
-df_perf_d4_ooo      = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='OoO$').mean(),      columns=['VecOoO']         ).set_axis(d4_index_list, axis=0)
+df_perf_d4_proposal = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='PROP$').mean(), columns=['PROP']).set_axis(d4_index_list, axis=0)
+df_perf_d4_ooo      = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='BASE$').mean(),      columns=['BASE']         ).set_axis(d4_index_list, axis=0)
 
 df_energy_d4_fence    = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='SV Fence$').sum(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
 df_energy_d4_lsuino   = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='SV MEM Fence$').sum(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
 df_energy_d4_nomerge  = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Prop1$').sum(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
-df_energy_d4_proposal = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Prop1\+Prop2$').sum(), columns=['Prop1+Prop2']).set_axis(d4_index_list, axis=0)
-df_energy_d4_ooo      = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d4_index_list, axis=0)
+df_energy_d4_proposal = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='PROP$').sum(), columns=['PROP']).set_axis(d4_index_list, axis=0)
+df_energy_d4_ooo      = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='BASE$').sum(),      columns=['BASE']         ).set_axis(d4_index_list, axis=0)
 
 df_area_d4_fence    = pd.DataFrame(df_area_whole_d4.filter(regex='SV Fence$').sum(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
 df_area_d4_lsuino   = pd.DataFrame(df_area_whole_d4.filter(regex='SV MEM Fence$').sum(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
 df_area_d4_nomerge  = pd.DataFrame(df_area_whole_d4.filter(regex='Prop1$').sum(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
-df_area_d4_proposal = pd.DataFrame(df_area_whole_d4.filter(regex='Prop1\+Prop2$').sum(), columns=['Prop1+Prop2']).set_axis(d4_index_list, axis=0)
-df_area_d4_ooo      = pd.DataFrame(df_area_whole_d4.filter(regex='OoO$').sum(),      columns=['VecOoO']         ).set_axis(d4_index_list, axis=0)
+df_area_d4_proposal = pd.DataFrame(df_area_whole_d4.filter(regex='PROP$').sum(), columns=['PROP']).set_axis(d4_index_list, axis=0)
+df_area_d4_ooo      = pd.DataFrame(df_area_whole_d4.filter(regex='BASE$').sum(),      columns=['BASE']         ).set_axis(d4_index_list, axis=0)
 
 plt.scatter(df_energy_d4_fence, df_perf_d4_fence, label='SV Fence', color='blue')
 plt.plot   (df_energy_d4_fence, df_perf_d4_fence, color='blue')
@@ -604,15 +610,15 @@ plt.plot   (df_energy_d4_nomerge, df_perf_d4_nomerge, label='Prop1', color='gree
 plt.axline((0, 0), (df_energy_d4_nomerge['Prop1']['V4-D4'], 
                     df_perf_d4_nomerge  ['Prop1']['V4-D4']), color='green', lw=0.5)
 
-plt.scatter(df_energy_d4_proposal, df_perf_d4_proposal, label='Prop1+Prop2', color='purple')
-plt.plot   (df_energy_d4_proposal, df_perf_d4_proposal, label='Prop1+Prop2', color='purple')
-plt.axline((0, 0), (df_energy_d4_proposal['Prop1+Prop2']['V4-D4'], 
-                    df_perf_d4_proposal  ['Prop1+Prop2']['V4-D4']), color='purple', lw=0.5)
+plt.scatter(df_energy_d4_proposal, df_perf_d4_proposal, label='PROP', color='purple')
+plt.plot   (df_energy_d4_proposal, df_perf_d4_proposal, label='PROP', color='purple')
+plt.axline((0, 0), (df_energy_d4_proposal['PROP']['V4-D4'], 
+                    df_perf_d4_proposal  ['PROP']['V4-D4']), color='purple', lw=0.5)
 
-plt.scatter(df_energy_d4_ooo, df_perf_d4_ooo, label='VecOoO', color='red')
-plt.plot   (df_energy_d4_ooo, df_perf_d4_ooo, label='VecOoO', color='red')
-plt.axline((0, 0), (df_energy_d4_ooo['VecOoO']['V4-D4'], 
-                    df_perf_d4_ooo  ['VecOoO']['V4-D4']), color='red', lw=0.5)
+plt.scatter(df_energy_d4_ooo, df_perf_d4_ooo, label='BASE', color='red')
+plt.plot   (df_energy_d4_ooo, df_perf_d4_ooo, label='BASE', color='red')
+plt.axline((0, 0), (df_energy_d4_ooo['BASE']['V4-D4'], 
+                    df_perf_d4_ooo  ['BASE']['V4-D4']), color='red', lw=0.5)
 
 plt.xlim(0.0, df_energy_whole_d4_pct.sum().max() * 1.1)
 plt.ylim(0.0, df_cycle_whole_d4_pct.mean().max() * 1.1)
@@ -651,8 +657,8 @@ for b in ut.benchmarks:
   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV Fence$")   .loc[b]).set_axis(d2_index_list, axis=0))
   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV MEM Fence$")  .loc[b]).set_axis(d2_index_list, axis=0))
   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Prop1$") .loc[b]).set_axis(d2_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Prop1\+Prop2$").loc[b]).set_axis(d2_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="OoO$")     .loc[b]).set_axis(d2_index_list, axis=0))
+  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="PROP$").loc[b]).set_axis(d2_index_list, axis=0))
+  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="BASE$")     .loc[b]).set_axis(d2_index_list, axis=0))
   plt.title("Performance rate of %s with %s" % (b, d2_index_list))
   plt.ylim(0.0)
   plt.show()
@@ -663,8 +669,8 @@ for b in ut.benchmarks:
   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV Fence$")   .loc[b]).set_axis(d4_index_list, axis=0))
   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV MEM Fence$")  .loc[b]).set_axis(d4_index_list, axis=0))
   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Prop1$") .loc[b]).set_axis(d4_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Prop1\+Prop2$").loc[b]).set_axis(d4_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="OoO$")     .loc[b]).set_axis(d4_index_list, axis=0))
+  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="PROP$").loc[b]).set_axis(d4_index_list, axis=0))
+  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="BASE$")     .loc[b]).set_axis(d4_index_list, axis=0))
   plt.title("Performance rate of %s with %s" % (b, d4_index_list))
   plt.ylim(0.0)
   plt.show()
@@ -687,15 +693,15 @@ plt.plot   (df_area_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green'
 plt.axline((0, 0), (df_area_d2_nomerge['Prop1']['V4-D2'], 
                     df_perf_d2_nomerge['Prop1']['V4-D2']), color='green', lw=0.5)
 
-plt.scatter(df_area_d2_proposal, df_perf_d2_proposal, label='Prop1+Prop2', color='purple')
-plt.plot   (df_area_d2_proposal, df_perf_d2_proposal, label='Prop1+Prop2', color='purple')
-plt.axline((0, 0), (df_area_d2_proposal['Prop1+Prop2']['V4-D2'], 
-                    df_perf_d2_proposal['Prop1+Prop2']['V4-D2']), color='purple', lw=0.5)
+plt.scatter(df_area_d2_proposal, df_perf_d2_proposal, label='PROP', color='purple')
+plt.plot   (df_area_d2_proposal, df_perf_d2_proposal, label='PROP', color='purple')
+plt.axline((0, 0), (df_area_d2_proposal['PROP']['V4-D2'], 
+                    df_perf_d2_proposal['PROP']['V4-D2']), color='purple', lw=0.5)
 
-plt.scatter(df_area_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
-plt.plot   (df_area_d2_ooo, df_perf_d2_ooo, label='VecOoO', color='red')
-plt.axline((0, 0), (df_area_d2_ooo['VecOoO']['V4-D2'], 
-                    df_perf_d2_ooo['VecOoO']['V4-D2']), color='red', lw=0.5)
+plt.scatter(df_area_d2_ooo, df_perf_d2_ooo, label='BASE', color='red')
+plt.plot   (df_area_d2_ooo, df_perf_d2_ooo, label='BASE', color='red')
+plt.axline((0, 0), (df_area_d2_ooo['BASE']['V4-D2'], 
+                    df_perf_d2_ooo['BASE']['V4-D2']), color='red', lw=0.5)
 
 plt.xlabel("Area (Lower is Better)")
 plt.ylabel("Performance (Higher is Better)")
