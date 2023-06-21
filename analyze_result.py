@@ -282,7 +282,7 @@ power_modules = [
 #display(pd.concat([pd.DataFrame(df_power_group_v2_d2.loc['axpy']).T.applymap(lambda cell: cell[m]) for m in power_modules]))
 pd.concat([pd.DataFrame(pd.concat([pd.DataFrame(df_power_group_v2_d2.loc[b]).T.applymap(lambda cell: cell[m]).rename(index={b:m}) for m in power_modules])) 
            for b in ut.benchmarks], axis=1) \
-             .to_csv('csv/v2_d2_power_wih_app.csv')
+             .to_csv('csv/v2_d2_power_with_app.csv')
 
 #%%
 
@@ -832,6 +832,7 @@ df_ooo_issue = pd.concat([pd.DataFrame(scalar_scalar_ooo_issue , index=ut.bench_
                           pd.DataFrame(vec_vec_ooo_issue       , index=ut.bench_and_dhry, columns=["ベクトルラ命令が古いベクトル命令を追い越して発行した回数"]),
                           pd.DataFrame(vec_ooo_issue           , index=ut.bench_and_dhry, columns=["ベクトル命令が古い命令を追い越して発行した回数"]),
                           pd.DataFrame(uops_total              , index=ut.bench_and_dhry, columns=["全体命令数"])], axis=1)
+display(df_ooo_issue)
 df_ooo_issue.to_csv("csv/df_ooo_issue_d2.csv")
 
 # %%
