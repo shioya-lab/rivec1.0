@@ -7,6 +7,7 @@ DLEN ?= $(VLEN)
 
 all: build_tests
 	$(MAKE) run_scalar runspike_v2 runspike_v4 runspike_v8 runspike_v16 runspike_v32
+	$(MAKE) inst
 	$(MAKE) run_v2d2 run_v4d2 run_v8d2 run_v16d2 run_v4d4 run_v8d4 run_v16d4 run_v32d4
 
 build_tests:
@@ -122,14 +123,14 @@ inst:
 			grep "cycles = "  $${dir}/spike-v.$${v}.log | sed 's/cycles = //g'  | xargs echo -n; echo -n "\t"; \
 		done; \
 		echo ''; \
-	done > inst.csv
+	done > csv/inst.csv
 	for dir in $(APPLICATION_DIRS); do \
 		echo -n $${dir} "\t"; \
 		for v in $(vlen_list); do \
 			grep "vecinst = "  $${dir}/spike-v.$${v}.log | sed 's/vecinst = //g'  | xargs echo -n; echo -n "\t"; \
 		done; \
 		echo ''; \
-	done > vecinst.csv
+	done > csv/vecinst.csv
 
 
 clean:

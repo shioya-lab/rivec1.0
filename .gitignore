@@ -31,5 +31,4 @@ ino.s*
 bin/
 *.dmp
 *.log
-*.csv
 *.pdf

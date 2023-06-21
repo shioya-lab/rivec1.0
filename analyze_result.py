@@ -40,7 +40,7 @@ plt.ylim(0.0, df_area_whole_d4.sum().max()*1.1)
 plt.show()
 # plt.savefig("area_d2.pdf", bbox_inches='tight')
 # plt.savefig("area_d2.png", bbox_inches='tight')
-df_area_whole_d2.to_csv("area_d2.csv")
+df_area_whole_d2.to_csv("csv/area_d2.csv")
 
 df_area_whole_d4.columns = ut.d4_index2
 display(df_area_whole_d4)
@@ -54,7 +54,7 @@ area_graph_d4.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper lef
 plt.show()
 # plt.savefig("area_d4.pdf", bbox_inches='tight')
 # plt.savefig("area_d4.png", bbox_inches='tight')
-df_area_whole_d4.to_csv("area_d4.csv")
+df_area_whole_d4.to_csv("csv/area_d4.csv")
 
 
 #%%
@@ -652,29 +652,29 @@ plt.ylim(0.0, 2.0)
 # %%
 # 各ベンチマークにおける相対性能グラフを作成
 
-for b in ut.benchmarks:
-  display(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV Fence$")    .loc[b]).set_axis(d2_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV Fence$")   .loc[b]).set_axis(d2_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV MEM Fence$")  .loc[b]).set_axis(d2_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Prop1$") .loc[b]).set_axis(d2_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="PROP$").loc[b]).set_axis(d2_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="BASE$")     .loc[b]).set_axis(d2_index_list, axis=0))
-  plt.title("Performance rate of %s with %s" % (b, d2_index_list))
-  plt.ylim(0.0)
-  plt.show()
-  plt.cla()
-
-for b in ut.benchmarks:
-  display(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV Fence$")    .loc[b]).set_axis(d4_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV Fence$")   .loc[b]).set_axis(d4_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV MEM Fence$")  .loc[b]).set_axis(d4_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Prop1$") .loc[b]).set_axis(d4_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="PROP$").loc[b]).set_axis(d4_index_list, axis=0))
-  plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="BASE$")     .loc[b]).set_axis(d4_index_list, axis=0))
-  plt.title("Performance rate of %s with %s" % (b, d4_index_list))
-  plt.ylim(0.0)
-  plt.show()
-  plt.cla()
+# for b in ut.benchmarks:
+#   display(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV Fence$")    .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV Fence$")   .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="SV MEM Fence$")  .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="Prop1$") .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="PROP$").loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d2_pct.filter(regex="BASE$")     .loc[b]).set_axis(d2_index_list, axis=0))
+#   plt.title("Performance rate of %s with %s" % (b, d2_index_list))
+#   plt.ylim(0.0)
+#   plt.show()
+#   plt.cla()
+# 
+# for b in ut.benchmarks:
+#   display(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV Fence$")    .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV Fence$")   .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="SV MEM Fence$")  .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="Prop1$") .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="PROP$").loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.plot(pd.DataFrame(df_cycle_whole_d4_pct.filter(regex="BASE$")     .loc[b]).set_axis(d4_index_list, axis=0))
+#   plt.title("Performance rate of %s with %s" % (b, d4_index_list))
+#   plt.ylim(0.0)
+#   plt.show()
+#   plt.cla()
 
   
 # %%
@@ -803,33 +803,51 @@ df_dc_insts_v32_d4        = pd.DataFrame([get_insts_with_app(b, 2048, 256)      
 # display(df_dc_insts_v32_d4)
 display((df_dc_load_misses_v32_d4 + df_dc_store_misses_v32_d4) / df_dc_insts_v32_d4 * 1000)
 
+
 # %%
 
 # 追い越しを行った回数を記録する
 
-import pandas as pd
-import utils as ut
-import util_cycle as ut_c
+scalar_scalar_ooo_issue = [sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-scalar-ooo-issue']['stop'] \
+                             if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('scalar-scalar-ooo-issue') else 0 for b in ut.bench_and_dhry]
+scalar_vec_ooo_issue    = [sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-vec-ooo-issue']['stop'] \
+                             if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('scalar-vec-ooo-issue') else 0 for b in ut.bench_and_dhry]
+scalar_ooo_issue    = [sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['stop'] - \
+                       sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['start'] \
+                       if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('scalar-ooo-issue') else 0 for b in ut.bench_and_dhry]
 
-df_vec_ooo_issue  = [pd.DataFrame([[ut_c.get_vec_ooo_issue(sql_info, b, c, v, 128) for c in ut.pipe_conf] for b in ut.benchmarks],
-                                  columns=["V" + str(v) + "-D2 " + c for c in ut.pipe_conf2], index=ut.benchmarks) for v in [128, 256, 512, 1024]]
-df_scalar_ooo_issue  = [pd.DataFrame([[ut_c.get_scalar_ooo_issue(sql_info, b, c, v, 128) for c in ut.pipe_conf] for b in ut.benchmarks],
-                                  columns=["V" + str(v) + "-D2 " + c for c in ut.pipe_conf2], index=ut.benchmarks) for v in [128, 256, 512, 1024]]
-df_all_uops_each = [pd.DataFrame([ut_c.get_whole_uops(sql_info, b, 'vio.v', v, 128) for b in ut.benchmarks],
-                                  columns=["V" + str(v) + "-D2 "], index=ut.benchmarks) for v in [128, 256, 512, 1024]]
-df_vec_uops_each = [pd.DataFrame([ut_c.get_vec_uops(sql_info, b, 'vio.v', v, 128) for b in ut.benchmarks],
-                                  columns=["V" + str(v) + "-D2 "], index=ut.benchmarks) for v in [128, 256, 512, 1024]]
+vec_scalar_ooo_issue = [sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-scalar-ooo-issue']['stop'] \
+                             if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('vec-scalar-ooo-issue') else 0 for b in ut.bench_and_dhry]
+vec_vec_ooo_issue    = [sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-vec-ooo-issue']['stop'] \
+                             if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('vec-vec-ooo-issue') else 0 for b in ut.bench_and_dhry]
+vec_ooo_issue    = [sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['stop'] - \
+                    sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['start'] \
+                    if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('vec-ooo-issue') else 0 for b in ut.bench_and_dhry]
+uops_total       = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
 
-df_vec_ooo = pd.concat(df_vec_ooo_issue, axis=1)
-df_scalar_ooo = pd.concat(df_scalar_ooo_issue, axis=1)
-df_all_uops = pd.concat(df_all_uops_each, axis=1)
-df_vec_uops = pd.concat(df_vec_uops_each, axis=1)
-
-display(df_vec_ooo)
-display(df_scalar_ooo)
-display(df_all_uops)
+df_ooo_issue = pd.concat([pd.DataFrame(scalar_scalar_ooo_issue , index=ut.bench_and_dhry, columns=["スカラ命令が古いスカラ命令を追い越して発行した回数"]),
+                          pd.DataFrame(scalar_vec_ooo_issue    , index=ut.bench_and_dhry, columns=["スカラ命令が古いベクトル命令を追い越して発行した回数"]),
+                          pd.DataFrame(scalar_ooo_issue        , index=ut.bench_and_dhry, columns=["スカラ命令が古い命令を追い越して発行した回数"]),
+                          pd.DataFrame(vec_scalar_ooo_issue    , index=ut.bench_and_dhry, columns=["ベクトルラ命令が古いスカラ命令を追い越して発行した回数"]),
+                          pd.DataFrame(vec_vec_ooo_issue       , index=ut.bench_and_dhry, columns=["ベクトルラ命令が古いベクトル命令を追い越して発行した回数"]),
+                          pd.DataFrame(vec_ooo_issue           , index=ut.bench_and_dhry, columns=["ベクトル命令が古い命令を追い越して発行した回数"]),
+                          pd.DataFrame(uops_total              , index=ut.bench_and_dhry, columns=["全体命令数"])], axis=1)
+df_ooo_issue.to_csv("csv/df_ooo_issue_d2.csv")
 
 # %%
+# 各ベンチマークにおけるスカラ命令とベクトル命令の割合を表示する
+
+uops_vec_arith = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_arith']['stop']  if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_arith')  else 0 for b in ut.bench_and_dhry]
+uops_vec_mem   = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_memacc']['stop'] if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_memacc') else 0 for b in ut.bench_and_dhry]
+uops_total     = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
+
+uops_vec_rate = ((pd.DataFrame(uops_vec_arith).T + pd.DataFrame(uops_vec_mem).T) / pd.DataFrame(uops_total).T).T
+uops_vec_rate.columns=["V16-D2"]
+uops_vec_rate.index=ut.bench_and_dhry
+
+uops_vec_rate = uops_vec_rate.sort_values('V16-D2', ascending=False)
+display(uops_vec_rate)
+uops_vec_rate.to_csv("csv/uops_vec_rate_v16_d2.csv")
 
 # df_vec_ooo_fence    = df_vec_ooo.filter(regex='fence$')
 # df_vec_ooo_lsu_ino  = df_vec_ooo.filter(regex='lsu-inorder$')
@@ -854,83 +872,3 @@ display(df_all_uops)
 # display(pd.concat([pd.DataFrame(df_vec_ooo_ngs    ), pd.DataFrame(df_vec_uops)], axis=1))
 # display(pd.concat([pd.DataFrame(df_vec_ooo_vio    ), pd.DataFrame(df_vec_uops)], axis=1))
 # display(pd.concat([pd.DataFrame(df_vec_ooo_ooo    ), pd.DataFrame(df_vec_uops)], axis=1))
-
-# %%
-
-# 追い越しを行った回数を記録する
-
-scalar_ooo_issue = [sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['stop'] - sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['start']     if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('scalar-vec-ooo-issue')    else 0 for b in ut.bench_and_dhry]
-vec_ooo_issue    = [sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['stop']    - sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['start']        if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('vec-vec-ooo-issue')       else 0 for b in ut.bench_and_dhry]
-uops_total       = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
-
-pd.concat([pd.DataFrame(scalar_ooo_issue , index=ut.bench_and_dhry, columns=["スカラ命令が古い命令を追い越して発行した回数"]),
-           pd.DataFrame(vec_ooo_issue    , index=ut.bench_and_dhry, columns=["ベクトル命令が古い命令を追い越して発行した回数"]),
-           pd.DataFrame(uops_total       , index=ut.bench_and_dhry, columns=["全体命令数"])], axis=1)
-
-# %%
-# 各ベンチマークにおけるスカラ命令とベクトル命令の割合を表示する
-
-uops_vec_arith = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_arith']['stop']  if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_arith')  else 0 for b in ut.bench_and_dhry]
-uops_vec_mem   = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_memacc']['stop'] if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_memacc') else 0 for b in ut.bench_and_dhry]
-uops_total     = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
-
-uops_vec_rate = ((pd.DataFrame(uops_vec_arith).T + pd.DataFrame(uops_vec_mem).T) / pd.DataFrame(uops_total).T).T
-uops_vec_rate.columns=["V16-D2"]
-uops_vec_rate.index=ut.bench_and_dhry
-
-uops_vec_rate = uops_vec_rate.sort_values('V16-D2', ascending=False)
-display(uops_vec_rate)
-
-
-# df_vec_ooo_fence    = df_vec_ooo.filter(regex='fence$')
-# df_vec_ooo_lsu_ino  = df_vec_ooo.filter(regex='lsu-inorder$')
-# df_vec_ooo_ngs      = df_vec_ooo.filter(regex='ngs$')
-# df_vec_ooo_vio      = df_vec_ooo.filter(regex='vio.v$')
-# df_vec_ooo_ooo      = df_vec_ooo.filter(regex='ooo.v$')
-# 
-# df_scalar_ooo_fence    = df_scalar_ooo.filter(regex='fence$')
-# df_scalar_ooo_lsu_ino  = df_scalar_ooo.filter(regex='lsu-inorder$')
-# df_scalar_ooo_ngs      = df_scalar_ooo.filter(regex='ngs$')
-# df_scalar_ooo_vio      = df_scalar_ooo.filter(regex='vio.v$')
-# df_scalar_ooo_ooo      = df_scalar_ooo.filter(regex='ooo.v$')
-# 
-# display(pd.concat([pd.DataFrame(df_vec_ooo_fence  ), pd.DataFrame(df_scalar_ooo_fence  ), pd.DataFrame(df_all_uops)], axis=1))
-# display(pd.concat([pd.DataFrame(df_vec_ooo_lsu_ino), pd.DataFrame(df_scalar_ooo_lsu_ino), pd.DataFrame(df_all_uops)], axis=1))
-# display(pd.concat([pd.DataFrame(df_vec_ooo_ngs    ), pd.DataFrame(df_scalar_ooo_ngs    ), pd.DataFrame(df_all_uops)], axis=1))
-# display(pd.concat([pd.DataFrame(df_vec_ooo_vio    ), pd.DataFrame(df_scalar_ooo_vio    ), pd.DataFrame(df_all_uops)], axis=1))
-# display(pd.concat([pd.DataFrame(df_vec_ooo_ooo    ), pd.DataFrame(df_scalar_ooo_ooo    ), pd.DataFrame(df_all_uops)], axis=1))
-# 
-# display(pd.concat([pd.DataFrame(df_vec_ooo_fence  ), pd.DataFrame(df_vec_uops)], axis=1))
-# display(pd.concat([pd.DataFrame(df_vec_ooo_lsu_ino), pd.DataFrame(df_vec_uops)], axis=1))
-# display(pd.concat([pd.DataFrame(df_vec_ooo_ngs    ), pd.DataFrame(df_vec_uops)], axis=1))
-# display(pd.concat([pd.DataFrame(df_vec_ooo_vio    ), pd.DataFrame(df_vec_uops)], axis=1))
-# display(pd.concat([pd.DataFrame(df_vec_ooo_ooo    ), pd.DataFrame(df_vec_uops)], axis=1))
-
-# %%
-
-# 追い越しを行った回数を記録する
-
-scalar_ooo_issue = [sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['stop'] - sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-ooo-issue']['start']     if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('scalar-vec-ooo-issue')    else 0 for b in ut.bench_and_dhry]
-vec_ooo_issue    = [sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['stop']    - sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-ooo-issue']['start']        if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('vec-vec-ooo-issue')       else 0 for b in ut.bench_and_dhry]
-uops_total       = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
-
-pd.concat([pd.DataFrame(scalar_ooo_issue , index=ut.bench_and_dhry, columns=["スカラ命令が古い命令を追い越して発行した回数"]),
-           pd.DataFrame(vec_ooo_issue    , index=ut.bench_and_dhry, columns=["ベクトル命令が古い命令を追い越して発行した回数"]),
-           pd.DataFrame(uops_total       , index=ut.bench_and_dhry, columns=["全体命令数"])], axis=1)
-
-# %%
-# 各ベンチマークにおけるスカラ命令とベクトル命令の割合を表示する
-
-uops_vec_arith = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_arith']['stop']  if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_arith')  else 0 for b in ut.bench_and_dhry]
-uops_vec_mem   = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uop_vec_memacc']['stop'] if sql_info[128][1024][b]['ooo.v']['rob_timer'].get('uop_vec_memacc') else 0 for b in ut.bench_and_dhry]
-uops_total     = [sql_info[128][1024][b]['ooo.v']['rob_timer']['uops_total']['stop'] for b in ut.bench_and_dhry]
-
-uops_vec_rate = ((pd.DataFrame(uops_vec_arith).T + pd.DataFrame(uops_vec_mem).T) / pd.DataFrame(uops_total).T).T
-uops_vec_rate.columns=["V16-D2"]
-uops_vec_rate.index=ut.bench_and_dhry
-
-uops_vec_rate = uops_vec_rate.sort_values('V16-D2', ascending=False)
-display(uops_vec_rate)
-
-
-# %%
