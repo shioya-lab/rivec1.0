@@ -29,7 +29,8 @@ rivec_benchmarks = [
 
 benchmarks = rivec_benchmarks + [
     'spmv', 
-    'fftw3'
+    'fftw3',
+#    'dhrystone'
 ]
 
 bench_and_dhry = benchmarks + ['dhrystone']
@@ -107,7 +108,7 @@ e_elem['SV Fence']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Cou
 # e_elem['SV Fence']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
 #                                        ]
 e_elem['SV Fence']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
-e_elem['SV Fence']['Vecotr RF'] = ['v_ino:Register_Files']
+e_elem['SV Fence']['Vector RF'] = ['v_ino:Register_Files']
 e_elem['SV Fence']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['SV Fence']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', '-s_ooo:Data_Cache']
 e_elem['SV Fence']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
@@ -128,7 +129,7 @@ e_elem['SV MEM Fence']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs__
 # e_elem['SV MEM Fence']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['SV MEM Fence']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
-e_elem['SV MEM Fence']['Vecotr RF'] = ['v_ino:Register_Files']
+e_elem['SV MEM Fence']['Vector RF'] = ['v_ino:Register_Files']
 e_elem['SV MEM Fence']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['SV MEM Fence']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', '-s_ooo:Data_Cache']
 e_elem['SV MEM Fence']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
@@ -149,7 +150,7 @@ e_elem['Prop1']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count'
 # e_elem['Prop1']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
 #                                      'v_ooo:Results_Broadcast_Bus']
 e_elem['Prop1']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
-e_elem['Prop1']['Vecotr RF'] = ['v_ino:Register_Files']
+e_elem['Prop1']['Vector RF'] = ['v_ino:Register_Files']
 e_elem['Prop1']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['Prop1']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s_ngs:LoadQ', '-s_ooo:Data_Cache']
 e_elem['Prop1']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
@@ -170,7 +171,7 @@ e_elem['PROP']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
 # e_elem['PROP']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['PROP']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
-e_elem['PROP']['Vecotr RF'] = ['v_ino:Register_Files']
+e_elem['PROP']['Vector RF'] = ['v_ino:Register_Files']
 e_elem['PROP']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['PROP']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', '-s_ooo:Data_Cache']
 e_elem['PROP']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
@@ -193,7 +194,7 @@ e_elem['BASE']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
 # e_elem['BASE']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['BASE']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
-e_elem['BASE']['Vecotr RF'] = ['v_ooo:Register_Files']
+e_elem['BASE']['Vector RF'] = ['v_ooo:Register_Files']
 e_elem['BASE']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['BASE']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', 'v_to_s:StoreQ', '-s_ooo:Data_Cache']
 e_elem['BASE']['Vector LSU'] = ['v_ooo:Load_Store_Unit', 's_to_v:LoadQ', 's_to_v:StoreQ', '-v_ooo:Data_Cache']
@@ -202,24 +203,24 @@ e_elem['BASE']['Vector LSU'] = ['v_ooo:Load_Store_Unit', 's_to_v:LoadQ', 's_to_v
 # 各モジュールにおいて、スケールを決める
 # ------------------------------------
 area_scale = dict()
-area_scale['v128_d128']  = {'Vecotr RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-area_scale['v256_d128']  = {'Vecotr RF': 2.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-area_scale['v512_d128']  = {'Vecotr RF': 4.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-area_scale['v1024_d128'] = {'Vecotr RF': 8.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-area_scale['v256_d256']  = {'Vecotr RF': 2.0,  'Vector FU': 2.0, 'L1D Cache': 2}
-area_scale['v512_d256']  = {'Vecotr RF': 4.0,  'Vector FU': 2.0, 'L1D Cache': 2}
-area_scale['v1024_d256'] = {'Vecotr RF': 8.0,  'Vector FU': 2.0, 'L1D Cache': 2}
-area_scale['v2048_d256'] = {'Vecotr RF': 16.0, 'Vector FU': 2.0, 'L1D Cache': 2}
+area_scale['v128_d128']  = {'Vector RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v256_d128']  = {'Vector RF': 2.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v512_d128']  = {'Vector RF': 4.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v1024_d128'] = {'Vector RF': 8.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+area_scale['v256_d256']  = {'Vector RF': 2.0,  'Vector FU': 2.0, 'L1D Cache': 2}
+area_scale['v512_d256']  = {'Vector RF': 4.0,  'Vector FU': 2.0, 'L1D Cache': 2}
+area_scale['v1024_d256'] = {'Vector RF': 8.0,  'Vector FU': 2.0, 'L1D Cache': 2}
+area_scale['v2048_d256'] = {'Vector RF': 16.0, 'Vector FU': 2.0, 'L1D Cache': 2}
 
 energy_scale = dict()
-energy_scale['v128_d128']  = {'Vecotr RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v256_d128']  = {'Vecotr RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v512_d128']  = {'Vecotr RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v1024_d128'] = {'Vecotr RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v256_d256']  = {'Vecotr RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
-energy_scale['v512_d256']  = {'Vecotr RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
-energy_scale['v1024_d256'] = {'Vecotr RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
-energy_scale['v2048_d256'] = {'Vecotr RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
+energy_scale['v128_d128']  = {'Vector RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v256_d128']  = {'Vector RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v512_d128']  = {'Vector RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v1024_d128'] = {'Vector RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v256_d256']  = {'Vector RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
+energy_scale['v512_d256']  = {'Vector RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
+energy_scale['v1024_d256'] = {'Vector RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
+energy_scale['v2048_d256'] = {'Vector RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
 
 #%%
 from itertools import chain

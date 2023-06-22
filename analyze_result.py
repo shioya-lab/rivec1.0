@@ -272,7 +272,7 @@ power_modules = [
   'Scalar FU + RF',
   'Vector FU',
   'Vector FU',
-  'Vecotr RF',
+  'Vector RF',
   'L1D Cache',
   'Scalar LSU',
   'Vector LSU',
@@ -495,11 +495,13 @@ df_energy_whole_d2 = pd.concat([df_energy_group_bench_sum_v2_d2,
                                 df_energy_group_bench_sum_v8_d2,
                                 df_energy_group_bench_sum_v16_d2], axis=1)
 # df_energy_whole_d2.columns = ut.d2_index2
+df_energy_whole_d2.to_csv("csv/energy_d2.csv")
 
 df_energy_whole_d4 = pd.concat([df_energy_group_bench_sum_v4_d4,
                                 df_energy_group_bench_sum_v8_d4,
                                 df_energy_group_bench_sum_v16_d4,
                                 df_energy_group_bench_sum_v32_d4], axis=1)
+df_energy_whole_d4.to_csv("csv/energy_d4.csv")
 # df_energy_whole_d4.columns = ut.d4_index2
 
 display(df_energy_whole_d2)

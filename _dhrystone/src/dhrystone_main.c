@@ -314,7 +314,7 @@ int main (int argc, char** argv)
   printf("Microseconds for one run through Dhrystone: %ld\n", Microseconds);
   printf("Dhrystones per Second:                      %ld\n", Dhrystones_Per_Second);
 
-  printf("cycle = %ld\n", User_Time);
+  printf("cycles = %ld\n", User_Time);
   printf("instret = %ld\n", stop_instret - start_instret);
   printf("vecinst = %ld\n", stop_vecinst - start_vecinst);
   
