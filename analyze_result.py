@@ -488,40 +488,157 @@ for c in df_power_group_v32_d4.columns:
 # plt.ylim(0.0, df_power_whole_d4.sum().max()*1.1)
 
 
+#%% 各アプリケーション毎にグラフを作り直し
+
+df_energy_base_v2_d2      = pd.DataFrame()
+df_energy_base_pct_v2_d2  = pd.DataFrame()
+df_energy_base_v4_d2      = pd.DataFrame()
+df_energy_base_pct_v4_d2  = pd.DataFrame()
+df_energy_base_v8_d2      = pd.DataFrame()
+df_energy_base_pct_v8_d2  = pd.DataFrame()
+df_energy_base_v16_d2     = pd.DataFrame()
+df_energy_base_pct_v16_d2 = pd.DataFrame()
+df_energy_prop_v2_d2      = pd.DataFrame()
+df_energy_prop_pct_v2_d2  = pd.DataFrame()
+df_energy_prop_v4_d2      = pd.DataFrame()
+df_energy_prop_pct_v4_d2  = pd.DataFrame()
+df_energy_prop_v8_d2      = pd.DataFrame()
+df_energy_prop_pct_v8_d2  = pd.DataFrame()
+df_energy_prop_v16_d2     = pd.DataFrame()
+df_energy_prop_pct_v16_d2 = pd.DataFrame()
+
+for b in ut.benchmarks:
+  df_energy_base_v2_d2    [b] = pd.Series(df_power_group_v2_d2.loc[b].loc['V2-D2 BASE']) * df_cycle_v2_d2.loc[b].loc['V2-D2 BASE']
+  df_energy_base_pct_v2_d2[b] = df_energy_base_v2_d2[b] / df_energy_base_v2_d2[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_prop_v2_d2    [b] = pd.Series(df_power_group_v2_d2.loc[b].loc['V2-D2 PROP']) * df_cycle_v2_d2.loc[b].loc['V2-D2 PROP']
+  df_energy_prop_pct_v2_d2[b] = df_energy_prop_v2_d2[b] / df_energy_base_v2_d2[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_base_v4_d2    [b] = pd.Series(df_power_group_v4_d2.loc[b].loc['V4-D2 BASE']) * df_cycle_v4_d2.loc[b].loc['V4-D2 BASE']
+  df_energy_base_pct_v4_d2[b] = df_energy_base_v4_d2[b] / df_energy_base_v2_d2[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_prop_v4_d2    [b] = pd.Series(df_power_group_v4_d2.loc[b].loc['V4-D2 PROP']) * df_cycle_v4_d2.loc[b].loc['V4-D2 PROP']
+  df_energy_prop_pct_v4_d2[b] = df_energy_prop_v4_d2[b] / df_energy_base_v2_d2[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_base_v8_d2    [b] = pd.Series(df_power_group_v8_d2.loc[b].loc['V8-D2 BASE']) * df_cycle_v8_d2.loc[b].loc['V8-D2 BASE']
+  df_energy_base_pct_v8_d2[b] = df_energy_base_v8_d2[b] / df_energy_base_v2_d2[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_prop_v8_d2    [b] = pd.Series(df_power_group_v8_d2.loc[b].loc['V8-D2 PROP']) * df_cycle_v8_d2.loc[b].loc['V8-D2 PROP']
+  df_energy_prop_pct_v8_d2[b] = df_energy_prop_v8_d2[b] / df_energy_base_v2_d2[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_base_v16_d2    [b] = pd.Series(df_power_group_v16_d2.loc[b].loc['V16-D2 BASE']) * df_cycle_v16_d2.loc[b].loc['V16-D2 BASE']
+  df_energy_base_pct_v16_d2[b] = df_energy_base_v16_d2[b] / df_energy_base_v2_d2[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_prop_v16_d2    [b] = pd.Series(df_power_group_v16_d2.loc[b].loc['V16-D2 PROP']) * df_cycle_v16_d2.loc[b].loc['V16-D2 PROP']
+  df_energy_prop_pct_v16_d2[b] = df_energy_prop_v16_d2[b] / df_energy_base_v2_d2[b].sum()   # V2-D2のエネルギーで割って正規化
+
+
+# 最終的に欲しいV2-D2 PROP/V2-D2 BASE / V8-D2 PROP / V8-D8 PROPのグラフを作る
+df_energy_whole_d2_pct = pd.concat([df_energy_prop_pct_v2_d2.T.mean(),
+                                    df_energy_base_pct_v2_d2.T.mean(),
+                                    df_energy_prop_pct_v4_d2.T.mean(),
+                                    df_energy_base_pct_v4_d2.T.mean(),
+                                    df_energy_prop_pct_v8_d2.T.mean(),
+                                    df_energy_base_pct_v8_d2.T.mean(),
+                                    df_energy_prop_pct_v16_d2.T.mean(),
+                                    df_energy_base_pct_v16_d2.T.mean(),], axis=1,
+                           keys = ["V2-D2 PROP", "V2-D2 BASE", "V4-D2 PROP", "V4-D2 BASE", "V8-D2 PROP", "V8-D2 BASE", "V16-D2 PROP", "V16-D2 BASE"])
+
+df_energy_whole_d2_pct.T.plot(kind='bar', stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+df_energy_whole_d2_pct.to_csv("csv/energy_d2.csv")
+
+df_energy_base_v4_d4      = pd.DataFrame()
+df_energy_base_pct_v4_d4  = pd.DataFrame()
+df_energy_base_v8_d4      = pd.DataFrame()
+df_energy_base_pct_v8_d4  = pd.DataFrame()
+df_energy_base_v16_d4      = pd.DataFrame()
+df_energy_base_pct_v16_d4  = pd.DataFrame()
+df_energy_base_v32_d4     = pd.DataFrame()
+df_energy_base_pct_v32_d4 = pd.DataFrame()
+df_energy_prop_v4_d4      = pd.DataFrame()
+df_energy_prop_pct_v4_d4  = pd.DataFrame()
+df_energy_prop_v8_d4      = pd.DataFrame()
+df_energy_prop_pct_v8_d4  = pd.DataFrame()
+df_energy_prop_v16_d4      = pd.DataFrame()
+df_energy_prop_pct_v16_d4  = pd.DataFrame()
+df_energy_prop_v32_d4     = pd.DataFrame()
+df_energy_prop_pct_v32_d4 = pd.DataFrame()
+
+for b in ut.benchmarks:
+  df_energy_base_v4_d4    [b] = pd.Series(df_power_group_v4_d4.loc[b].loc['V4-D4 BASE']) * df_cycle_v4_d4.loc[b].loc['V4-D4 BASE']
+  df_energy_base_pct_v4_d4[b] = df_energy_base_v4_d4[b] / df_energy_base_v4_d4[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_prop_v4_d4    [b] = pd.Series(df_power_group_v4_d4.loc[b].loc['V4-D4 PROP']) * df_cycle_v4_d4.loc[b].loc['V4-D4 PROP']
+  df_energy_prop_pct_v4_d4[b] = df_energy_prop_v4_d4[b] / df_energy_base_v4_d4[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_base_v8_d4    [b] = pd.Series(df_power_group_v8_d4.loc[b].loc['V8-D4 BASE']) * df_cycle_v8_d4.loc[b].loc['V8-D4 BASE']
+  df_energy_base_pct_v8_d4[b] = df_energy_base_v8_d4[b] / df_energy_base_v4_d4[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_prop_v8_d4    [b] = pd.Series(df_power_group_v8_d4.loc[b].loc['V8-D4 PROP']) * df_cycle_v8_d4.loc[b].loc['V8-D4 PROP']
+  df_energy_prop_pct_v8_d4[b] = df_energy_prop_v8_d4[b] / df_energy_base_v4_d4[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_base_v16_d4    [b] = pd.Series(df_power_group_v16_d4.loc[b].loc['V16-D4 BASE']) * df_cycle_v16_d4.loc[b].loc['V16-D4 BASE']
+  df_energy_base_pct_v16_d4[b] = df_energy_base_v16_d4[b] / df_energy_base_v4_d4[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_prop_v16_d4    [b] = pd.Series(df_power_group_v16_d4.loc[b].loc['V16-D4 PROP']) * df_cycle_v16_d4.loc[b].loc['V16-D4 PROP']
+  df_energy_prop_pct_v16_d4[b] = df_energy_prop_v16_d4[b] / df_energy_base_v4_d4[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_base_v32_d4    [b] = pd.Series(df_power_group_v32_d4.loc[b].loc['V32-D4 BASE']) * df_cycle_v32_d4.loc[b].loc['V32-D4 BASE']
+  df_energy_base_pct_v32_d4[b] = df_energy_base_v32_d4[b] / df_energy_base_v4_d4[b].sum()   # V2-D2のエネルギーで割って正規化
+
+  df_energy_prop_v32_d4    [b] = pd.Series(df_power_group_v32_d4.loc[b].loc['V32-D4 PROP']) * df_cycle_v32_d4.loc[b].loc['V32-D4 PROP']
+  df_energy_prop_pct_v32_d4[b] = df_energy_prop_v32_d4[b] / df_energy_base_v4_d4[b].sum()   # V2-D2のエネルギーで割って正規化
+
+
+# 最終的に欲しいV2-D2 PROP/V2-D2 BASE / V8-D2 PROP / V8-D8 PROPのグラフを作る
+df_energy_whole_d4_pct = pd.concat([df_energy_prop_pct_v4_d4.T.mean(),
+                                    df_energy_base_pct_v4_d4.T.mean(),
+                                    df_energy_prop_pct_v8_d4.T.mean(),
+                                    df_energy_base_pct_v8_d4.T.mean(),
+                                    df_energy_prop_pct_v16_d4.T.mean(),
+                                    df_energy_base_pct_v16_d4.T.mean(),
+                                    df_energy_prop_pct_v32_d4.T.mean(),
+                                    df_energy_base_pct_v32_d4.T.mean()], axis=1,
+                           keys = ["V4-D4 PROP", "V4-D4 BASE", "V8-D4 PROP", "V8-D4 BASE", "V16-D4 PROP", "V16-D4 BASE", "V32-D4 PROP", "V32-D4 BASE"])
+
+df_energy_whole_d4_pct.T.plot(kind='bar', stacked=True).legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+df_energy_whole_d4_pct.to_csv("csv/energy_d4.csv")
+
+
 #%%
-# 全部のエネルギーを計算
-df_energy_whole_d2 = pd.concat([df_energy_group_bench_sum_v2_d2, 
-                                df_energy_group_bench_sum_v4_d2,
-                                df_energy_group_bench_sum_v8_d2,
-                                df_energy_group_bench_sum_v16_d2], axis=1)
-# df_energy_whole_d2.columns = ut.d2_index2
-df_energy_whole_d2.to_csv("csv/energy_d2.csv")
+# # 全部のエネルギーを計算
+# df_energy_whole_d2 = pd.concat([df_energy_group_bench_sum_v2_d2, 
+#                                 df_energy_group_bench_sum_v4_d2,
+#                                 df_energy_group_bench_sum_v8_d2,
+#                                 df_energy_group_bench_sum_v16_d2], axis=1)
+# # df_energy_whole_d2.columns = ut.d2_index2
+# df_energy_whole_d2.to_csv("csv/energy_d2.csv")
+# 
+# df_energy_whole_d4 = pd.concat([df_energy_group_bench_sum_v4_d4,
+#                                 df_energy_group_bench_sum_v8_d4,
+#                                 df_energy_group_bench_sum_v16_d4,
+#                                 df_energy_group_bench_sum_v32_d4], axis=1)
+# df_energy_whole_d4.to_csv("csv/energy_d4.csv")
+# # df_energy_whole_d4.columns = ut.d4_index2
 
-df_energy_whole_d4 = pd.concat([df_energy_group_bench_sum_v4_d4,
-                                df_energy_group_bench_sum_v8_d4,
-                                df_energy_group_bench_sum_v16_d4,
-                                df_energy_group_bench_sum_v32_d4], axis=1)
-df_energy_whole_d4.to_csv("csv/energy_d4.csv")
-# df_energy_whole_d4.columns = ut.d4_index2
-
-display(df_energy_whole_d2)
-energy_graph = df_energy_whole_d2.T.plot(kind='bar', title="Energy Estimation of V2-D2 V4-D2 V8-D2 V16-D2", stacked=True)
-handles, labels = energy_graph.get_legend_handles_labels()
-handles = handles[::-1]
-labels = labels[::-1]
-energy_graph.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left', )
-plt.ylim(0.0, df_energy_whole_d4.sum().max() * 1.1)
-plt.show()
-
-# plt.savefig("relative_energy.pdf", bbox_inches='tight')
-
-display(df_energy_whole_d4)
-energy_graph = df_energy_whole_d4.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4 V32-D4", stacked=True)
-handles, labels = energy_graph.get_legend_handles_labels()
-handles = handles[::-1]
-labels = labels[::-1]
-energy_graph.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left', )
-plt.show()
+# display(df_energy_whole_d2)
+# energy_graph = df_energy_whole_d2.T.plot(kind='bar', title="Energy Estimation of V2-D2 V4-D2 V8-D2 V16-D2", stacked=True)
+# handles, labels = energy_graph.get_legend_handles_labels()
+# handles = handles[::-1]
+# labels = labels[::-1]
+# energy_graph.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left', )
+# plt.ylim(0.0, df_energy_whole_d4.sum().max() * 1.1)
+# plt.show()
+# 
+# # plt.savefig("relative_energy.pdf", bbox_inches='tight')
+# 
+# display(df_energy_whole_d4)
+# energy_graph = df_energy_whole_d4.T.plot(kind='bar', title="Energy Estimation of V4-D4 V8-D4 V16-D4 V32-D4", stacked=True)
+# handles, labels = energy_graph.get_legend_handles_labels()
+# handles = handles[::-1]
+# labels = labels[::-1]
+# energy_graph.legend(handles, labels, bbox_to_anchor=(1.05, 1.0), loc='upper left', )
+# plt.show()
 
 
 # %%
@@ -529,37 +646,37 @@ plt.show()
 
 import numpy as np
 
-df_energy_whole_d2_pct = df_energy_whole_d2 / df_energy_whole_d2.sum().min()
+# df_energy_whole_d2_pct = df_energy_whole_d2 / df_energy_whole_d2.sum().min()
 
 d2_index_list = ['V2-D2', 'V4-D2', 'V8-D2', 'V16-D2']
 
-df_perf_d2_fence    = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='SV Fence$').mean(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
-df_perf_d2_lsuino   = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='SV MEM Fence$').mean(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
-df_perf_d2_nomerge  = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Prop1$').mean(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
+# df_perf_d2_fence    = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='SV Fence$').mean(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
+# df_perf_d2_lsuino   = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='SV MEM Fence$').mean(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
+# df_perf_d2_nomerge  = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='Prop1$').mean(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
 df_perf_d2_proposal = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='PROP$').mean(), columns=['PROP'] ).set_axis(d2_index_list, axis=0)
 df_perf_d2_ooo      = pd.DataFrame(df_cycle_whole_d2_pct.filter(regex='BASE$').mean(),          columns=['BASE']      ).set_axis(d2_index_list, axis=0)
 
-df_energy_d2_fence    = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='SV Fence$').sum(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
-df_energy_d2_lsuino   = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='SV MEM Fence$').sum(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
-df_energy_d2_nomerge  = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Prop1$').sum(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
+# df_energy_d2_fence    = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='SV Fence$').sum(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
+# df_energy_d2_lsuino   = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='SV MEM Fence$').sum(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
+# df_energy_d2_nomerge  = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='Prop1$').sum(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
 df_energy_d2_proposal = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='PROP$').sum(), columns=['PROP'] ).set_axis(d2_index_list, axis=0)
 df_energy_d2_ooo      = pd.DataFrame(df_energy_whole_d2_pct.filter(regex='BASE$').sum(),          columns=['BASE']      ).set_axis(d2_index_list, axis=0)
 
-df_area_d2_fence    = pd.DataFrame(df_area_whole_d2.filter(regex='SV Fence$').sum(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
-df_area_d2_lsuino   = pd.DataFrame(df_area_whole_d2.filter(regex='SV MEM Fence$').sum(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
-df_area_d2_nomerge  = pd.DataFrame(df_area_whole_d2.filter(regex='Prop1$').sum(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
+# df_area_d2_fence    = pd.DataFrame(df_area_whole_d2.filter(regex='SV Fence$').sum(),     columns=['SV Fence']    ).set_axis(d2_index_list, axis=0)
+# df_area_d2_lsuino   = pd.DataFrame(df_area_whole_d2.filter(regex='SV MEM Fence$').sum(), columns=['SV MEM Fence']).set_axis(d2_index_list, axis=0)
+# df_area_d2_nomerge  = pd.DataFrame(df_area_whole_d2.filter(regex='Prop1$').sum(),        columns=['Prop1']       ).set_axis(d2_index_list, axis=0)
 df_area_d2_proposal = pd.DataFrame(df_area_whole_d2.filter(regex='PROP$').sum(), columns=['PROP'] ).set_axis(d2_index_list, axis=0)
 df_area_d2_ooo      = pd.DataFrame(df_area_whole_d2.filter(regex='BASE$').sum(),          columns=['BASE']      ).set_axis(d2_index_list, axis=0)
 
-plt.scatter(df_energy_d2_fence, df_perf_d2_fence, label='SV Fence', color='blue')
-plt.plot   (df_energy_d2_fence, df_perf_d2_fence, color='blue')
-plt.axline((0, 0), (df_energy_d2_fence['SV Fence']['V4-D2'], 
-                    df_perf_d2_fence  ['SV Fence']['V4-D2']), color='blue', lw=0.5)
-
-plt.scatter(df_energy_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
-plt.plot   (df_energy_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
-plt.axline((0, 0), (df_energy_d2_nomerge['Prop1']['V4-D2'], 
-                    df_perf_d2_nomerge  ['Prop1']['V4-D2']), color='green', lw=0.5)
+# plt.scatter(df_energy_d2_fence, df_perf_d2_fence, label='SV Fence', color='blue')
+# plt.plot   (df_energy_d2_fence, df_perf_d2_fence, color='blue')
+# plt.axline((0, 0), (df_energy_d2_fence['SV Fence']['V4-D2'], 
+#                     df_perf_d2_fence  ['SV Fence']['V4-D2']), color='blue', lw=0.5)
+# 
+# plt.scatter(df_energy_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
+# plt.plot   (df_energy_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
+# plt.axline((0, 0), (df_energy_d2_nomerge['Prop1']['V4-D2'], 
+#                     df_perf_d2_nomerge  ['Prop1']['V4-D2']), color='green', lw=0.5)
 
 plt.scatter(df_energy_d2_proposal, df_perf_d2_proposal, label='PROP', color='purple')
 plt.plot   (df_energy_d2_proposal, df_perf_d2_proposal, label='PROP', color='purple')
@@ -580,37 +697,37 @@ plt.ylabel("Performance (Higher is Better)")
 #%%
 # D4 : 性能とエネルギーの分布図を作る
 
-df_energy_whole_d4_pct = df_energy_whole_d4 / df_energy_whole_d4.sum().min()
+# df_energy_whole_d4_pct = df_energy_whole_d4 / df_energy_whole_d4.sum().min()
 
 d4_index_list = ['V4-D4', 'V8-D4', 'V16-D4', 'V32-D4']
 
-df_perf_d4_fence    = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='SV Fence$').mean(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
-df_perf_d4_lsuino   = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='SV MEM Fence$').mean(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
-df_perf_d4_nomerge  = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Prop1$').mean(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
+# df_perf_d4_fence    = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='SV Fence$').mean(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
+# df_perf_d4_lsuino   = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='SV MEM Fence$').mean(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
+# df_perf_d4_nomerge  = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='Prop1$').mean(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
 df_perf_d4_proposal = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='PROP$').mean(), columns=['PROP']).set_axis(d4_index_list, axis=0)
 df_perf_d4_ooo      = pd.DataFrame(df_cycle_whole_d4_pct.filter(regex='BASE$').mean(),      columns=['BASE']         ).set_axis(d4_index_list, axis=0)
 
-df_energy_d4_fence    = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='SV Fence$').sum(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
-df_energy_d4_lsuino   = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='SV MEM Fence$').sum(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
-df_energy_d4_nomerge  = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Prop1$').sum(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
+# df_energy_d4_fence    = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='SV Fence$').sum(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
+# df_energy_d4_lsuino   = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='SV MEM Fence$').sum(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
+# df_energy_d4_nomerge  = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='Prop1$').sum(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
 df_energy_d4_proposal = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='PROP$').sum(), columns=['PROP']).set_axis(d4_index_list, axis=0)
 df_energy_d4_ooo      = pd.DataFrame(df_energy_whole_d4_pct.filter(regex='BASE$').sum(),      columns=['BASE']         ).set_axis(d4_index_list, axis=0)
 
-df_area_d4_fence    = pd.DataFrame(df_area_whole_d4.filter(regex='SV Fence$').sum(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
-df_area_d4_lsuino   = pd.DataFrame(df_area_whole_d4.filter(regex='SV MEM Fence$').sum(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
-df_area_d4_nomerge  = pd.DataFrame(df_area_whole_d4.filter(regex='Prop1$').sum(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
+# df_area_d4_fence    = pd.DataFrame(df_area_whole_d4.filter(regex='SV Fence$').sum(),    columns=['SV Fence']   ).set_axis(d4_index_list, axis=0)
+# df_area_d4_lsuino   = pd.DataFrame(df_area_whole_d4.filter(regex='SV MEM Fence$').sum(),   columns=['SV MEM Fence']  ).set_axis(d4_index_list, axis=0)
+# df_area_d4_nomerge  = pd.DataFrame(df_area_whole_d4.filter(regex='Prop1$').sum(),  columns=['Prop1'] ).set_axis(d4_index_list, axis=0)
 df_area_d4_proposal = pd.DataFrame(df_area_whole_d4.filter(regex='PROP$').sum(), columns=['PROP']).set_axis(d4_index_list, axis=0)
 df_area_d4_ooo      = pd.DataFrame(df_area_whole_d4.filter(regex='BASE$').sum(),      columns=['BASE']         ).set_axis(d4_index_list, axis=0)
 
-plt.scatter(df_energy_d4_fence, df_perf_d4_fence, label='SV Fence', color='blue')
-plt.plot   (df_energy_d4_fence, df_perf_d4_fence, color='blue')
-plt.axline((0, 0), (df_energy_d4_fence['SV Fence']['V4-D4'], 
-                    df_perf_d4_fence  ['SV Fence']['V4-D4']), color='blue', lw=0.5)
-
-plt.scatter(df_energy_d4_nomerge, df_perf_d4_nomerge, label='Prop1', color='green')
-plt.plot   (df_energy_d4_nomerge, df_perf_d4_nomerge, label='Prop1', color='green')
-plt.axline((0, 0), (df_energy_d4_nomerge['Prop1']['V4-D4'], 
-                    df_perf_d4_nomerge  ['Prop1']['V4-D4']), color='green', lw=0.5)
+# plt.scatter(df_energy_d4_fence, df_perf_d4_fence, label='SV Fence', color='blue')
+# plt.plot   (df_energy_d4_fence, df_perf_d4_fence, color='blue')
+# plt.axline((0, 0), (df_energy_d4_fence['SV Fence']['V4-D4'], 
+#                     df_perf_d4_fence  ['SV Fence']['V4-D4']), color='blue', lw=0.5)
+# 
+# plt.scatter(df_energy_d4_nomerge, df_perf_d4_nomerge, label='Prop1', color='green')
+# plt.plot   (df_energy_d4_nomerge, df_perf_d4_nomerge, label='Prop1', color='green')
+# plt.axline((0, 0), (df_energy_d4_nomerge['Prop1']['V4-D4'], 
+#                     df_perf_d4_nomerge  ['Prop1']['V4-D4']), color='green', lw=0.5)
 
 plt.scatter(df_energy_d4_proposal, df_perf_d4_proposal, label='PROP', color='purple')
 plt.plot   (df_energy_d4_proposal, df_perf_d4_proposal, label='PROP', color='purple')
@@ -633,9 +750,9 @@ plt.ylabel("Performance (Higher is Better)")
 # 性能の折れ線グラフを作る
 import matplotlib.pyplot as plt
 
-plt.plot(df_perf_d2_fence)
-plt.plot(df_perf_d2_lsuino)
-plt.plot(df_perf_d2_nomerge)
+# plt.plot(df_perf_d2_fence)
+# plt.plot(df_perf_d2_lsuino)
+# plt.plot(df_perf_d2_nomerge)
 plt.plot(df_perf_d2_proposal)
 plt.plot(df_perf_d2_ooo)
 plt.ylim(0.0, 2.0)
@@ -643,9 +760,9 @@ plt.show()
 
 plt.cla()
 
-plt.plot(df_perf_d4_fence)
-plt.plot(df_perf_d4_lsuino)
-plt.plot(df_perf_d4_nomerge)
+# plt.plot(df_perf_d4_fence)
+# plt.plot(df_perf_d4_lsuino)
+# plt.plot(df_perf_d4_nomerge)
 plt.plot(df_perf_d4_proposal)
 plt.plot(df_perf_d4_ooo)
 plt.ylim(0.0, 2.0)
@@ -685,15 +802,15 @@ plt.ylim(0.0, 2.0)
 df_area_whole_d2_pct = df_area_whole_d2.sum() / df_area_whole_d2.sum().min()
 df_area_whole_d4_pct = df_area_whole_d4.sum() / df_area_whole_d4.sum().min()
 
-plt.scatter(df_area_d2_fence, df_perf_d2_fence, lw=2, label='SV Fence', color='blue')
-plt.plot   (df_area_d2_fence, df_perf_d2_fence, lw=2, color='blue')
-plt.axline((0, 0), (df_area_d2_fence['SV Fence']['V4-D2'], 
-                    df_perf_d2_fence['SV Fence']['V4-D2']), color='blue', lw=0.5)
-
-plt.scatter(df_area_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
-plt.plot   (df_area_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
-plt.axline((0, 0), (df_area_d2_nomerge['Prop1']['V4-D2'], 
-                    df_perf_d2_nomerge['Prop1']['V4-D2']), color='green', lw=0.5)
+# plt.scatter(df_area_d2_fence, df_perf_d2_fence, lw=2, label='SV Fence', color='blue')
+# plt.plot   (df_area_d2_fence, df_perf_d2_fence, lw=2, color='blue')
+# plt.axline((0, 0), (df_area_d2_fence['SV Fence']['V4-D2'], 
+#                     df_perf_d2_fence['SV Fence']['V4-D2']), color='blue', lw=0.5)
+# 
+# plt.scatter(df_area_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
+# plt.plot   (df_area_d2_nomerge, df_perf_d2_nomerge, label='Prop1', color='green')
+# plt.axline((0, 0), (df_area_d2_nomerge['Prop1']['V4-D2'], 
+#                     df_perf_d2_nomerge['Prop1']['V4-D2']), color='green', lw=0.5)
 
 plt.scatter(df_area_d2_proposal, df_perf_d2_proposal, label='PROP', color='purple')
 plt.plot   (df_area_d2_proposal, df_perf_d2_proposal, label='PROP', color='purple')
@@ -875,3 +992,4 @@ uops_vec_rate.to_csv("csv/uops_vec_rate_v16_d2.csv")
 # display(pd.concat([pd.DataFrame(df_vec_ooo_ngs    ), pd.DataFrame(df_vec_uops)], axis=1))
 # display(pd.concat([pd.DataFrame(df_vec_ooo_vio    ), pd.DataFrame(df_vec_uops)], axis=1))
 # display(pd.concat([pd.DataFrame(df_vec_ooo_ooo    ), pd.DataFrame(df_vec_uops)], axis=1))
+
