@@ -844,7 +844,7 @@ df_d2_balance.to_csv('csv/perf_energy_balance_d2.csv')
 df_d4_balance = pd.concat([df_cycle_whole_d4_pct.mean(), df_energy_whole_d4_pct.sum(), df_area_whole_d4_pct], axis=1)
 df_d4_balance = df_d4_balance.reindex(["V%d-D4 %s" % (v, c) for c in ut.pipe_conf2 for v in (4, 8, 16, 32)], axis=0)
 print(df_d4_balance)
-df_d2_balance.to_csv('csv/perf_energy_balance_d4.csv')
+df_d4_balance.to_csv('csv/perf_energy_balance_d4.csv')
 
 
 # %%
