@@ -99,8 +99,9 @@ e_elem['SV Fence'] = dict()
 e_elem['SV Fence']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
 e_elem['SV Fence']['Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['SV Fence']['Scheduler'] = ['s_ooo:Instruction_Window',
-                                      's_ooo:FP_Instruction_Window',
-                                      's_ooo:ROB']
+                                   's_ooo:FP_Instruction_Window',
+                                   'v_ooo:FP_Instruction_Window',
+                                   's_ooo:ROB']
 e_elem['SV Fence']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
                                  's_ooo:Integer_ALUs__Count',
                                  's_ooo:Results_Broadcast_Bus',
@@ -120,8 +121,9 @@ e_elem['SV MEM Fence'] = dict()
 e_elem['SV MEM Fence']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
 e_elem['SV MEM Fence']['Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['SV MEM Fence']['Scheduler'] = ['s_ooo:Instruction_Window',
-                                            's_ooo:FP_Instruction_Window',
-                                            's_ooo:ROB']
+                                       's_ooo:FP_Instruction_Window',
+                                       'v_ooo:FP_Instruction_Window',
+                                       's_ooo:ROB']
 e_elem['SV MEM Fence']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
                                             's_ooo:Integer_ALUs__Count',
                                             's_ooo:Results_Broadcast_Bus',
@@ -141,8 +143,9 @@ e_elem['Prop1'] = dict()
 e_elem['Prop1']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
 e_elem['Prop1']['Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['Prop1']['Scheduler'] = ['s_ooo:Instruction_Window',
-                                  's_ooo:FP_Instruction_Window',
-                                  's_ooo:ROB']
+                                's_ooo:FP_Instruction_Window',
+                                'v_ooo:FP_Instruction_Window',
+                                's_ooo:ROB']
 e_elem['Prop1']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
                                  's_ooo:Integer_ALUs__Count',
                                  's_ooo:Results_Broadcast_Bus',
@@ -162,8 +165,9 @@ e_elem['PROP'] = dict()
 e_elem['PROP']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
 e_elem['PROP']['Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['PROP']['Scheduler'] = ['s_ooo:Instruction_Window',
-                                  's_ooo:FP_Instruction_Window',
-                                  's_ooo:ROB']
+                               's_ooo:FP_Instruction_Window',
+                               'v_ooo:FP_Instruction_Window',
+                               's_ooo:ROB']
 e_elem['PROP']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
                                  's_ooo:Integer_ALUs__Count',
                                  's_ooo:Results_Broadcast_Bus',
@@ -184,9 +188,9 @@ e_elem['BASE']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
 e_elem['BASE']['Rename'] = ['s_ooo:Renaming_Unit',
                               'v_ooo:Renaming_Unit']
 e_elem['BASE']['Scheduler'] = ['s_ooo:Instruction_Window',
-                                's_ooo:FP_Instruction_Window',
-                                'v_ooo:FP_Instruction_Window',
-                                's_ooo:ROB']
+                               's_ooo:FP_Instruction_Window',
+                               'v_ooo:FP_Instruction_Window',
+                               's_ooo:ROB']
 e_elem['BASE']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
                                  's_ooo:Integer_ALUs__Count',
                                  's_ooo:Results_Broadcast_Bus',
