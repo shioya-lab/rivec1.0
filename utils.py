@@ -217,14 +217,14 @@ area_scale['v1024_d256'] = {'Vector RF': 8.0,  'Vector FU': 2.0, 'L1D Cache': 2}
 area_scale['v2048_d256'] = {'Vector RF': 16.0, 'Vector FU': 2.0, 'L1D Cache': 2}
 
 energy_scale = dict()
-energy_scale['v128_d128']  = {'Vector RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v256_d128']  = {'Vector RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v512_d128']  = {'Vector RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v1024_d128'] = {'Vector RF': 1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
-energy_scale['v256_d256']  = {'Vector RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
-energy_scale['v512_d256']  = {'Vector RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
-energy_scale['v1024_d256'] = {'Vector RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
-energy_scale['v2048_d256'] = {'Vector RF': 1.0,  'Vector FU': 2.0, 'L1D Cache': 2}
+energy_scale['v128_d128']  = {'Vector RF':  1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v256_d128']  = {'Vector RF':  1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v512_d128']  = {'Vector RF':  1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v1024_d128'] = {'Vector RF':  1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v256_d256']  = {'Vector RF':  1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v512_d256']  = {'Vector RF':  1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v1024_d256'] = {'Vector RF':  1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
+energy_scale['v2048_d256'] = {'Vector RF':  1.0,  'Vector FU': 1.0, 'L1D Cache': 2}
 
 #%%
 from itertools import chain
