@@ -77,6 +77,16 @@ df_cycle_v8_d4   = pd.DataFrame([get_cycle_with_app(b,  512, 256) for b in ut.be
 df_cycle_v16_d4  = pd.DataFrame([get_cycle_with_app(b, 1024, 256) for b in ut.benchmarks], columns=["V16-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
 df_cycle_v32_d4  = pd.DataFrame([get_cycle_with_app(b, 2048, 256) for b in ut.benchmarks], columns=["V32-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
 
+df_cycle_v2_d2.to_csv('csv/cycle_v2_d2.csv')
+df_cycle_v4_d2.to_csv('csv/cycle_v4_d2.csv')
+df_cycle_v8_d2.to_csv('csv/cycle_v8_d2.csv')
+df_cycle_v16_d2.to_csv('csv/cycle_v16_d2.csv')
+df_cycle_v4_d4.to_csv('csv/cycle_v4_d4.csv')
+df_cycle_v8_d4.to_csv('csv/cycle_v8_d4.csv')
+df_cycle_v16_d4.to_csv('csv/cycle_v16_d4.csv')
+df_cycle_v32_d4.to_csv('csv/cycle_v32_d4.csv')
+
+
 #%%
 # V4-D2 のテーブルを作る
 
