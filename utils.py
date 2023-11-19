@@ -97,7 +97,7 @@ e_elem = dict()
 # -------------------------
 e_elem['SV Fence'] = dict()
 e_elem['SV Fence']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
-e_elem['SV Fence']['Rename'] = ['s_ooo:Renaming_Unit']
+e_elem['SV Fence']['Scalar Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['SV Fence']['Scheduler'] = ['s_ooo:Instruction_Window',
                                    's_ooo:FP_Instruction_Window',
                                    'v_ooo:FP_Instruction_Window',
@@ -110,6 +110,7 @@ e_elem['SV Fence']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Cou
 #                                        ]
 e_elem['SV Fence']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['SV Fence']['Vector RF'] = ['v_ino:Register_Files']
+e_elem['SV Fence']['Vector Rename'] = []
 e_elem['SV Fence']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['SV Fence']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', '-s_ooo:Data_Cache']
 e_elem['SV Fence']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
@@ -119,7 +120,7 @@ e_elem['SV Fence']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v
 # -----------------------------
 e_elem['SV MEM Fence'] = dict()
 e_elem['SV MEM Fence']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
-e_elem['SV MEM Fence']['Rename'] = ['s_ooo:Renaming_Unit']
+e_elem['SV MEM Fence']['Scalar Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['SV MEM Fence']['Scheduler'] = ['s_ooo:Instruction_Window',
                                        's_ooo:FP_Instruction_Window',
                                        'v_ooo:FP_Instruction_Window',
@@ -132,6 +133,7 @@ e_elem['SV MEM Fence']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs__
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['SV MEM Fence']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['SV MEM Fence']['Vector RF'] = ['v_ino:Register_Files']
+e_elem['SV MEM Fence']['Vector Rename'] = []
 e_elem['SV MEM Fence']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['SV MEM Fence']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', '-s_ooo:Data_Cache']
 e_elem['SV MEM Fence']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
@@ -141,7 +143,7 @@ e_elem['SV MEM Fence']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ',
 # -----------------------------
 e_elem['Prop1'] = dict()
 e_elem['Prop1']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
-e_elem['Prop1']['Rename'] = ['s_ooo:Renaming_Unit']
+e_elem['Prop1']['Scalar Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['Prop1']['Scheduler'] = ['s_ooo:Instruction_Window',
                                 's_ooo:FP_Instruction_Window',
                                 'v_ooo:FP_Instruction_Window',
@@ -154,6 +156,7 @@ e_elem['Prop1']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count'
 #                                      'v_ooo:Results_Broadcast_Bus']
 e_elem['Prop1']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['Prop1']['Vector RF'] = ['v_ino:Register_Files']
+e_elem['Prop1']['Vector Rename'] = []
 e_elem['Prop1']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['Prop1']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s_ngs:LoadQ', '-s_ooo:Data_Cache']
 e_elem['Prop1']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
@@ -163,7 +166,7 @@ e_elem['Prop1']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_oo
 # -------------------------
 e_elem['PROP'] = dict()
 e_elem['PROP']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
-e_elem['PROP']['Rename'] = ['s_ooo:Renaming_Unit']
+e_elem['PROP']['Scalar Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['PROP']['Scheduler'] = ['s_ooo:Instruction_Window',
                                's_ooo:FP_Instruction_Window',
                                'v_ooo:FP_Instruction_Window',
@@ -176,6 +179,7 @@ e_elem['PROP']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['PROP']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['PROP']['Vector RF'] = ['v_ino:Register_Files']
+e_elem['PROP']['Vector Rename'] = []
 e_elem['PROP']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['PROP']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', '-s_ooo:Data_Cache']
 e_elem['PROP']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo:StoreQ', '-v_ooo:Data_Cache']
@@ -185,8 +189,7 @@ e_elem['PROP']['Vector LSU'] = ['v_ooo:Load_Store_Unit', '-v_ooo:LoadQ', '-v_ooo
 # -------------------------
 e_elem['BASE'] = dict()
 e_elem['BASE']['Fetch']  = ['s_ooo:Instruction_Fetch_Unit']
-e_elem['BASE']['Rename'] = ['s_ooo:Renaming_Unit',
-                              'v_ooo:Renaming_Unit']
+e_elem['BASE']['Scalar Rename'] = ['s_ooo:Renaming_Unit']
 e_elem['BASE']['Scheduler'] = ['s_ooo:Instruction_Window',
                                's_ooo:FP_Instruction_Window',
                                'v_ooo:FP_Instruction_Window',
@@ -199,6 +202,7 @@ e_elem['BASE']['Scalar FU + RF']  = ['s_ooo:Floating_Point_Units__FPUs___Count',
 #                                  'v_ooo:Results_Broadcast_Bus']
 e_elem['BASE']['Vector FU']  = ['v_ooo:Floating_Point_Units__FPUs___Count']
 e_elem['BASE']['Vector RF'] = ['v_ooo:Register_Files']
+e_elem['BASE']['Vector Rename'] = ['v_ooo:Renaming_Unit']
 e_elem['BASE']['L1D Cache'] = ['dcache:Data_Cache']
 e_elem['BASE']['Scalar LSU'] = ['s_ooo:Load_Store_Unit', 's_ooo:Memory_Management_Unit', 'v_to_s:LoadQ', 'v_to_s:StoreQ', '-s_ooo:Data_Cache']
 e_elem['BASE']['Vector LSU'] = ['v_ooo:Load_Store_Unit', 's_to_v:LoadQ', 's_to_v:StoreQ', '-v_ooo:Data_Cache']

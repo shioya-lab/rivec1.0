@@ -263,11 +263,14 @@ for c in df_power_group_v2_d2.columns:
   df_power_group_bench_sum_v2_d2  = pd.concat([df_power_group_bench_sum_v2_d2 , p], axis=1)
   df_energy_group_bench_sum_v2_d2 = pd.concat([df_energy_group_bench_sum_v2_d2, e], axis=1)
 
+df_power_group_bench_sum_v2_d2 = df_power_group_bench_sum_v2_d2.fillna(0.0)
+df_energy_group_bench_sum_v2_d2 = df_energy_group_bench_sum_v2_d2.fillna(0.0)
+
 # 各アプリケーション毎に電力グラフを作る
 
 power_modules = [
   'Fetch',
-  'Rename',
+  'Scalar Rename',
   'Scheduler',
   'Scalar FU + RF',
   'Vector FU',
@@ -275,6 +278,7 @@ power_modules = [
   'Vector RF',
   'L1D Cache',
   'Scalar LSU',
+  'Vector Rename',
   'Vector LSU',
 ]
 
@@ -1032,7 +1036,7 @@ df_dc_insts_v4_d4        = pd.DataFrame([get_insts_with_app(b, 256, 256)        
 
 # display(df_dc_loads_v4_d4)
 # display(df_dc_load_misses_v4_d4)
-# display(df_dc_insts_v4_d4)
+# display(df_dc_insts_v4_d4)  
 display((df_dc_load_misses_v4_d4 + df_dc_store_misses_v4_d4) / df_dc_insts_v4_d4 * 1000)
 
 df_dc_loads_v32_d4        = pd.DataFrame([get_dcache_info_with_app(b, 2048, 256, 'loads')        for b in ut.benchmarks], columns=["V32-D4 " + b for b in ut.pipe_conf2], index=ut.benchmarks)
@@ -1116,3 +1120,42 @@ uops_vec_rate.to_csv("csv/uops_vec_rate_v16_d2.csv")
 # display(pd.concat([pd.DataFrame(df_vec_ooo_vio    ), pd.DataFrame(df_vec_uops)], axis=1))
 # display(pd.concat([pd.DataFrame(df_vec_ooo_ooo    ), pd.DataFrame(df_vec_uops)], axis=1))
 
+# %%
+# ベクトル命令がベクトル命令に追い越された割合と、ベクトル命令がスカラ命令に追い越された割合を表示する。
+
+uops_vec_issued            = pd.DataFrame([sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-inst-issued']['stop'] for b in ut.bench_and_dhry], index=ut.bench_and_dhry)
+uop_vec_overtook_by_scalar = pd.DataFrame([sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-scalar-overtook-issue']['stop'] for b in ut.bench_and_dhry], index=ut.bench_and_dhry)
+uop_vec_overtook_by_vec    = pd.DataFrame([sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-vec-overtook-issue']['stop'] for b in ut.bench_and_dhry], index=ut.bench_and_dhry)
+
+uops_vec_overtook_rate = pd.DataFrame(
+                          pd.concat([pd.DataFrame(uop_vec_overtook_by_vec / uops_vec_issued),
+                                    pd.DataFrame(uop_vec_overtook_by_scalar / uops_vec_issued)], axis=1))
+uops_vec_overtook_rate.loc['Average'] = uops_vec_overtook_rate.mean()
+
+uops_vec_overtook_rate.columns=["Rate of Vector uops, overtook by Vector", "Rate of Vector uops, overtook by Scalar"]
+display(uops_vec_overtook_rate)
+uops_vec_overtook_rate.plot(kind='bar').legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+
+uops_vec_overtook_rate.to_csv("csv/uops_vec_overtook_rate_d2.csv")
+
+# %%
+# ベクトル命令のうち、ベクトル命令を追い越した割合と、スカラ命令のうち、ベクトル命令を追い越した割合
+
+uops_vector_issued         = pd.DataFrame([sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-inst-issued']['stop'] for b in ut.benchmarks], index=ut.benchmarks)
+uop_vector_overtook_vector = pd.DataFrame([sql_info[128][1024][b]['ooo.v']['rob_timer']['vec-vec-ooo-issue']['stop'] for b in ut.benchmarks], index=ut.benchmarks)
+uops_scalar_issued         = pd.DataFrame([sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-inst-issued']['stop'] for b in ut.benchmarks], index=ut.benchmarks)
+uop_scalar_overtook_vector = pd.DataFrame([sql_info[128][1024][b]['ooo.v']['rob_timer']['scalar-vec-ooo-issue']['stop'] for b in ut.benchmarks], index=ut.benchmarks)
+
+uops_vec_overtake_rate = pd.DataFrame(
+                          pd.concat([pd.DataFrame(uop_vector_overtook_vector / uops_vector_issued),
+                                    pd.DataFrame(uop_scalar_overtook_vector / uops_scalar_issued)], axis=1))
+# uops_vec_overtake_rate.loc['Average'] = uops_vec_overtake_rate.mean()
+
+uops_vec_overtake_rate.columns=["Reordered younger vector and older vector",
+                                "Reordered younger scalar and older vector"]
+display(uops_vec_overtake_rate)
+uops_vec_overtake_rate.plot(kind='bar').legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+
+uops_vec_overtake_rate.to_csv("csv/uops_vec_overtake_rate_d2.csv")
+
+# %%

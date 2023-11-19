@@ -36,6 +36,7 @@ def calc_group_power(conf, app):
         csv_data = ut.load_csv(ut.conf_filename[e_name] + "." + conf , app)
         power_detail[e_name] = dict()
         for grp_name in ut.e_elem[e]:
+            power_detail[e_name][grp_name] = 0.0
             for m in ut.e_elem[e][grp_name] :
                 scale = 1.0
                 if m[0] == '-':

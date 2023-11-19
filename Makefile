@@ -25,7 +25,7 @@ runspike_v16:
 runspike_v32:
 	$(MAKE) VLEN=1024 $(addsuffix _spike,$(APPLICATION_DIRS))
 
-run_v2d2 : 
+run_v2d2 :
 	$(MAKE) VLEN=128  DLEN=128 $(subst _,,$(APPLICATION_DIRS))
 run_v4d2 :
 	$(MAKE) VLEN=256  DLEN=128 $(subst _,,$(APPLICATION_DIRS))
@@ -60,7 +60,7 @@ run_canneal_origin:
 run_swaptions_origin:
 	$(MAKE) VLEN=512 DLEN=128 runsniper-vio-v -C _swaptions
 	$(MAKE) VLEN=512 DLEN=128 runsniper-vio-v -C _swaptions_origin
-run_particlefilter_origin: 
+run_particlefilter_origin:
 	$(MAKE) VLEN=512 DLEN=128 runsniper-vio-v -C _particlefilter
 	$(MAKE) VLEN=512 DLEN=128 runsniper-vio-v -C _particlefilter_origin
 run_pathfinder_origin:
@@ -96,7 +96,8 @@ runsniper:
 	$(MAKE) runsniper-v runsniper-s
 
 runsniper-v:
-	$(MAKE) runsniper-ooo-v runsniper-io-v runsniper-vio-v runsniper-vio-fence-v runsniper-vio-ngs-v
+	$(MAKE) runsniper-ooo-v
+# runsniper-io-v runsniper-vio-v runsniper-vio-fence-v runsniper-vio-ngs-v
 
 runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-io-s
