@@ -25,7 +25,7 @@ runspike_v16:
 runspike_v32:
 	$(MAKE) VLEN=1024 $(addsuffix _spike,$(APPLICATION_DIRS))
 
-run_v2d2 : 
+run_v2d2 :
 	$(MAKE) VLEN=128  DLEN=128 $(subst _,,$(APPLICATION_DIRS))
 run_v4d2 :
 	$(MAKE) VLEN=256  DLEN=128 $(subst _,,$(APPLICATION_DIRS))
@@ -41,6 +41,35 @@ run_v16d4:
 	$(MAKE) VLEN=1024 DLEN=256 $(subst _,,$(APPLICATION_DIRS))
 run_v32d4:
 	$(MAKE) VLEN=2048 DLEN=256 $(subst _,,$(APPLICATION_DIRS))
+
+# runprefetch_v8d2 :
+# 	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_none   L1PREF_POLICY=l1d_pref_load $(addprefix prefetch,$(APPLICATION_DIRS))
+# 	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_stream L1PREF_POLICY=l1d_pref_load $(addprefix prefetch,$(APPLICATION_DIRS))
+# 	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_oracle L1PREF_POLICY=l1d_pref_load $(addprefix prefetch,$(APPLICATION_DIRS))
+# 	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_none   L1PREF_POLICY=l1d_pref_keep $(addprefix prefetch,$(APPLICATION_DIRS))
+# 	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_stream L1PREF_POLICY=l1d_pref_keep $(addprefix prefetch,$(APPLICATION_DIRS))
+# 	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_oracle L1PREF_POLICY=l1d_pref_keep $(addprefix prefetch,$(APPLICATION_DIRS))
+
+runprefetch_v8d2 :
+	$(MAKE) runprefetch_v8d2_l2none_l1dprefload
+	$(MAKE) runprefetch_v8d2_l2none_l1dprefkeep \
+			runprefetch_v8d2_l2stream_l1dprefload \
+			runprefetch_v8d2_l2stream_l1dprefkeep \
+			runprefetch_v8d2_l2oracle_l1dprefload \
+			runprefetch_v8d2_l2oracle_l1dprefkeep
+
+runprefetch_v8d2_l2stream_l1dprefload:
+	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_stream L1PREF_POLICY=l1d_pref_load $(addprefix prefetch,$(APPLICATION_DIRS))
+runprefetch_v8d2_l2stream_l1dprefkeep:
+	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_stream L1PREF_POLICY=l1d_pref_keep $(addprefix prefetch,$(APPLICATION_DIRS))
+runprefetch_v8d2_l2none_l1dprefload:
+	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_none   L1PREF_POLICY=l1d_pref_load $(addprefix prefetch,$(APPLICATION_DIRS))
+runprefetch_v8d2_l2none_l1dprefkeep:
+	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_none   L1PREF_POLICY=l1d_pref_keep $(addprefix prefetch,$(APPLICATION_DIRS))
+runprefetch_v8d2_l2oracle_l1dprefload:
+	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_oracle L1PREF_POLICY=l1d_pref_load $(addprefix prefetch,$(APPLICATION_DIRS))
+runprefetch_v8d2_l2oracle_l1dprefkeep:
+	$(MAKE) VLEN=512  DLEN=128 L2PREF=l2_oracle L1PREF_POLICY=l1d_pref_keep $(addprefix prefetch,$(APPLICATION_DIRS))
 
 run_original: run_axpy_origin run_streamcluster_origin \
 				run_blackscholes_origin run_canneal_origin run_swaptions_origin \
@@ -60,7 +89,7 @@ run_canneal_origin:
 run_swaptions_origin:
 	$(MAKE) VLEN=512 DLEN=128 runsniper-vio-v -C _swaptions
 	$(MAKE) VLEN=512 DLEN=128 runsniper-vio-v -C _swaptions_origin
-run_particlefilter_origin: 
+run_particlefilter_origin:
 	$(MAKE) VLEN=512 DLEN=128 runsniper-vio-v -C _particlefilter
 	$(MAKE) VLEN=512 DLEN=128 runsniper-vio-v -C _particlefilter_origin
 run_pathfinder_origin:
@@ -98,6 +127,9 @@ runsniper:
 runsniper-v:
 	$(MAKE) runsniper-ooo-v runsniper-io-v runsniper-vio-v runsniper-vio-fence-v runsniper-vio-ngs-v
 
+runsniper-prefetch-v:
+	$(MAKE) runsniper-none-pref-v runsniper-simple-pref-v runsniper-stream-pref-v runsniper-stride-pref-v runsniper-vec-pref-v runsniper-oracle-pref-v
+
 runsniper-s:
 	$(MAKE) runsniper-ooo-s runsniper-io-s
 
@@ -105,6 +137,21 @@ $(subst _,,$(APPLICATION_DIRS)):
 	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runspike-v
 	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runsniper-v
 	$(MAKE) -C _$@ VLEN=$(VLEN) DLEN=$(DLEN) runmcpat
+
+$(addprefix prefetch,$(APPLICATION_DIRS)):
+	$(MAKE) -C $(subst prefetch,,$@) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) runsniper-none-pref-v   \
+		runsniper-simple-pref-v \
+		runsniper-stream-pref-v \
+		runsniper-stride-pref-v \
+		runsniper-vec-pref-v    \
+		runsniper-oracle-pref-v \
+		runsniper-ooo-s
+
+# 	$(MAKE) -C $(subst prefetch,,$@) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) runsniper-simple-pref-v
+# 	$(MAKE) -C $(subst prefetch,,$@) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) runsniper-stream-pref-v
+# 	$(MAKE) -C $(subst prefetch,,$@) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) runsniper-vec-pref-v
+# 	$(MAKE) -C $(subst prefetch,,$@) VLEN=$(VLEN) DLEN=$(DLEN) L2PREF=$(L2PREF) L1PREF_POLICY=$(L1PREF_POLICY) runsniper-oracle-pref-v
+
 
 $(subst _,scalar_,$(APPLICATION_DIRS)):
 	$(MAKE) -C _$(subst scalar_,,$@) runspike-s

@@ -248,8 +248,8 @@ def get_cycle_rate_with_vlen_dlen(vlen, dlen):
 
 import sqlite3
 
-def get_sqlite_info(app, vlen, dlen, pipe_conf):
-    file_str = '_%s/%s.v%s_d%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen)
+def get_sqlite_info(app, vlen, dlen, pipe_conf, l2_conf):
+    file_str = '_%s/%s.v%s_d%s_%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen, l2_conf)
     print("Opening %s ..." % (file_str))
     try:
         sql3_conn = sqlite3.connect(file_str)

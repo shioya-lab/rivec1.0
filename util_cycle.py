@@ -2,30 +2,10 @@
 import sqlite3
 import utils as ut
 
-def get_cycle(sql_dict, app, pipe_conf, vlen, dlen):
-    return sql_dict[dlen][vlen][app][pipe_conf]['thread']['time_by_core[0]']['roi-end'] - sql_dict[dlen][vlen][app][pipe_conf]['thread']['time_by_core[0]']['roi-begin']
 
-    # file_str = '_%s/%s.v%s_d%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen)
-    # print("Opening %s ..." % (file_str))
-    # try:
-    #     sql3_conn = sqlite3.connect(file_str)
-    # except sqlite3.OperationalError:
-    #     print ('sqlite3 file error ' + file_str)
-    #     exit()
-    
-    # time_by_core0_index = sql3_conn.execute("SELECT * FROM 'names' WHERE objectname='thread' AND metricname='time_by_core[0]'").fetchall()[0][0]
-    # roi_begin_index = sql3_conn.execute("SELECT * FROM 'prefixes' WHERE prefixname='roi-begin'").fetchall()[0][0]
-    # roi_end_index = sql3_conn.execute("SELECT * FROM 'prefixes' WHERE prefixname='roi-end'").fetchall()[0][0]
-    # 
-    # start_time = sql3_conn.execute("SELECT * FROM 'values' WHERE prefixid='%s' AND nameid='%s'" \
-    #                 % (roi_begin_index, time_by_core0_index)).fetchall()[0][3]
-    # stop_time = sql3_conn.execute("SELECT * FROM 'values' WHERE prefixid='%s' AND nameid='%s'" \
-    #                 % (roi_end_index, time_by_core0_index)).fetchall()[0][3]
-    # cycle = stop_time - start_time
-    return cycle
 
-def get_insts(sql_dict, app, pipe_conf, vlen, dlen):
-    insts = sql_dict[dlen][vlen][app][pipe_conf]['thread']['instructions_by_core[0]']
+def get_insts(sql_dict, app, pipe_conf, vlen, dlen, l2_conf):
+    insts = sql_dict[l2_conf][dlen][vlen][app][pipe_conf]['thread']['instructions_by_core[0]']
     return insts['stop']
 
     # file_str = '_%s/%s.v%s_d%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen)
@@ -43,8 +23,8 @@ def get_insts(sql_dict, app, pipe_conf, vlen, dlen):
     #                 % (roi_end_index, time_by_core0_index)).fetchall()[0][3]
     # return stop_time
 
-def get_vec_ooo_issue(sql_info, app, pipe_conf, vlen, dlen):
-    vec_ooo_issue = sql_info[dlen][vlen][app][pipe_conf]['rob_timer']['vec-ooo-issue']
+def get_vec_ooo_issue(sql_dict, app, pipe_conf, vlen, dlen, l2_conf):
+    vec_ooo_issue = sql_dict[l2_conf][dlen][vlen][app][pipe_conf]['rob_timer']['vec-ooo-issue']
     return vec_ooo_issue['roi-end'] - vec_ooo_issue['roi-begin']
 
     # file_str = '_%s/%s.v%s_d%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen)
@@ -65,8 +45,8 @@ def get_vec_ooo_issue(sql_info, app, pipe_conf, vlen, dlen):
     #                 % (roi_end_index, time_by_core0_index)).fetchall()[0][3]
     # return stop_time - start_time
 
-def get_scalar_ooo_issue(sql_info, app, pipe_conf, vlen, dlen):
-    scalar_ooo_issue = sql_info[dlen][vlen][app][pipe_conf]['rob_timer']['scalar-ooo-issue']
+def get_scalar_ooo_issue(sql_dict, app, pipe_conf, vlen, dlen, l2_conf):
+    scalar_ooo_issue = sql_dict[l2_conf][dlen][vlen][app][pipe_conf]['rob_timer']['scalar-ooo-issue']
     return scalar_ooo_issue['roi-end'] - scalar_ooo_issue['roi-begin']
 
     # file_str = '_%s/%s.v%s_d%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen)
@@ -88,11 +68,9 @@ def get_scalar_ooo_issue(sql_info, app, pipe_conf, vlen, dlen):
     # return stop_time - start_time
 
 
-def get_cycle_with_app(sql_info, app, vlen, dlen):
-    return [get_cycle(sql_info, app, p, vlen, dlen) / 100000 for p in ut.pipe_conf]
 
-def get_whole_uops(sql_info, app, pipe_conf, vlen, dlen):
-    return sql_info[dlen][vlen][app][pipe_conf]['rob_timer']['uops_total']['stop']
+def get_whole_uops(sql_dict, app, pipe_conf, vlen, dlen, l2_conf):
+    return sql_dict[l2_conf][dlen][vlen][app][pipe_conf]['rob_timer']['uops_total']['stop']
 
     # file_str = '_%s/%s.v%s_d%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen)
     # # print("Opening %s ..." % (file_str))
@@ -110,9 +88,9 @@ def get_whole_uops(sql_info, app, pipe_conf, vlen, dlen):
     # return length[0][3]
 
 
-def get_vec_uops(sql_info, app, pipe_conf, vlen, dlen):
-    return sql_info[dlen][vlen][app][pipe_conf]['rob_timer']['uop_vec_arith']['stop'] + \
-        sql_info[dlen][vlen][app][pipe_conf]['rob_timer']['uop_vec_memacc']['stop']
+def get_vec_uops(sql_dict, app, pipe_conf, vlen, dlen, l2_conf):
+    return sql_dict[l2_conf][dlen][vlen][app][pipe_conf]['rob_timer']['uop_vec_arith']['stop'] + \
+        sql_dict[l2_conf][dlen][vlen][app][pipe_conf]['rob_timer']['uop_vec_memacc']['stop']
 
     # file_str = '_%s/%s.v%s_d%s/sim.stats.sqlite3' % (app, pipe_conf, vlen, dlen)
     # # print("Opening %s ..." % (file_str))
