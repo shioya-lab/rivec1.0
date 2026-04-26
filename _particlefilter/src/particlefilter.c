@@ -3,16 +3,27 @@
  * @author Michael Trotter & Matt Goodrum
  * @brief Particle filter implementation in C/OpenMP
  */
+
+/*************************************************************************
+* RISC-V Vectorized Version
+* Author: Cristóbal Ramírez Lazo
+* email: cristobal.ramirez@bsc.es
+* Barcelona Supercomputing Center (2020)
+*************************************************************************/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include <sys/time.h>
-#include <time.h>
-// RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
+#include <time.h> 
+
 #ifdef USE_RISCV_VECTOR
+#include <riscv_vector.h>
 #include "../../common/vector_defines.h"
 #endif
+
+#include "../../common/riscv_util.h"
 
 //#include <omp.h>
 #include <limits.h>
@@ -29,26 +40,8 @@ int A = 1103515245;
 @var C value for LCG
 */
 int C = 12345;
-/*****************************
-*GET_TIME
-*returns a long int representing the time
-*****************************/
-long long get_time() {
-//    struct timeval tv;
-//    gettimeofday(&tv, NULL);
-//    return (tv.tv_sec * 1000000) + tv.tv_usec;
-  return 0;
-}
 
-#include "count_utils.h"
-#include "sim_api.h"
-
-// Returns the number of seconds elapsed between the two specified times
-long long elapsed_time(long long start_time, long long end_time) {
-  // return (float) (end_time - start_time) / (1000 * 1000);
-  return end_time - start_time;
-}
-/**
+/** 
 * Takes in a double and returns an integer that approximates to that double
 * @return if the mantissa < .5 => return value < input value; else return value > input value
 */
@@ -95,46 +88,26 @@ double randu(int * seed, int index)
 }
 
 #ifdef USE_RISCV_VECTOR
-inline _MMR_f64 randu_vector(long int * seed, int index ,unsigned long int gvl)
+
+inline _MMR_f64 randu_vector(int * seed, int index ,unsigned long int gvl)
 {
-    /*
-    _MMR_i64    xseed = _MM_LOAD_i64(&seed[index],gvl);
-    _MMR_i64    xA = _MM_SET_i64(A,gvl);
-    _MMR_i64    xC = _MM_SET_i64(C,gvl);
-    _MMR_i64    xM = _MM_SET_i64(M,gvl);
+    _MMR_i32mf2    xseed = _MM_LOAD_i32mf2(&seed[index],gvl);
+    _MMR_i32mf2    xA = _MM_SET_i32mf2(A,gvl);
+    _MMR_i32mf2    xC = _MM_SET_i32mf2(C,gvl);
+    _MMR_i32mf2    xM = _MM_SET_i32mf2((int)M,gvl);
+    
+    xseed =  _MM_MUL_i32mf2(xseed,xA,gvl);
+    xseed =  _MM_ADD_i32mf2(xseed,xC,gvl);
+    xseed =  _MM_REM_i32mf2(xseed,xM,gvl);
 
-    xseed =  _MM_MUL_i64(xseed,xA,gvl);
-    xseed =  _MM_ADD_i64(xseed,xC,gvl);
+    _MM_STORE_i32mf2(&seed[index],xseed,gvl);
 
-    _MM_STORE_i64(&seed[index],_MM_REM_i64(xseed,xM,gvl),gvl);
-    FENCE();
     _MMR_f64    xResult;
-    xResult = _MM_DIV_f64(_MM_VFCVT_F_X_f64(xseed,gvl),_MM_VFCVT_F_X_f64(xM,gvl),gvl);
+    xResult = _MM_DIV_f64(_MM_VFWCVT_F_X_f64m1(xseed,gvl),_MM_SET_f64((double)M,gvl),gvl);
     xResult = _MM_VFSGNJX_f64(xResult,xResult,gvl);
     return xResult;
-    */
-
-    /*
-    Esta parte del codigo deberia ser en 32 bits, pero las instrucciones de conversion aún no están disponibles,
-    moviendo todo a 64 bits el resultado cambia ya que no se desborda, y las variaciones son muchas.
-    */
-    double result[256];
-    int num[256];
-    //FENCE();
-    //double* result = (double*)malloc(gvl*sizeof(double));
-    //int* num = (int*)malloc(gvl*sizeof(int));
-
-    FENCE();
-    for(int x = index; x < index+gvl; x++){
-        num[x-index] = A*seed[x] + C;
-        seed[x] = num[x-index] % M;
-        result[x-index] = fabs(seed[x]/((double) M));
-    }
-    _MMR_f64    xResult;
-    xResult = _MM_LOAD_f64(&result[0],gvl);
-    FENCE();
-    return xResult;
 }
+
 #endif // USE_RISCV_VECTOR
 /**
 * Generates a normally distributed random number using the Box-Muller transformation
@@ -154,7 +127,7 @@ double randn(int * seed, int index){
 }
 
 #ifdef USE_RISCV_VECTOR
-static inline _MMR_f64 randn_vector(long int * seed, int index ,unsigned long int gvl){
+inline _MMR_f64 randn_vector(int * seed, int index, unsigned long int gvl){
     /*Box-Muller algorithm*/
     _MMR_f64    xU = randu_vector(seed,index,gvl);
     _MMR_f64    xV = randu_vector(seed,index,gvl);
@@ -163,7 +136,6 @@ static inline _MMR_f64 randn_vector(long int * seed, int index ,unsigned long in
 
     xV = _MM_MUL_f64(_MM_SET_f64(PI*2.0,gvl),xV,gvl);
     xCosine =_MM_COS_f64(xV,gvl);
-    FENCE();
     xU = _MM_LOG_f64(xU,gvl);
     xRt =  _MM_MUL_f64(_MM_SET_f64(-2.0,gvl),xU,gvl);
     return _MM_MUL_f64(_MM_SQRT_f64(xRt,gvl),xCosine,gvl);
@@ -608,9 +580,9 @@ void particleFilter(int * I, int IszX, int IszY, int Nfr, int * seed, int Nparti
 }
 
 #ifdef USE_RISCV_VECTOR
-void particleFilter_vector(int * I, int IszX, int IszY, int Nfr, int * seed, long int * seed_64, int Nparticles){
-
-
+void particleFilter_vector(int * I, int IszX, int IszY, int Nfr, int * seed, int Nparticles){
+    
+    
     int max_size = IszX*IszY*Nfr;
     long long start = get_time();
     //original particle centroid
@@ -645,17 +617,13 @@ void particleFilter_vector(int * I, int IszX, int IszY, int Nfr, int * seed, lon
     for(x = 0; x < Nparticles; x++){
         weights[x] = 1/((double)(Nparticles));
     }*/
-    // unsigned long int gvl = __builtin_epi_vsetvl(Nparticles, __epi_e64, __epi_m1);
-    unsigned long int gvl = vsetvl_e64m1(Nparticles); //PLCT
+    unsigned long int gvl = __riscv_vsetvl_e64m1(Nparticles);
 
     _MMR_f64    xweights = _MM_SET_f64(1.0/((double)(Nparticles)),gvl);
     for(x = 0; x < Nparticles; x=x+gvl){
-        // gvl     = __builtin_epi_vsetvl(Nparticles-x, __epi_e64, __epi_m1);
-        gvl = vsetvl_e64m1(Nparticles-x); //PLCT
-
+        gvl     = __riscv_vsetvl_e64m1(Nparticles-x);
         _MM_STORE_f64(&weights[x],xweights,gvl);
     }
-    FENCE();
 
     long long get_weights = get_time();
     printf("TIME TO GET WEIGHTSTOOK: %f\n", elapsed_time(get_neighbors, get_weights));
@@ -668,6 +636,8 @@ void particleFilter_vector(int * I, int IszX, int IszY, int Nfr, int * seed, lon
     double * CDF = (double *)malloc(sizeof(double)*Nparticles);
     double * u = (double *)malloc(sizeof(double)*Nparticles);
     int * ind = (int*)malloc(sizeof(int)*countOnes*Nparticles);
+    // Se usa adentro del for, aqui para no repetir
+    long int * locations = (long int *)malloc(sizeof(long int)*Nparticles);
 
     /*
     //#pragma omp parallel for shared(arrayX, arrayY, xe, ye) private(x)
@@ -676,53 +646,46 @@ void particleFilter_vector(int * I, int IszX, int IszY, int Nfr, int * seed, lon
         arrayY[x] = ye;
     }
     */
-    // gvl     = __builtin_epi_vsetvl(Nparticles, __epi_e64, __epi_m1);
-    gvl = vsetvl_e64m1(Nparticles); //PLCT
+    gvl     = __riscv_vsetvl_e64m1(Nparticles);
     _MMR_f64    xArrayX = _MM_SET_f64(xe,gvl);
     _MMR_f64    xArrayY = _MM_SET_f64(ye,gvl);
     for(int i = 0; i < Nparticles; i=i+gvl){
-       // gvl     = __builtin_epi_vsetvl(Nparticles-i, __epi_e64, __epi_m1);
-        gvl = vsetvl_e64m1(Nparticles-i); //PLCT
+        gvl     = __riscv_vsetvl_e64m1(Nparticles-i);
         _MM_STORE_f64(&arrayX[i],xArrayX,gvl);
         _MM_STORE_f64(&arrayY[i],xArrayY,gvl);
     }
-    FENCE();
-
+    
 
     _MMR_f64    xAux;
 
     int k;
     printf("TIME TO SET ARRAYS TOOK: %f\n", elapsed_time(get_weights, get_time()));
     int indX, indY;
+
+
     for(k = 1; k < Nfr; k++){
         long long set_arrays = get_time();
         //apply motion model
         //draws sample from motion model (random walk). The only prior information
         //is that the object moves 2x as fast as in the y direction
-        // gvl     = __builtin_epi_vsetvl(Nparticles, __epi_e64, __epi_m1);
-        gvl = vsetvl_e64m1(Nparticles); //PLCT
+        gvl     = __riscv_vsetvl_e64m1(Nparticles);
         for(x = 0; x < Nparticles; x=x+gvl){
-        // gvl     = __builtin_epi_vsetvl(Nparticles-x, __epi_e64, __epi_m1);
-        gvl = vsetvl_e64m1(Nparticles-x); //PLCT
+            gvl     = __riscv_vsetvl_e64m1(Nparticles-x);
             xArrayX = _MM_LOAD_f64(&arrayX[x],gvl);
-            FENCE();
-            xAux = randn_vector(seed_64, x,gvl);
-            FENCE();
-            xAux =  _MM_MUL_f64(xAux, _MM_SET_f64(5.0,gvl),gvl);
-            xAux =  _MM_ADD_f64(xAux, _MM_SET_f64(1.0,gvl),gvl);
-            xArrayX = _MM_ADD_f64(xAux, xArrayX ,gvl);
+            xAux = randn_vector(seed, x,gvl);
+            xAux =  _MM_MUL_f64(xAux, _MM_SET_f64(5.0,gvl),gvl); 
+            xAux =  _MM_ADD_f64(xAux, _MM_SET_f64(1.0,gvl),gvl); 
+            xArrayX = _MM_ADD_f64(xAux, xArrayX ,gvl); 
             _MM_STORE_f64(&arrayX[x],xArrayX,gvl);
 
             xArrayY = _MM_LOAD_f64(&arrayY[x],gvl);
-            FENCE();
-            xAux = randn_vector(seed_64, x,gvl);
-            FENCE();
-            xAux =  _MM_MUL_f64(xAux, _MM_SET_f64(2.0,gvl),gvl);
-            xAux =  _MM_ADD_f64(xAux, _MM_SET_f64(-2.0,gvl),gvl);
-            xArrayY = _MM_ADD_f64(xAux, xArrayY ,gvl);
+            xAux = randn_vector(seed, x,gvl);
+            xAux =  _MM_MUL_f64(xAux, _MM_SET_f64(2.0,gvl),gvl); 
+            xAux =  _MM_ADD_f64(xAux, _MM_SET_f64(-2.0,gvl),gvl); 
+            xArrayY = _MM_ADD_f64(xAux, xArrayY ,gvl); 
             _MM_STORE_f64(&arrayY[x],xArrayY,gvl);
         }
-        FENCE();
+
         /*
         //#pragma omp parallel for shared(arrayX, arrayY, Nparticles, seed) private(x)
         for(x = 0; x < Nparticles; x++){
@@ -794,8 +757,7 @@ void particleFilter_vector(int * I, int IszX, int IszY, int Nfr, int * seed, lon
         //pause(hold off for now)
 
         //resampling
-
-
+        
         CDF[0] = weights[0];
         for(x = 1; x < Nparticles; x++){
             CDF[x] = weights[x] + CDF[x-1];
@@ -812,44 +774,55 @@ void particleFilter_vector(int * I, int IszX, int IszY, int Nfr, int * seed, lon
 
         int j, i;
 
-        _MMR_MASK_i64   xComp;
-        _MMR_i64        xMask;
+        _MMR_MASK_i64           xComp;
+        _MMR_MASK_i64           xMask;
 
-        _MMR_f64        xCDF;
-        _MMR_f64        xU;
-        _MMR_i64        xArray;
+        _MMR_f64          xCDF;
+        _MMR_f64          xU;
+        _MMR_i64          xArray;
 
         long int vector_complete;
-        long int * locations = (long int *)malloc(sizeof(long int)*Nparticles);
         long int valid;
-        // gvl     = __builtin_epi_vsetvl(Nparticles, __epi_e64, __epi_m1);
-        gvl = vsetvl_e64m1(Nparticles); //PLCT
+        gvl     = __riscv_vsetvl_e64m1(Nparticles);
         for(i = 0; i < Nparticles; i=i+gvl){
-           //  gvl     = __builtin_epi_vsetvl(Nparticles-i, __epi_e64, __epi_m1);
-            gvl = vsetvl_e64m1(Nparticles-i); //PLCT
+            gvl     = __riscv_vsetvl_e64m1(Nparticles-i);
             vector_complete = 0;
-            xMask   = _MM_SET_i64(0,gvl);
+            xMask   = _MM_CAST_i1_i64(_MM_SET_i64(0,gvl));
             xArray  = _MM_SET_i64(Nparticles-1,gvl);
             xU      = _MM_LOAD_f64(&u[i],gvl);
             for(j = 0; j < Nparticles; j++){
                 xCDF = _MM_SET_f64(CDF[j],gvl);
                 xComp = _MM_VFGE_f64(xCDF,xU,gvl);
-                xComp = _MM_CAST_i1_i64(_MM_XOR_i64(_MM_CAST_i64_i1(xComp,gvl),xMask,gvl),gvl);
+                xComp = _MM_VMXOR_i64(xComp,xMask,gvl);
                 valid = _MM_VMFIRST_i64(xComp,gvl);
                 if(valid != -1)
                 {
                     xArray = _MM_MERGE_i64(xArray,_MM_SET_i64(j,gvl),xComp,gvl);
-                    xMask = _MM_OR_i64(_MM_CAST_i64_i1(xComp,gvl),xMask,gvl);
-                    vector_complete = _MM_VMPOPC_i64(_MM_CAST_i1_i64(xMask,gvl),gvl);
+                    xMask = _MM_VMOR_i64(xComp,xMask,gvl);
+                    vector_complete = _MM_VMPOPC_i64(xMask,gvl);
                 }
                 if(vector_complete == gvl){ break; }
-                //FENCE();
             }
             _MM_STORE_i64(&locations[i],xArray,gvl);
+            //xArray = _MM_MUL_i64(xArray,_MM_SET_i64(8,gvl),gvl); // Position in elements to position in bytes
+            //xarrayX = _MM_LOAD_INDEX_f64(&arrayX[i],xArray,gvl);
+            //xarrayY = _MM_LOAD_INDEX_f64(&arrayY[i],xArray,gvl);
+            //_MM_STORE_f64(&xj[i],xarrayX,gvl);
+            //_MM_STORE_f64(&yj[i],xarrayY,gvl);
+            // This commented lines corresponds to the scalar code below
         }
-        FENCE();
-        //for(i = 0; i < Nparticles; i++) { printf("%d ", locations[i]); } printf("\n");
 
+        /*
+        for(j = 0; j < Nparticles; j++){
+            i = findIndex(CDF, Nparticles, u[j]);
+            if(i == -1)
+                    i = Nparticles-1;   
+            //printf("%d ", i);     
+            xj[j] = arrayX[i];
+            yj[j] = arrayY[i];
+            
+        }
+        */
         //#pragma omp parallel for shared(CDF, Nparticles, xj, yj, u, arrayX, arrayY) private(i, j)
         for(j = 0; j < Nparticles; j++){
             i = locations[j];
@@ -872,6 +845,7 @@ void particleFilter_vector(int * I, int IszX, int IszY, int Nfr, int * seed, lon
         long long reset = get_time();
         printf("TIME TO RESET WEIGHTS TOOK: %f\n", elapsed_time(xyj_time, reset));
     }
+    free(locations);
     free(disk);
     free(objxy);
     free(weights);
@@ -965,28 +939,33 @@ int main(int argc, char * argv[]){
     long long endVideoSequence = get_time();
     printf("VIDEO SEQUENCE TOOK %f\n", elapsed_time(start, endVideoSequence));
 
+    // Start instruction and cycles count of the region of interest
+    //unsigned long cycles1, cycles2, instr2, instr1;
+    //instr1 = get_inst_count();
+    //cycles1 = get_cycles_count();
+
     #ifdef USE_RISCV_VECTOR
-    long int * seed_64 = (long int *)malloc(sizeof(long int)*Nparticles);
-    for(i = 0; i < Nparticles; i++)
-    {
-        seed_64[i] = (long int)seed[i];
-    }
-    //call particle filter
-    particleFilter_vector(I, IszX, IszY, Nfr, seed, seed_64, Nparticles);
+     //call particle filter
+    particleFilter_vector(I, IszX, IszY, Nfr, seed, Nparticles);
     #else
     //call particle filter
     particleFilter(I, IszX, IszY, Nfr, seed, Nparticles);
     #endif
 
-    SimRoiEnd();
-    stop_konatadump();
+    // End instruction and cycles count of the region of interest
+    //instr2 = get_inst_count();
+    //cycles2 = get_cycles_count();
+
     long long endParticleFilter = get_time();
     long long end_cycle = get_cycle();
     long long end_vecinst = get_vecinst();
     printf("PARTICLE FILTER TOOK %f\n", elapsed_time(endVideoSequence, endParticleFilter));
     printf("ENTIRE PROGRAM TOOK %f\n", elapsed_time(start, endParticleFilter));
-    printf("cycles = %lld\n", end_cycle - start_cycle);
-    printf("vecinst = %lld\n", end_vecinst - start_vecinst);
+
+    // Instruction and cycles count of the region of interest
+    //printf("-CSR   NUMBER OF EXEC CYCLES :%lu\n", cycles2 - cycles1);
+    //printf("-CSR   NUMBER OF INSTRUCTIONS EXECUTED :%lu\n", instr2 - instr1);
+
 
     free(seed);
     free(I);

@@ -1,46 +1,44 @@
+/*************************************************************************
+* Vectorized Axpy Kernel
+* Author: Jesus Labarta
+* Barcelona Supercomputing Center
+*************************************************************************/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
 
 #ifdef USE_RISCV_VECTOR
-
+#include <riscv_vector.h>
 #include "../../common/vector_defines.h"
+#endif
 
-void axpy_intrinsics(double a, double *dx, double *dy, int n) {
+#ifndef USE_RISCV_VECTOR
+
+void axpy_serial(double a, double *dx, double *dy, int n) {
+   int i;
+   for (i=0; i<n; i++) {
+      dy[i] += a*dx[i];
+   }
+}
+
+#else
+
+void axpy_vector(double a, double *dx, double *dy, int n) {
   int i;
 
-  // long gvl = __builtin_epi_vsetvl(n, __epi_e64, __epi_m1);
-  long gvl = vsetvl_e64m8(n); //PLCT
-
-  _MMR_8xf64 v_a = _MM_SET_f64_m8(a, gvl);
-
+  long gvl = _MMR_VSETVL_E64M1(n);
+  
   for (i = 0; i < n;) {
-    // gvl = __builtin_epi_vsetvl(n - i, __epi_e64, __epi_m1);
-    gvl = vsetvl_e64m8(n - i); //PLCT
-
-    _MMR_8xf64 v_dx = _MM_LOAD_f64_m8(&dx[i], gvl);
-    _MMR_8xf64 v_dy = _MM_LOAD_f64_m8(&dy[i], gvl);
-    _MMR_8xf64 v_res = _MM_MACC_f64_m8(v_dy, v_a, v_dx, gvl);
-    _MM_STORE_f64_m8(&dy[i], v_res, gvl);
+    gvl = _MMR_VSETVL_E64M1(n - i);
+    vfloat64m1_t v_dx = _MM_LOAD_f64(&dx[i], gvl);
+    vfloat64m1_t v_dy = _MM_LOAD_f64(&dy[i], gvl);
+    vfloat64m1_t v_res = _MM_MACC_VF_f64(v_dy, a, v_dx, gvl);
+    _MM_STORE_f64(&dy[i], v_res, gvl);
 
     i += gvl;
   }
-
-FENCE();
 }
 
-#else // USE_RISCV_VECTOR
-
-#define FENCE()   asm volatile( "fence" : : );
-
-void axpy_intrinsics(double a, double *dx, double *dy, int n) {
-
-  for (int i = 0; i < n; i++) {
-    dy[i] = a * dx[i] + dy[i];
-  }
-
-  FENCE();
-}
-
-#endif // USE_RISCV_VECTOR
+#endif

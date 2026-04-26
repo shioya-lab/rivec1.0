@@ -1,23 +1,20 @@
 #makefile
 
-APP_NAME = blackscholes
+start:
+	rm bin/*.*
 
-# SPIKE_OPTS = 1 ./input/in_64K.input prices.txt
-SPIKE_OPTS = 1 ./input/in_512.input prices.txt
+serial: # with -O2 fails in spike and gem5 the vector version
+	${RISCV}/bin/clang++ -march=rv64g -fno-vectorize -c -o src/blackscholes_serial.o src/blackscholes.cpp
+	${RISCV}/bin/clang++ -march=rv64g -fno-vectorize -o bin/blackscholes_serial.exe src/blackscholes_serial.o -lm
+	rm src/*.o
+	${RISCV}/bin/llvm-objdump --mattr=+m,+f,+d,+a,+c -ds  bin/blackscholes_serial.exe > bin/blackscholes_serial.dump
 
-rvv_target    = bin/rvv-test_vlen$(VLEN)
-serial_target = bin/serial-test_vlen$(VLEN)
+vector: # with -O2 fails in spike and gem5 
+	${RISCV}/bin/clang++  -march=rv64gcv -DUSE_RISCV_VECTOR  -fno-vectorize -c -o src/blackscholes.o src/blackscholes.cpp ; \
+	${RISCV}/bin/clang++  -march=rv64gcv -DUSE_RISCV_VECTOR  -fno-vectorize -o bin/blackscholes_vector.exe src/*.o -lm ; \
+	rm src/*.o ; \
+	${RISCV}/bin/llvm-objdump --mattr=+m,+f,+d,+a,+c,+v -ds bin/blackscholes_vector.exe > bin/blackscholes_vector.dump ;
 
-include ../../scripts/runspike.mk
-
-scalar: $(serial_target)
-$(serial_target):
-	mkdir -p bin
-	${LLVM}/bin/clang++ --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(serial_target) src/blackscholes.cpp -lm
-	riscv64-unknown-elf-objdump -D $(serial_target) > $(serial_target).dmp
-
-vector: $(rvv_target)
-$(rvv_target):
-	mkdir -p bin
-	${LLVM}/bin/clang++ --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR   -march=rv64gv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -o $(rvv_target) src/blackscholes.assembly.S src/blackscholes.cpp  -lm
-	riscv64-unknown-elf-objdump -D $(rvv_target) > $(rvv_target).dmp
+clean:
+	rm bin/*.dump; \
+	rm bin/*.exe;

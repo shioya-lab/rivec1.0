@@ -1,14 +1,10 @@
-*.o
-vio.v*
-ooo.v*
-ino.v*
-io.v*
-ooo.s*
-ino.s*
+*.swp
+output/
+m5out/
+
+# Build artifacts (do not commit binaries / objects / traces)
+**/bin/*.exe
+**/bin/*.dump
+**/*.o
 *.sift
-*.xz
-*.tgz
-bin/
-*.dmp
-*.log
-*.csv
+spike-*.log

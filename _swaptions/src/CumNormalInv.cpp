@@ -110,54 +110,17 @@ void CumNormalInv_vector( FTYPE* u ,FTYPE* output ,unsigned long int gvl)
   // _MMR_f64   zero    = _MM_SET_f64(0.0,gvl);
   mask2  = _MM_VFGT_f64_f(x,0.0,gvl);
   r1 = vU;
-  r1   = _MM_SUB_f64_MASK(r1,_MM_SET_f64(1.0,gvl),vU,mask2,gvl); //sub(vs2,vs1)
+  r1   = _MM_SUB_f64_MASK(mask2,one,vU,gvl); //sub(vs2,vs1)
   Cons1 = _MM_LOG_f64(r1,gvl);
   r1 = _MM_VFSGNJN_f64(Cons1,Cons1,gvl);
   r1 = _MM_LOG_f64(r1,gvl);
-  // END SECOND PART
 
-  r = _MM_MUL_f64(x, x , gvl);
+  r1 = _MM_ADD_f64(_MM_MUL_f64(_MM_ADD_f64(_MM_MUL_f64(_MM_ADD_f64(_MM_MUL_f64(_MM_ADD_f64(_MM_MUL_f64(_MM_ADD_f64(_MM_MUL_f64(_MM_ADD_f64(_MM_MUL_f64(_MM_ADD_f64(_MM_MUL_f64(_MM_ADD_f64(_MM_MUL_f64(c8,r1 ,gvl),c7,gvl),r1,gvl),c6,gvl),r1,gvl),c5,gvl),r1,gvl),c4,gvl),r1,gvl),c3,gvl),r1,gvl),c2,gvl),r1,gvl),c1,gvl),r1,gvl),c0,gvl);
+  mask3  = _MM_VFLT_f64(x,zero,gvl); 
+  r1 = _MM_MERGE_f64(_MM_VFSGNJN_f64(r1,r1,gvl),r1, mask3,gvl);
 
-  tmp2 = _MM_MUL_f64_f(r1, c[8], gvl);
-  tmp1 = _MM_MUL_f64_f(r  ,b[3]  ,gvl);
-  tmp0 = _MM_MUL_f64_f(r  ,a[3]  ,gvl);
-  tmp2 = _MM_ADD_f64_f(tmp2, c[7], gvl);
-  tmp1 = _MM_ADD_f64_f(tmp1,b[2] ,gvl);
-  tmp0 = _MM_ADD_f64_f(tmp0,a[2] ,gvl);
-  tmp2 = _MM_MUL_f64  (tmp2, r1, gvl);
-  tmp1 = _MM_MUL_f64  (tmp1, r  ,gvl);
-  tmp0 = _MM_MUL_f64  (tmp0, r  ,gvl);
-  tmp2 = _MM_ADD_f64_f(tmp2, c[6], gvl);
-  tmp1 = _MM_ADD_f64_f(tmp1,b[1] ,gvl);
-  tmp0 = _MM_ADD_f64_f(tmp0,a[1] ,gvl);
-  tmp2 = _MM_MUL_f64  (tmp2, r1, gvl);
-  tmp1 = _MM_MUL_f64  (tmp1,r  ,gvl);
-  tmp0 = _MM_MUL_f64  (tmp0,r  ,gvl);
-  tmp2 = _MM_ADD_f64_f(tmp2, c[5], gvl);
-  tmp1 = _MM_ADD_f64_f(tmp1,b[0] ,gvl);
-  tmp0 = _MM_ADD_f64_f(tmp0,a[0] ,gvl);
-  tmp2 = _MM_MUL_f64(tmp2, r1, gvl);
-  tmp1 = _MM_MUL_f64(tmp1,r  ,gvl);
-  tmp0 = _MM_MUL_f64(tmp0,x  ,gvl);
-  tmp2 = _MM_ADD_f64_f(tmp2, c[4], gvl);
-  tmp1 = _MM_ADD_f64(tmp1,_MM_SET_f64(1.0,gvl),gvl);
-
-  tmp2 = _MM_MUL_f64  (tmp2, r1, gvl);
-  tmp2 = _MM_ADD_f64_f(tmp2, c[3], gvl);
-  tmp2 = _MM_MUL_f64  (tmp2, r1, gvl);
-  tmp2 = _MM_ADD_f64_f(tmp2, c[2], gvl);
-  tmp2 = _MM_MUL_f64  (tmp2, r1, gvl);
-  tmp2 = _MM_ADD_f64_f(tmp2, c[1], gvl);
-  tmp2 = _MM_MUL_f64  (tmp2, r1, gvl);
-  r1   = _MM_ADD_f64_f(tmp2, c[0], gvl);
-
-  r = _MM_DIV_f64(tmp0, tmp1, gvl);
-
-  mask3  = _MM_VFLT_f64_f(x,0.0,gvl);
-  r1 = _MM_MERGE_f64(r1,_MM_VFSGNJN_f64(r1,r1,gvl), mask3,gvl);
-
-  mask1  = _MM_VFLT_f64_f(_MM_VFSGNJX_f64(x,x,gvl),0.42,gvl);
-  r = _MM_MERGE_f64(r1,r, mask1,gvl);
+  mask1  = _MM_VFLT_f64(_MM_VFSGNJX_f64(x,x,gvl),Cons2,gvl); 
+  r = _MM_MERGE_f64(r,r1, mask1,gvl);
 
   _MM_STORE_f64(output,r,gvl);
 

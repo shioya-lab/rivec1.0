@@ -5,6 +5,13 @@
 /* See "Random Number Generators: Good Ones Are Hard To Find", */
 /*     Park & Miller, CACM 31#10 October 1988 pages 1192-1201. */
 
+/*************************************************************************
+* RISC-V Vectorized Version
+* Author: Cristóbal Ramírez Lazo
+* email: cristobal.ramirez@bsc.es
+* Barcelona Supercomputing Center (2020)
+*************************************************************************/
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -36,8 +43,8 @@ FTYPE RanUnif( long *s )
 void RanUnif_vector( long *s , int iFactors , int iN ,int  BLOCKSIZE , FTYPE **randZ )
 {
   // uniform random number generator
-  // unsigned long int gvl = __builtin_epi_vsetvl(BLOCKSIZE, __epi_e64, __epi_m1);
-  unsigned long int gvl =  vsetvl_e64m1(BLOCKSIZE); //PLCT
+  unsigned long int gvl = _MMR_VSETVL_E64M1(BLOCKSIZE);
+
   _MMR_i64    k1;
   _MMR_i64      zero;
   _MMR_MASK_i64   mask1;
@@ -56,7 +63,7 @@ void RanUnif_vector( long *s , int iFactors , int iN ,int  BLOCKSIZE , FTYPE **r
           xSeed   = _MM_SUB_i64(_MM_MUL_i64(cons2,_MM_SUB_i64(xSeed,_MM_MUL_i64(k1,cons1,gvl),gvl),gvl), _MM_MUL_i64(k1,cons3,gvl) , gvl);
           zero    = _MM_SET_i64(0,gvl);
           mask1   = _MM_VMSLT_i64(xSeed,zero,gvl); 
-          xSeed     = _MM_ADD_i64_MASK(xSeed,xSeed,cons4,mask1,gvl);
+          xSeed     = _MM_ADD_i64_MASK(mask1,xSeed,cons4,gvl);
           dRes    = _MM_MUL_f64( cons5,_MM_VFCVT_F_X_f64(xSeed,gvl),gvl);
 
           _MM_STORE_f64(&randZ[l][BLOCKSIZE*j], dRes,gvl);

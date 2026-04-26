@@ -1,24 +1,30 @@
-.PONY: power
+#makefile
 
-rvv_target    = spmv_vector_vlen$(VLEN)
-serial_target = spmv_scalar_vlen$(VLEN)
+# Variables for the compiler and options
+RISCV_BIN=${RISCV}/bin
+PK=${RISCV}/riscv64-unknown-elf/bin/pk
 
-run:
-	$(MAKE) runsniper-ooo-v runsniper-vio-v runsniper-vio-fence-v runsniper-ino-v  runsniper-vio-ngs-v
-	$(MAKE) runsniper-ooo-s runsniper-ino-s
+# Variables for source code
+SRC=src/spmv.c src/main.c
+BIN_DIR=bin
+BIN_SERIAL=$(BIN_DIR)/spmv_serial.exe
+BIN_VECTOR=$(BIN_DIR)/spmv_vector.exe
+DUMP_SERIAL=$(BIN_DIR)/spmv_serial.dump
+DUMP_VECTOR=$(BIN_DIR)/spmv_vector.dump
 
-SOURCE_FILES += spmv_main.c
-SOURCE_FILES += spmv_vector.S
+start:
+	rm -f bin/*.*
 
-APP_NAME = spmv
+serial:
+	@echo "Compiling serial version..."
+	$(RISCV_BIN)/clang -march=rv64gc -O2 -o $(BIN_SERIAL) $(SRC)
+	$(RISCV_BIN)/llvm-objdump --mattr=+m,+f,+d,+a,+c -ds $(BIN_SERIAL) > $(DUMP_SERIAL)
 
-RISCV_GCC_SCALAR_OPTS = \
-	-march=rv64g \
-	-O3 \
-	-funroll-loops \
-	-I/home/kimura/work/sniper/sniper/sniper/include/ \
-	-DPREALLOCATE=1 -mcmodel=medany
+vector:
+	@echo "Compiling vector version..."
+	$(RISCV_BIN)/clang -march=rv64gcv -fno-vectorize -DUSE_RISCV_VECTOR -O2 -I../common -o $(BIN_VECTOR) $(SRC)
+	$(RISCV_BIN)/llvm-objdump --mattr=+m,+f,+d,+a,+c,+v -S $(BIN_VECTOR) > $(DUMP_VECTOR)
 
-include ../../microbenchmarks/microbenches.mk
-include ../../scripts/compile.mk
-include ../../scripts/runspike.mk
+clean:
+	rm -f bin/*.dump; \
+	rm -f bin/*.exe;

@@ -6,6 +6,14 @@
  * streamcluster - Online clustering algorithm
  *
  */
+
+/*************************************************************************
+* RISC-V Vectorized Version
+* Author: Cristóbal Ramírez Lazo
+* email: cristobal.ramirez@bsc.es
+* Barcelona Supercomputing Center (2020)
+*************************************************************************/
+
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
@@ -16,13 +24,11 @@
 #include <sys/resource.h>
 #include <limits.h>
 
-#include "sim_api.h"
-#include "count_utils.h"
-
-// RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
 #include "../../common/vector_defines.h"
 #endif
+
+#include "../../common/riscv_util.h"
 
 #include <time.h>
 #include <sys/time.h>
@@ -114,7 +120,7 @@ public:
 
     for(int kk=begin; kk!=end; kk++) {
       myhiz += dist(points->p[kk], points->p[0],
-			 ptDimension)*points->p[kk].weight;
+       ptDimension)*points->p[kk].weight;
     }
     hiz += myhiz;
   }
@@ -165,17 +171,17 @@ public:
 
     if(type) {
       double local_total = 0.0;
-      for(int k = begin; k!=end; k++ )
-	local_total+=points->p[k].cost;
+      for(int k = begin; k!=end; k++ )  
+  local_total+=points->p[k].cost;
       total_cost += local_total;
     }
     else {
       for(int k = begin; k!=end; k++ )  {
-	float distance = dist(points->p[i],points->p[k],points->dim);
-	if( i && distance*points->p[k].weight < points->p[k].cost )  {
-	  points->p[k].cost = distance * points->p[k].weight;
-	  points->p[k].assign=i;
-	}
+  float distance = dist(points->p[i],points->p[k],points->dim);
+  if( i && distance*points->p[k].weight < points->p[k].cost )  {
+    points->p[k].cost = distance * points->p[k].weight;
+    points->p[k].assign=i;
+  }
       }
     }
 
@@ -213,7 +219,7 @@ public:
 
     for( int i = k1; i < k2; i++ ) {
       if( is_center[i] ) {
-	center_table[i] = count++;
+  center_table[i] = count++;
       }
     }
 
@@ -242,8 +248,8 @@ public:
       recycle_as_continuation();
       set_ref_count(NUM_DIVISIONS);
 
-      for(p = 1; p < (NUM_DIVISIONS); p++ )
-	  list.push_back( *new( allocate_child() ) CenterTableCount(p, stride, points, work_mem));
+      for(p = 1; p < (NUM_DIVISIONS); p++ ) 
+    list.push_back( *new( allocate_child() ) CenterTableCount(p, stride, points, work_mem));
       CenterTableCount &me = *new( allocate_child() ) CenterTableCount(0, stride, points, work_mem);
       spawn(list);
       is_continuation = 1;
@@ -254,9 +260,9 @@ public:
       /* continuation part */
       int accum = 0;
       for( int p = 0; p < (NUM_DIVISIONS); p++ ) {
-	int tmp = (int)work_mem[p*stride];
-	work_mem[p*stride] = accum;
-	accum += tmp;
+  int tmp = (int)work_mem[p*stride];
+  work_mem[p*stride] = accum;
+  accum += tmp;
       }
       //fprintf(stderr,"Accum = %d\n",accum);
       return NULL;
@@ -288,8 +294,8 @@ public:
 
     for( int i = k1; i < k2; i++ ) {
       if( is_center[i] ) {
-	center_table[i] += (int)work_mem[pid*stride];
-	//fprintf(stderr,"\tcenter_table[%d] = %d\n",i,center_table[i]);
+  center_table[i] += (int)work_mem[pid*stride];
+  //fprintf(stderr,"\tcenter_table[%d] = %d\n",i,center_table[i]);
       }
 
     }
@@ -314,8 +320,8 @@ public:
     if(!is_continuation) {
       recycle_as_continuation();
       set_ref_count(NUM_DIVISIONS);
-      for(p = 1; p < (NUM_DIVISIONS); p++ )
-	  list.push_back( *new( allocate_child() ) FixCenter(p, stride, points, work_mem));
+      for(p = 1; p < (NUM_DIVISIONS); p++ ) 
+    list.push_back( *new( allocate_child() ) FixCenter(p, stride, points, work_mem));
       spawn(list);
       FixCenter &me = *new (allocate_child()) FixCenter(0, stride, points, work_mem);
       is_continuation = true;
@@ -358,32 +364,32 @@ public:
     double *cost_of_opening_x = &work_mem[pid*stride + K+1];
 
     for ( i = k1; i < k2; i++ ) {
-      float x_cost = dist(points->p[i], points->p[x], points->dim)
-	* points->p[i].weight;
+      float x_cost = dist(points->p[i], points->p[x], points->dim) 
+  * points->p[i].weight;
       float current_cost = points->p[i].cost;
 
       //fprintf(stderr,"\t (x_cost=%lf < current_cost=%lf)\n",x_cost, current_cost);
       if ( x_cost < current_cost ) {
 
-	// point i would save cost just by switching to x
-	// (note that i cannot be a median,
-	// or else dist(p[i], p[x]) would be 0)
-
-	switch_membership[i] = 1;
-	local_cost_of_opening_x += x_cost - current_cost;
-
+  // point i would save cost just by switching to x
+  // (note that i cannot be a median, 
+  // or else dist(p[i], p[x]) would be 0)
+  
+  switch_membership[i] = 1;
+  local_cost_of_opening_x += x_cost - current_cost;
+  
       } else {
-
-	// cost of assigning i to x is at least current assignment cost of i
-
-	// consider the savings that i's **current** median would realize
-	// if we reassigned that median and all its members to x;
-	// note we've already accounted for the fact that the median
-	// would save z by closing; now we have to subtract from the savings
-	// the extra cost of reassigning that median and its members
-	int assign = points->p[i].assign;
-	lower[center_table[assign]] += current_cost - x_cost;
-	//fprintf(stderr,"Lower[%d]=%lf\n",center_table[assign], lower[center_table[assign]]);
+  
+  // cost of assigning i to x is at least current assignment cost of i
+  
+  // consider the savings that i's **current** median would realize
+  // if we reassigned that median and all its members to x;
+  // note we've already accounted for the fact that the median
+  // would save z by closing; now we have to subtract from the savings
+  // the extra cost of reassigning that median and its members 
+  int assign = points->p[i].assign;
+  lower[center_table[assign]] += current_cost - x_cost;
+  //fprintf(stderr,"Lower[%d]=%lf\n",center_table[assign], lower[center_table[assign]]);
       }
     }
 
@@ -411,8 +417,8 @@ public:
     if(!is_continuation) {
       recycle_as_continuation();
       set_ref_count(NUM_DIVISIONS);
-      for(p = 1; p < (NUM_DIVISIONS); p++ )
-	  list.push_back( *new( allocate_child() )  LowerCost(p, stride, points, x, work_mem, K));
+      for(p = 1; p < (NUM_DIVISIONS); p++ ) 
+    list.push_back( *new( allocate_child() )  LowerCost(p, stride, points, x, work_mem, K));
       spawn(list);
       LowerCost &me = *new (allocate_child())  LowerCost(0, stride, points, x, work_mem, K);
       is_continuation = true;
@@ -457,22 +463,22 @@ public:
     cost_of_opening_x = &work_mem[pid*stride + K+1];
 
       for ( int i = k1; i < k2; i++ ) {
-	if( is_center[i] ) {
-	  double low = z;
-	  //aggregate from all threads
-	  for( int p = 0; p < (NUM_DIVISIONS); p++ ) {
-	    low += work_mem[center_table[i]+p*stride];
-	  }
-	  gl_lower[center_table[i]] = low;
-	  if ( low > 0 ) {
-	    // i is a median, and
-	    // if we were to open x (which we still may not) we'd close i
-
-	    // note, we'll ignore the following quantity unless we do open x
-	    ++local_number_of_centers_to_close;
-	    *cost_of_opening_x -= low;
-	  }
-	}
+  if( is_center[i] ) {
+    double low = z;
+    //aggregate from all threads
+    for( int p = 0; p < (NUM_DIVISIONS); p++ ) {
+      low += work_mem[center_table[i]+p*stride];
+    }
+    gl_lower[center_table[i]] = low;
+    if ( low > 0 ) {
+      // i is a median, and
+      // if we were to open x (which we still may not) we'd close i
+      
+      // note, we'll ignore the following quantity unless we do open x
+      ++local_number_of_centers_to_close;  
+      *cost_of_opening_x -= low;
+    }
+  }
       }
       *number_of_centers_to_close = (double)local_number_of_centers_to_close;
       return NULL;
@@ -498,8 +504,8 @@ public:
     if(!is_continuation) {
       recycle_as_continuation();
       set_ref_count(NUM_DIVISIONS);
-      for(p = 1; p < (NUM_DIVISIONS); p++ )
-	list.push_back( *new( allocate_child() )  CenterClose(p, stride, points, work_mem, K, z));
+      for(p = 1; p < (NUM_DIVISIONS); p++ ) 
+  list.push_back( *new( allocate_child() )  CenterClose(p, stride, points, work_mem, K, z));
       spawn(list);
       CenterClose &me = *new (allocate_child())  CenterClose(0, stride, points, work_mem, K, z);
       is_continuation = true;
@@ -541,17 +547,17 @@ public:
     for ( int i = k1; i < k2; i++ ) {
       bool close_center = gl_lower[center_table[points->p[i].assign]] > 0 ;
       if ( switch_membership[i] || close_center ) {
-	// Either i's median (which may be i itself) is closing,
-	// or i is closer to x than to its current median
-	points->p[i].cost = points->p[i].weight *
-	  dist(points->p[i], points->p[x], points->dim);
-	points->p[i].assign = x;
-	//fprintf(stderr,"\t[SaveMoney] %d: cost %lf, x=%d\n",i,points->p[i].cost, x);
+  // Either i's median (which may be i itself) is closing,
+  // or i is closer to x than to its current median
+  points->p[i].cost = points->p[i].weight *
+    dist(points->p[i], points->p[x], points->dim);
+  points->p[i].assign = x;
+  //fprintf(stderr,"\t[SaveMoney] %d: cost %lf, x=%d\n",i,points->p[i].cost, x);
       }
     }
     for( int i = k1; i < k2; i++ ) {
       if( is_center[i] && gl_lower[center_table[i]] > 0 ) {
-	is_center[i] = false;
+  is_center[i] = false;
       }
     }
     if( x >= k1 && x < k2 ) {
@@ -583,8 +589,8 @@ public:
     if(!is_continuation) {
       recycle_as_continuation();
       set_ref_count(NUM_DIVISIONS);
-      for(p = 1; p < (NUM_DIVISIONS); p++ )
-	list.push_back( *new( allocate_child() )  SaveMoney(p, stride, points, x, work_mem));
+      for(p = 1; p < (NUM_DIVISIONS); p++ ) 
+  list.push_back( *new( allocate_child() )  SaveMoney(p, stride, points, x, work_mem));
       spawn(list);
       SaveMoney &me = *new (allocate_child())  SaveMoney(0, stride, points, x, work_mem);
       is_continuation = true;
@@ -662,8 +668,7 @@ float dist(Point p1, Point p2, int dim )
 #ifdef USE_RISCV_VECTOR
   float result=0.0;
   int i;
-  //unsigned long int gvl = __builtin_epi_vsetvl(dim, __epi_e32, __epi_m1);
-  unsigned long int gvl = vsetvl_e32m8(dim); //PLCT
+  unsigned long int gvl = _MMR_VSETVL_E32M1(dim);
 
   _MMR_8xf32 result1, _aux, _diff, _coord1, _coord2;
   _MMR_f32   result2;
@@ -672,9 +677,7 @@ float dist(Point p1, Point p2, int dim )
   result2 = _MM_SET_f32_m1(0.0,gvl);
   for (i=0;i<dim;i=i+gvl) {
 
-    // gvl = __builtin_epi_vsetvl(dim-i, __epi_e32, __epi_m1);
-    // gvl = vsetvl_e32m1(dim-i); //PLCT
-    gvl = vsetvl_e32m8(dim-i); //PLCT
+    gvl = _MMR_VSETVL_E32M1(dim-i);
 
     _coord1 = _MM_LOAD_f32_m8(&(p1.coord[i]),gvl);
     _coord2 = _MM_LOAD_f32_m8(&(p2.coord[i]),gvl);
@@ -682,9 +685,8 @@ float dist(Point p1, Point p2, int dim )
     _diff = _MM_SUB_f32_m8(_coord2,_coord1,gvl);
     result1   = _MM_MACC_f32_m8(result1,_diff,_diff,gvl);
   }
-  result2 = _MM_REDSUM_f32_m8(result1,result2,gvl);
-  result = _MM_VGETFIRST_f32_m1(result2,gvl);
-  FENCE();
+  result2 = _MM_REDSUM_f32(result1,result2,gvl);
+  result = _MM_VGETFIRST_f32(result2);
   //printf("result = %f \n",result);
   return result;
 #else // USE_RISCV_VECTOR
@@ -726,10 +728,10 @@ float pspeedy(Points *points, float z, long *kcenter)
     for(i = 1; i < points->num; i++ )  {
       bool to_open = ((float)lrand48()/(float)INT_MAX)<(points->p[i].cost/z);
       if( to_open )  {
-	(*kcenter)++;
-	c.i = i;
-	//fprintf(stderr,"** New center for i=%d\n",i);
-	tbb::parallel_reduce(tbb::blocked_range<int>(0,points->num,grain_size),c);
+  (*kcenter)++;
+  c.i = i;
+  //fprintf(stderr,"** New center for i=%d\n",i);
+  tbb::parallel_reduce(tbb::blocked_range<int>(0,points->num,grain_size),c);
       }
     }
 
@@ -792,14 +794,14 @@ float pspeedy(Points *points, float z, long *kcenter, int pid, pthread_barrier_t
 #endif
       if( i >= points->num ) break;
       for( int k = k1; k < k2; k++ )
-	{
-	  float distance = dist(points->p[i],points->p[k],points->dim);
-	  if( distance*points->p[k].weight < points->p[k].cost )
-	    {
-	      points->p[k].cost = distance * points->p[k].weight;
-	      points->p[k].assign=i;
-	    }
-	}
+  {
+    float distance = dist(points->p[i],points->p[k],points->dim);
+    if( distance*points->p[k].weight < points->p[k].cost )
+      {
+        points->p[k].cost = distance * points->p[k].weight;
+        points->p[k].assign=i;
+      }
+  }
 #ifdef ENABLE_THREADS
       pthread_barrier_wait(barrier);
       pthread_barrier_wait(barrier);
@@ -810,28 +812,28 @@ float pspeedy(Points *points, float z, long *kcenter, int pid, pthread_barrier_t
     for(i = 1; i < points->num; i++ )  {
       bool to_open = ((float)lrand48()/(float)INT_MAX)<(points->p[i].cost/z);
       if( to_open )  {
-	(*kcenter)++;
+  (*kcenter)++;
 #ifdef ENABLE_THREADS
-	pthread_mutex_lock(&mutex);
+  pthread_mutex_lock(&mutex);
 #endif
-	open = true;
+  open = true;
 #ifdef ENABLE_THREADS
-	pthread_mutex_unlock(&mutex);
-	pthread_cond_broadcast(&cond);
+  pthread_mutex_unlock(&mutex);
+  pthread_cond_broadcast(&cond);
 #endif
-	for( int k = k1; k < k2; k++ )  {
-	  float distance = dist(points->p[i],points->p[k],points->dim );
-	  if( distance*points->p[k].weight < points->p[k].cost )  {
-	    points->p[k].cost = distance * points->p[k].weight;
-	    points->p[k].assign=i;
-	  }
-	}
+  for( int k = k1; k < k2; k++ )  {
+    float distance = dist(points->p[i],points->p[k],points->dim );
+    if( distance*points->p[k].weight < points->p[k].cost )  {
+      points->p[k].cost = distance * points->p[k].weight;
+      points->p[k].assign=i;
+    }
+  }
 #ifdef ENABLE_THREADS
-	pthread_barrier_wait(barrier);
+  pthread_barrier_wait(barrier);
 #endif
-	open = false;
+  open = false;
 #ifdef ENABLE_THREADS
-	pthread_barrier_wait(barrier);
+  pthread_barrier_wait(barrier);
 #endif
       }
     }
@@ -861,9 +863,9 @@ float pspeedy(Points *points, float z, long *kcenter, int pid, pthread_barrier_t
     {
       totalcost=z*(*kcenter);
       for( int i = 0; i < nproc; i++ )
-	{
-	  totalcost += costs[i];
-	}
+  {
+    totalcost += costs[i];
+  } 
       free(costs);
     }
 #ifdef ENABLE_THREADS
@@ -1128,16 +1130,16 @@ double pgain(long x, Points *points, double z, long int *numcenters, int pid, pt
       double low = z;
       //aggregate from all threads
       for( int p = 0; p < nproc; p++ ) {
-	low += work_mem[center_table[i]+p*stride];
+  low += work_mem[center_table[i]+p*stride];
       }
       gl_lower[center_table[i]] = low;
       if ( low > 0 ) {
-	// i is a median, and
-	// if we were to open x (which we still may not) we'd close i
+  // i is a median, and
+  // if we were to open x (which we still may not) we'd close i
 
-	// note, we'll ignore the following quantity unless we do open x
-	++number_of_centers_to_close;
-	cost_of_opening_x -= low;
+  // note, we'll ignore the following quantity unless we do open x
+  ++number_of_centers_to_close;  
+  cost_of_opening_x -= low;
       }
     }
   }
@@ -1169,16 +1171,16 @@ double pgain(long x, Points *points, double z, long int *numcenters, int pid, pt
     for ( int i = k1; i < k2; i++ ) {
       bool close_center = gl_lower[center_table[points->p[i].assign]] > 0 ;
       if ( switch_membership[i] || close_center ) {
-	// Either i's median (which may be i itself) is closing,
-	// or i is closer to x than to its current median
-	points->p[i].cost = points->p[i].weight *
-	  dist(points->p[i], points->p[x], points->dim );
-	points->p[i].assign = x;
+  // Either i's median (which may be i itself) is closing,
+  // or i is closer to x than to its current median
+  points->p[i].cost = points->p[i].weight *
+    dist(points->p[i], points->p[x], points->dim );
+  points->p[i].assign = x;
       }
     }
     for( int i = k1; i < k2; i++ ) {
       if( is_center[i] && gl_lower[center_table[i]] > 0 ) {
-	is_center[i] = false;
+  is_center[i] = false;
       }
     }
     if( x >= k1 && x < k2 ) {
@@ -1220,7 +1222,7 @@ double pgain(long x, Points *points, double z, long int *numcenters, int pid, pt
 
 #ifdef TBB_VERSION
 float pFL(Points *points, int *feasible, int numfeasible,
-	  double z, long *k, double cost, long iter, double e)
+    double z, long *k, double cost, long iter, double e)
 {
 
   long i;
@@ -1252,8 +1254,8 @@ float pFL(Points *points, int *feasible, int numfeasible,
 
 #else //!TBB_VERSION
  float pFL(Points *points, int *feasible, int numfeasible,
-	  float z, long *k, double cost, long iter, float e,
-	  int pid, pthread_barrier_t* barrier)
+    float z, long *k, double cost, long iter, float e, 
+    int pid, pthread_barrier_t* barrier)
 {
 #ifdef ENABLE_THREADS
   pthread_barrier_wait(barrier);
@@ -1354,10 +1356,10 @@ int selectfeasible_fast(Points *points, int **feasible, int kmin, int pid, pthre
     while( l+1 < r ) {
       k = (l+r)/2;
       if( accumweight[k] > w ) {
-	r = k;
-      }
+  r = k;
+      } 
       else {
-	l=k;
+  l=k;
       }
     }
     (*feasible)[i]=r;
@@ -1377,7 +1379,7 @@ int selectfeasible_fast(Points *points, int **feasible, int kmin, int pid, pthre
 #ifdef TBB_VERSION
 /* compute approximate kmedian on the points */
 float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
-	       int pid, pthread_barrier_t* barrier )
+         int pid, pthread_barrier_t* barrier )
 {
   int i;
   double cost;
@@ -1408,13 +1410,13 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
   int grain_size = points->num / ((NUM_DIVISIONS));
   if(grain_size==0)
     {
-
-      for (long kk=0;kk < points->num; kk++ )
-	{
-	  hiz += dist(points->p[kk], points->p[0],
-		      ptDimension )*points->p[kk].weight;
-	}
-
+      
+      for (long kk=0;kk < points->num; kk++ ) 
+  {
+    hiz += dist(points->p[kk], points->p[0],
+          ptDimension )*points->p[kk].weight;
+  }
+      
     }
   else {
     HizReduction h(points);
@@ -1427,12 +1429,12 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
   /* NEW: Check whether more centers than points! */
   if (points->num <= kmax) {
     /* just return all points as facilities */
-      for (long kk=0;kk<points->num;kk++)
-	{
-	  points->p[kk].assign = kk;
-	  points->p[kk].cost = 0;
-	}
-
+      for (long kk=0;kk<points->num;kk++) 
+  {
+    points->p[kk].assign = kk;
+    points->p[kk].cost = 0;
+  }
+    
     cost = 0;
     *kfinal = k;
 
@@ -1476,16 +1478,16 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
     /* first get a rough estimate on the FL solution */
     lastcost = cost;
     cost = pFL(points, feasible, numfeasible,
-	       z, &k, cost, (long)(ITER*kmax*log((double)kmax)), 0.1);
+         z, &k, cost, (long)(ITER*kmax*log((double)kmax)), 0.1);
 
     /* if number of centers seems good, try a more accurate FL */
     if (((k <= (1.1)*kmax)&&(k >= (0.9)*kmin))||
-	((k <= kmax+2)&&(k >= kmin-2))) {
-
+  ((k <= kmax+2)&&(k >= kmin-2))) {
+      
       /* may need to run a little longer here before halting without
-	 improvement */
+   improvement */
       cost = pFL(points, feasible, numfeasible,
-		 z, &k, cost, (long)(ITER*kmax*log((double)kmax)), 0.001);
+     z, &k, cost, (long)(ITER*kmax*log((double)kmax)), 0.001);
     }
 
     if (k > kmax) {
@@ -1504,8 +1506,8 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
     /* if k is good, return the result */
     /* if we're stuck, just give up and return what we have */
     if (((k <= kmax)&&(k >= kmin))||((loz >= (0.999)*hiz)) )
-      {
-	break;
+      { 
+  break;
       }
 
   }
@@ -1523,7 +1525,7 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
 
 /* compute approximate kmedian on the points */
 float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
-	       int pid, pthread_barrier_t* barrier )
+         int pid, pthread_barrier_t* barrier )
 {
   int i;
   double cost;
@@ -1553,7 +1555,7 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
   double myhiz = 0;
   for (long kk=k1;kk < k2; kk++ ) {
     myhiz += dist(points->p[kk], points->p[0],
-		      ptDimension )*points->p[kk].weight;
+          ptDimension )*points->p[kk].weight;
   }
   hizs[pid] = myhiz;
 
@@ -1608,7 +1610,7 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
     {
       numfeasible = selectfeasible_fast(points,&feasible,kmin,pid,barrier);
       for( int i = 0; i< points->num; i++ ) {
-	is_center[points->p[i].assign]= true;
+  is_center[points->p[i].assign]= true;
       }
     }
 
@@ -1620,16 +1622,16 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
     /* first get a rough estimate on the FL solution */
     lastcost = cost;
     cost = pFL(points, feasible, numfeasible,
-	       z, &k, cost, (long)(ITER*kmax*log((double)kmax)), 0.1, pid, barrier);
+         z, &k, cost, (long)(ITER*kmax*log((double)kmax)), 0.1, pid, barrier);
 
     /* if number of centers seems good, try a more accurate FL */
     if (((k <= (1.1)*kmax)&&(k >= (0.9)*kmin))||
-	((k <= kmax+2)&&(k >= kmin-2))) {
+  ((k <= kmax+2)&&(k >= kmin-2))) {
 
       /* may need to run a little longer here before halting without
-	 improvement */
+   improvement */
       cost = pFL(points, feasible, numfeasible,
-		 z, &k, cost, (long)(ITER*kmax*log((double)kmax)), 0.001, pid, barrier);
+     z, &k, cost, (long)(ITER*kmax*log((double)kmax)), 0.001, pid, barrier);
     }
 
     if (k > kmax) {
@@ -1648,8 +1650,8 @@ float pkmedian(Points *points, long kmin, long kmax, long* kfinal,
     /* if k is good, return the result */
     /* if we're stuck, just give up and return what we have */
     if (((k <= kmax)&&(k >= kmin))||((loz >= (0.999)*hiz)) )
-      {
-	break;
+      { 
+  break;
       }
 #ifdef ENABLE_THREADS
     pthread_barrier_wait(barrier);
@@ -1683,9 +1685,9 @@ int contcenters(Points *points)
       relweight=points->p[points->p[i].assign].weight + points->p[i].weight;
       relweight = points->p[i].weight/relweight;
       for (ii=0;ii<points->dim;ii++) {
-	points->p[points->p[i].assign].coord[ii]*=1.0-relweight;
-	points->p[points->p[i].assign].coord[ii]+=
-	  points->p[i].coord[ii]*relweight;
+  points->p[points->p[i].assign].coord[ii]*=1.0-relweight;
+  points->p[points->p[i].assign].coord[ii]+=
+    points->p[i].coord[ii]*relweight;
       }
       points->p[points->p[i].assign].weight += points->p[i].weight;
     }
@@ -1811,7 +1813,7 @@ public:
     size_t count = 0;
     for( int i = 0; i < num && n > 0; i++ ) {
       for( int k = 0; k < dim; k++ ) {
-	dest[i*dim + k] = lrand48()/(float)INT_MAX;
+  dest[i*dim + k] = lrand48()/(float)INT_MAX;
       }
       n--;
       count++;
@@ -1875,8 +1877,7 @@ void outcenterIDs( Points* centers, long* centerIDs, char* outfile ) {
       printf("%u\n", centerIDs[i]);
       printf("%lf\n", centers->p[i].weight);
       for( int k = 0; k < centers->dim; k++ ) {
-	fprintf(fp, "%lf ", centers->p[i].coord[k]);
-        printf("%lf ", centers->p[i].coord[k]);
+  fprintf(fp, "%lf ", centers->p[i].coord[k]);
       }
       fprintf(fp,"\n\n");
       printf("\n\n");
@@ -1885,9 +1886,9 @@ void outcenterIDs( Points* centers, long* centerIDs, char* outfile ) {
   // fclose(fp);
 }
 
-void streamCluster( PStream* stream,
-		    long kmin, long kmax, int dim,
-		    long chunksize, long centersize, char* outfile )
+void streamCluster( PStream* stream, 
+        long kmin, long kmax, int dim,
+        long chunksize, long centersize, char* outfile )
 {
 
 #ifdef TBB_VERSION
@@ -2020,10 +2021,10 @@ int main(int argc, char **argv)
 #define __PARSEC_STRING(x) #x
 #define __PARSEC_XSTRING(x) __PARSEC_STRING(x)
         fprintf(stderr,"PARSEC Benchmark Suite Version "__PARSEC_XSTRING(PARSEC_VERSION)"\n");
-	fflush(NULL);
+  fflush(NULL);
 #else
         fprintf(stderr,"PARSEC Benchmark Suite\n");
-	fflush(NULL);
+  fflush(NULL);
 #endif //PARSEC_VERSION
 #ifdef ENABLE_PARSEC_HOOKS
   __parsec_bench_begin(__parsec_streamcluster);
@@ -2031,7 +2032,7 @@ int main(int argc, char **argv)
 
   if (argc<10) {
     fprintf(stderr,"usage: %s k1 k2 d n chunksize clustersize infile outfile nproc\n",
-	    argv[0]);
+      argv[0]);
     fprintf(stderr,"  k1:          Min. number of centers allowed\n");
     fprintf(stderr,"  k2:          Max. number of centers allowed\n");
     fprintf(stderr,"  d:           Dimension of each data point\n");
@@ -2081,29 +2082,28 @@ int main(int argc, char **argv)
 
 
 //#ifdef USE_RISCV_VECTOR
-    struct timeval tv1, tv2;
-    struct timezone tz;
-    double elapsed=0.0;
-    // gettimeofday(&tv1, &tz);
-    long long start_cycle = get_cycle();
-    long long start_vecinst = get_vecinst();
+  long long start,end;
+  start = get_time();
 
+
+    // Start instruction and cycles count of the region of interest
+    //unsigned long cycles1, cycles2, instr2, instr1;
+    //instr1 = get_inst_count();
+    //cycles1 = get_cycles_count();
 //#endif
-    SimRoiStart();
-    // stop_konatadump moves to start point of dist()
-    streamCluster(stream, kmin, kmax, dim, chunksize, clustersize, outfilename );
 
-    SimRoiEnd();
-    stop_konatadump();
+  streamCluster(stream, kmin, kmax, dim, chunksize, clustersize, outfilename );
 
-    //#ifdef USE_RISCV_VECTOR
-  // gettimeofday(&tv2, &tz);
-    long long end_cycle = get_cycle();
-    long long end_vecinst = get_vecinst();
-    elapsed = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
-    printf("\n\nstreamCluster Kernel took %8.8lf secs   \n", elapsed );
-    printf("cycles = %ld\n",  end_cycle - start_cycle);
-    printf("vecinst = %ld\n",  end_vecinst - start_vecinst);
+//#ifdef USE_RISCV_VECTOR
+    // End instruction and cycles count of the region of interest
+    //instr2 = get_inst_count();
+    //cycles2 = get_cycles_count();
+    // Instruction and cycles count of the region of interest
+    //printf("-CSR   NUMBER OF EXEC CYCLES :%lu\n", cycles2 - cycles1);
+    //printf("-CSR   NUMBER OF INSTRUCTIONS EXECUTED :%lu\n", instr2 - instr1);
+
+  end = get_time();
+  printf("\n\nstreamCluster Kernel took %8.8lf secs   \n", elapsed_time(start, end));
 //#endif
 
 #ifdef ENABLE_PARSEC_HOOKS

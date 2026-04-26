@@ -417,9 +417,8 @@ int Discount_Factors_Blocking_vector(FTYPE *pdDiscountFactors,
 	FTYPE ddelt;			//HJM time-step length
 	ddelt = (FTYPE) (dYears/iN);
 
-	// unsigned long int gvl = __builtin_epi_vsetvl(BLOCKSIZE, __epi_e64, __epi_m1);
-	unsigned long int gvl = vsetvl_e64m1(BLOCKSIZE); //PLCT
-    _MMR_f64 	xDdelt;
+	unsigned long int gvl = _MMR_VSETVL_E64M1(BLOCKSIZE);
+	_MMR_f64 	xDdelt;
 	_MMR_f64   	xpdRatePath;
 
 	xDdelt = _MM_SET_f64(ddelt,gvl);
@@ -450,7 +449,6 @@ int Discount_Factors_Blocking_vector(FTYPE *pdDiscountFactors,
 	    	_MM_STORE_f64(&pdDiscountFactors[i*BLOCKSIZE],xpdRatePath,gvl);
 	    }
 	} 
-	FENCE();
 	free_dvector(pdexpRes, 0,(iN-1)*BLOCKSIZE-1);
 	iSuccess = 1;
 	return iSuccess;

@@ -2,21 +2,26 @@
 rvv_target    = bin/rvv-test_vlen$(VLEN)
 serial_target = bin/serial-test_vlen$(VLEN)
 
-# SPIKE_OPTS = 256
-# SPIKE_OPTS = 8
-SPIKE_OPTS = 32
+start:
+	rm bin/*.*
 
-APP_NAME = axpy
+serial:
+	echo "serial"
+	${RISCV}/bin/clang -march=rv64g -O2 -c -o src/utils.o src/utils.c
+	${RISCV}/bin/clang -march=rv64g -O2 -c -o src/axpy.o src/axpy.c
+	${RISCV}/bin/clang -march=rv64g -O2 -c -o src/main.o src/main.c
+	${RISCV}/bin/clang -march=rv64g -O2 -o bin/axpy_serial.exe src/*.o -lm
+	rm src/*.o
+	${RISCV}/bin/llvm-objdump --mattr=+m,+f,+d,+a,+c -ds  bin/axpy_serial.exe > bin/axpy_serial.dump
 
-include ../../scripts/runspike.mk
-
-scalar: $(serial_target)
-$(serial_target):
-	mkdir -p bin
-	${LLVM}/bin/clang  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64gc -O2  --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -c -o src/axpy_scalar.o src/axpy.c
-	${LLVM}/bin/clang  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64gc -O2  --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -c -o src/main.o src/main.c
-	${LLVM}/bin/clang  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64gc -O2  --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -c -o src/utils.o src/utils.c
-	${LLVM}/bin/clang  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -march=rv64gc -O2  --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(serial_target) src/axpy_scalar.o src/main.o src/utils.o -lm
+vector:
+	echo "vector"
+	${RISCV}/bin/clang -march=rv64gcv -DUSE_RISCV_VECTOR  -fno-vectorize -O2 -c -o src/axpy.o src/axpy.c
+	${RISCV}/bin/clang -march=rv64gcv -DUSE_RISCV_VECTOR  -fno-vectorize -c -o src/main.o src/main.c
+	${RISCV}/bin/clang -march=rv64gcv -DUSE_RISCV_VECTOR  -fno-vectorize -O2 -c -o src/utils.o src/utils.c
+	${RISCV}/bin/clang -march=rv64gcv -DUSE_RISCV_VECTOR  -fno-vectorize -O2 -o bin/axpy_vector.exe src/*.o -lm
+	rm src/*.o
+	${RISCV}/bin/llvm-objdump  --mattr=+m,+f,+d,+a,+c,+v -ds  bin/axpy_vector.exe > bin/axpy_vector.dump
 
 vector: $(rvv_target)
 $(rvv_target): src/utils.c src/axpy.c src/main.c

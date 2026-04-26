@@ -2,18 +2,17 @@
 rvv_target    = bin/rvv-test_vlen$(VLEN)
 serial_target = bin/serial-test_vlen$(VLEN)
 
-APP_NAME = pathfinder
+start:
+	rm -f bin/*.*
 
-SPIKE_OPTS = 32 32 out
+serial:
+	${RISCV}/bin/clang++ -march=rv64g -O2 -o bin/pathfinder_serial.exe src/pathfinder.cpp
+	${RISCV}/bin/llvm-objdump  --mattr=+m,+f,+d,+a,+c -ds  bin/pathfinder_serial.exe > bin/pathfinder_serial.dump
 
-include ../../scripts/runspike.mk
+vector:
+	${RISCV}/bin/clang++ -DUSE_RISCV_VECTOR -march=rv64gcv -O2 -I../common -o bin/pathfinder_vector.exe src/pathfinder.cpp  
+	${RISCV}/bin/llvm-objdump  --mattr=+m,+f,+d,+a,+c,+v -ds   bin/pathfinder_vector.exe > bin/pathfinder_vector.dump 
 
-scalar: $(serial_target)
-$(serial_target):
-	mkdir -p bin
-	${LLVM}/bin/clang++ --target=riscv64-unknown-elf -march=rv64gcv1p0 -I$(SNIPER_ROOT)/include -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -o $(serial_target) src/pathfinder.cpp
-
-vector: $(rvv_target)
-$(rvv_target):
-	mkdir -p bin
-	${LLVM}/bin/clang++ --target=riscv64-unknown-elf -DUSE_RISCV_VECTOR -I$(SNIPER_ROOT)/include   -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -o $(rvv_target)  src/pathfinder.cpp
+clean:
+	rm -f bin/*.dump; \
+	rm -f bin/*.exe;

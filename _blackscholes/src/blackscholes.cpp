@@ -7,19 +7,25 @@
 // Reference Source: Options, Futures, and Other Derivatives, 3rd Edition, Prentice
 // Hall, John C. Hull,
 
+/*************************************************************************
+* RISC-V Vectorized Version
+* Author: Cristóbal Ramírez Lazo
+* email: cristobal.ramirez@bsc.es
+* Barcelona Supercomputing Center (2020)
+*************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
 
+#include "../../common/riscv_util.h"
+
 #include <time.h>
 #include <sys/time.h>
 
-#include "sim_api.h"
-#include "count_utils.h"
-
-// RISC-V VECTOR Version by Cristóbal Ramírez Lazo, "Barcelona 2019"
 #ifdef USE_RISCV_VECTOR
+#include <riscv_vector.h>
 #include "../../common/vector_defines.h"
 #endif
 
@@ -128,12 +134,9 @@ _MMR_f32 CNDF_SIMD  (_MMR_f32 xInput ,unsigned long int gvl)
   expValues   = _MM_MUL_f32(expValues, _MM_SET_f32(-0.5,gvl),gvl);
 
   xNPrimeofX = _MM_EXP_f32(expValues ,gvl);
-  FENCE();
   xNPrimeofX = _MM_MUL_f32(xNPrimeofX, _MM_SET_f32(inv_sqrt_2xPI,gvl),gvl);
-  //xK2 = _MM_MUL_f32(_MM_SET_f32(0.2316419,gvl), xInput,gvl);
-  //xK2 = _MM_ADD_f32(xK2, xOne,gvl);
-  xK2   = _MM_SET_f32(0.2316419,gvl);
-  xK2   = _MM_MADD_f32(xK2,xInput,xOne,gvl);
+
+  xK2   = _MM_MADD_f32(_MM_SET_f32(0.2316419,gvl),xInput,xOne,gvl);
 
   xK2   = _MM_DIV_f32(xOne,xK2,gvl);
   xK2_2 = _MM_MUL_f32(xK2, xK2,gvl);
@@ -143,26 +146,16 @@ _MMR_f32 CNDF_SIMD  (_MMR_f32 xInput ,unsigned long int gvl)
 
   xLocal_1 = _MM_MUL_f32(xK2, _MM_SET_f32(0.319381530,gvl),gvl);
   xLocal_2 = _MM_MUL_f32(xK2_2, _MM_SET_f32(-0.356563782,gvl),gvl);
-
-  xLocal_3 = _MM_MUL_f32(xK2_3, _MM_SET_f32(1.781477937,gvl),gvl);
-  xLocal_2 = _MM_ADD_f32(xLocal_2, xLocal_3,gvl);
-  //xLocal_2   = _MM_MACC_f32(xLocal_2,xK2_3,_MM_SET_f32(1.781477937,gvl),gvl);
-
-  //xLocal_3 = _MM_MUL_f32(xK2_4, _MM_SET_f32(-1.821255978,gvl),gvl);
-  //xLocal_2 = _MM_ADD_f32(xLocal_2, xLocal_3,gvl);
+  xLocal_2   = _MM_MACC_f32(xLocal_2,xK2_3,_MM_SET_f32(1.781477937,gvl),gvl);
   xLocal_2   = _MM_MACC_f32(xLocal_2,xK2_4,_MM_SET_f32(-1.821255978,gvl),gvl);
-
-  xLocal_3 = _MM_MUL_f32(xK2_5, _MM_SET_f32(1.330274429,gvl),gvl);
-  xLocal_2 = _MM_ADD_f32(xLocal_2, xLocal_3,gvl);
-  //xLocal_2   = _MM_MACC_f32(xLocal_2,xK2_5,_MM_SET_f32(1.330274429,gvl),gvl);
+  xLocal_2   = _MM_MACC_f32(xLocal_2,xK2_5,_MM_SET_f32(1.330274429,gvl),gvl);
 
   xLocal_1 = _MM_ADD_f32(xLocal_2, xLocal_1,gvl);
 
   xLocal   = _MM_MUL_f32(xLocal_1, xNPrimeofX,gvl);
   xLocal   = _MM_SUB_f32(xOne,xLocal,gvl);
-  //xLocal   = _MM_NMSUB_f32(xLocal,xNPrimeofX,xOne,gvl);
 
-  xLocal   = _MM_SUB_f32_MASK(xLocal,xOne,xLocal,xMask,gvl); //sub(vs2,vs1)
+  xLocal   = _MM_SUB_f32_MASK(xMask, xOne, xLocal, gvl);
   return xLocal;
 }
 
@@ -196,13 +189,10 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     _MMR_f32 xfXd1;
     _MMR_f32 xfXd2;
 
-    FENCE();
     xStrikePrice = _MM_LOAD_f32(strike,gvl);
     xStockPrice = _MM_LOAD_f32(sptprice,gvl);
     xStrikePrice = _MM_DIV_f32(xStockPrice,xStrikePrice,gvl);
     xLogTerm = _MM_LOG_f32(xStrikePrice,gvl);
-
-    //FENCE();
     xRiskFreeRate = _MM_LOAD_f32(rate,gvl);
     xVolatility = _MM_LOAD_f32(volatility,gvl);
     xTime = _MM_LOAD_f32(time,gvl);
@@ -211,13 +201,10 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     xRatexTime = _MM_VFSGNJN_f32(xRatexTime, xRatexTime,gvl);
 
     xFutureValueX = _MM_EXP_f32(xRatexTime,gvl);
-    FENCE();
     xPowerTerm = _MM_MUL_f32(xVolatility, xVolatility,gvl);
     xPowerTerm = _MM_MUL_f32(xPowerTerm, _MM_SET_f32(0.5,gvl),gvl);
     xD1 = _MM_ADD_f32( xRiskFreeRate , xPowerTerm,gvl);
-
-    //xD1 = _MM_MUL_f32(xD1, xTime,gvl);
-    //xD1 = _MM_ADD_f32(xD1,xLogTerm,gvl);
+    
     xD1   = _MM_MADD_f32(xD1,xTime,xLogTerm,gvl);
 
     xDen = _MM_MUL_f32(xVolatility, xSqrtTime,gvl);
@@ -228,7 +215,6 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     xfXd2 = CNDF_SIMD( xD2 ,gvl);
 
     xStrikePrice = _MM_LOAD_f32(strike,gvl);
-    FENCE();
     xFutureValueX = _MM_MUL_f32(xFutureValueX, xStrikePrice,gvl);
 
     xOtype    = _MM_LOAD_i32(otype,gvl);
@@ -237,13 +223,11 @@ void BlkSchlsEqEuroNoDiv_vector (fptype * OptionPrice, int numOptions, fptype * 
     xfXd1   = _MM_MERGE_f32(_MM_SUB_f32(_MM_SET_f32(1.0,gvl),xfXd1,gvl),xfXd1, xMask,gvl);
     xStockPrice = _MM_LOAD_f32(sptprice,gvl);
     xOptionPrice1 = _MM_MUL_f32(xStockPrice, xfXd1,gvl);
-    FENCE();
     xfXd2   = _MM_MERGE_f32(_MM_SUB_f32(_MM_SET_f32(1.0,gvl),xfXd2,gvl),xfXd2, xMask,gvl);
     xOptionPrice2 = _MM_MUL_f32(xFutureValueX, xfXd2,gvl);
     xOptionPrice = _MM_SUB_f32(xOptionPrice2,xOptionPrice1,gvl);
     xOptionPrice = _MM_VFSGNJX_f32(xOptionPrice,xOptionPrice,gvl);
     _MM_STORE_f32(OptionPrice, xOptionPrice,gvl);
-    FENCE();
 }
 
 #endif // USE_RISCV_VECTOR
@@ -405,7 +389,7 @@ struct mainWork {
       fptype priceDelta = data[i].DGrefval - price;
       if( fabs(priceDelta) >= 1e-5 ){
         fprintf(stderr,"Error on %d. Computed=%.5f, Ref=%.5f, Delta=%.5f\n",
-		i, price, data[i].DGrefval, priceDelta);
+    i, price, data[i].DGrefval, priceDelta);
         numError ++;
       }
 #endif
@@ -452,10 +436,9 @@ int bs_thread(void *tid_ptr) {
     int start = tid * (numOptions / nThreads);
     int end = start + (numOptions / nThreads);
 
-    // unsigned long int gvl = __builtin_epi_vsetvl(end, __epi_e32, __epi_m1);
-    unsigned long int gvl = vsetvl_e32m1(end); //PLCT
-    fptype* price;
-    price = (fptype*)malloc(gvl*sizeof(fptype));
+    unsigned long int gvl = __riscv_vsetvl_e32m1(end);
+    //fptype* price;
+    //price = (fptype*)malloc(gvl*sizeof(fptype));
     //price = aligned_alloc(64, gvl*sizeof(fptype));
 
 #ifdef ENABLE_PARSEC_HOOKS
@@ -471,19 +454,18 @@ int bs_thread(void *tid_ptr) {
 #endif //ENABLE_OPENMP
             // Calling main function to calculate option value based on Black & Scholes's
             // equation.
-            // gvl = __builtin_epi_vsetvl(end-i, __epi_e32, __epi_m1);
-            gvl = vsetvl_e32m1(end-i); //PLCT
-            BlkSchlsEqEuroNoDiv_vector_asm( price, gvl, &(sptprice[i]), &(strike[i]),
+            gvl = __riscv_vsetvl_e32m1(end-i);
+            BlkSchlsEqEuroNoDiv_vector( &(prices[i]), gvl, &(sptprice[i]), &(strike[i]),
                                 &(rate[i]), &(volatility[i]), &(otime[i]), &(otype[i])/*,&(otype_d[i])*/, 0,gvl);
-            for (k=0; k<gvl; k++) {
-              prices[i+k] = price[k];
-            }
+            //for (k=0; k<gvl; k++) {
+            //  prices[i+k] = price[k];
+            //}
 #ifdef ERR_CHK
             for (k=0; k<gvl; k++) {
-                priceDelta = data[i+k].DGrefval - price[k];
+                priceDelta = data[i+k].DGrefval - prices[k];
                 if (fabs(priceDelta) >= 1e-4) {
                     printf("Error on %d. Computed=%.5f, Ref=%.5f, Delta=%.5f\n",
-                           i + k, price[k], data[i+k].DGrefval, priceDelta);
+                           i + k, prices[k], data[i+k].DGrefval, priceDelta);
                     numError ++;
                 }
             }
@@ -492,7 +474,7 @@ int bs_thread(void *tid_ptr) {
     }
 
 #ifdef ENABLE_PARSEC_HOOKS
-	__parsec_thread_end();
+  __parsec_thread_end();
 #endif
 
     return 0;
@@ -510,7 +492,7 @@ for (j=0; j<NUM_RUNS; j++) {
 #pragma omp parallel for private(i, price, priceDelta)
         for (i=0; i<numOptions; i++) {
 #else  //ENABLE_OPENMP
-	  for (i=start; i<end; i++) {
+    for (i=start; i<end; i++) {
 #endif //ENABLE_OPENMP
             /* Calling main function to calculate option value based on
              * Black & Scholes's equation.
@@ -523,15 +505,15 @@ for (j=0; j<NUM_RUNS; j++) {
 #ifdef ERR_CHK
             priceDelta = data[i].DGrefval - price;
             if( fabs(priceDelta) >= 1e-4 ){
-	      printf("Error on %d. Computed=%.5f, Ref=%.5f, Delta=%.5f\n",
-		     i, price, data[i].DGrefval, priceDelta);
-	      numError ++;
+        printf("Error on %d. Computed=%.5f, Ref=%.5f, Delta=%.5f\n",
+         i, price, data[i].DGrefval, priceDelta);
+        numError ++;
             }
 #endif
-	  }
-	}
+    }
+  }
 
-	return 0;
+  return 0;
 }
 
 #endif // USE_RISCV_VECTOR
@@ -549,22 +531,18 @@ int main (int argc, char **argv)
     int * buffer2;
     int rv;
 
-//#ifdef USE_RISCV_VECTOR
-    struct timeval tv1_0, tv2_0;
-    struct timezone tz_0;
-    double elapsed0=0.0;
-    // gettimeofday(&tv1_0, &tz_0);
-//#endif
+    long long start,end;
+    start = get_time();
 
 
 #ifdef PARSEC_VERSION
 #define __PARSEC_STRING(x) #x
 #define __PARSEC_XSTRING(x) __PARSEC_STRING(x)
         printf("PARSEC Benchmark Suite Version "__PARSEC_XSTRING(PARSEC_VERSION)"\n");
-	fflush(NULL);
+  fflush(NULL);
 #else
         printf("PARSEC Benchmark Suite\n");
-	fflush(NULL);
+  fflush(NULL);
 #endif //PARSEC_VERSION
 #ifdef ENABLE_PARSEC_HOOKS
    __parsec_bench_begin(__parsec_blackscholes);
@@ -648,21 +626,16 @@ int main (int argc, char **argv)
 
     printf("Size of data: %lu\n", numOptions * (sizeof(OptionData) + sizeof(int)));
 
-//#ifdef USE_RISCV_VECTOR
-    // gettimeofday(&tv2_0, &tz_0);
-    elapsed0 = (double) (tv2_0.tv_sec-tv1_0.tv_sec) + (double) (tv2_0.tv_usec-tv1_0.tv_usec) * 1.e-6;
-    printf("\n\nBlackScholes Initialization took %8.8lf secs   \n", elapsed0 );
-//#endif
+    end = get_time();
+    printf("\n\nBlackScholes Initialization took %8.8lf secs   \n", elapsed_time(start, end));
 
-//#ifdef USE_RISCV_VECTOR
-    struct timeval tv1, tv2;
-    struct timezone tz;
-    double elapsed1=0.0;
-    // gettimeofday(&tv1, &tz);
-    SimRoiStart();
-    start_konatadump();
-    long long start_cycle = get_cycle();
-    long long start_vecinst = get_vecinst();
+    // ROI
+    start = get_time();
+
+    // Start instruction and cycles count of the region of interest
+    //unsigned long cycles1, cycles2, instr2, instr1;
+    // instr1 = get_inst_count();
+    // cycles1 = get_cycles_count();
 //#endif
 
 #ifdef ENABLE_PARSEC_HOOKS
@@ -720,45 +693,42 @@ int main (int argc, char **argv)
 #endif
 
 //#ifdef USE_RISCV_VECTOR
-    // gettimeofday(&tv2, &tz);
-    SimRoiEnd();
-    stop_konatadump();
-
-    long long end_cycle = get_cycle();
-    long long end_vecinst = get_vecinst();
-    elapsed1 = (double) (tv2.tv_sec-tv1.tv_sec) + (double) (tv2.tv_usec-tv1.tv_usec) * 1.e-6;
-    // printf("\n\nBlackScholes Kernel took %8.8lf secs   \n", elapsed1 );
-    printf("cycles = %lld\n", end_cycle - start_cycle);
-    printf("vecinst = %lld\n", end_vecinst - start_vecinst);
+    // End instruction and cycles count of the region of interest
+    // instr2 = get_inst_count();
+    // cycles2 = get_cycles_count();
+    // Instruction and cycles count of the region of interest
+    // printf("-CSR   NUMBER OF EXEC CYCLES :%lu\n", cycles2 - cycles1);
+    // printf("-CSR   NUMBER OF INSTRUCTIONS EXECUTED :%lu\n", instr2 - instr1);
 //#endif
+    end = get_time();
+    printf("\n\nBlackScholes Kernel took %8.8lf secs   \n", elapsed_time(start, end));
 
-    // //Write prices to output file
-    // file = fopen(outputFile, "w");
-    // if(file == NULL) {
-    //   printf("ERROR: Unable to open file `%s'.\n", outputFile);
-    // //  exit(1);
-    // }
-    // //rv = fprintf(file, "%i\n", numOptions);
-    // printf("%i\n", numOptions);
-    // if(rv < 0) {
-    //   printf("ERROR: Unable to write to file `%s'.\n", outputFile);
-    //   fclose(file);
-    //   exit(1);
-    // }
-    // for(i=0; i<numOptions; i++) {
-    //   //rv = fprintf(file, "%.18f\n", prices[i]);
-    //   printf("%.18f\n", prices[i]);
-    //   if(rv < 0) {
-    //     printf("ERROR: Unable to write to file `%s'.\n", outputFile);
-    //     fclose(file);
-    //     exit(1);
-    //   }
-    // }
-    // rv = fclose(file);
-    // if(rv != 0) {
-    //   printf("ERROR: Unable to close file `%s'.\n", outputFile);
-    //   exit(1);
-    // }
+    
+    //Write prices to output file
+    file = fopen(outputFile, "w");
+    if(file == NULL) {
+      printf("ERROR: Unable to open file `%s'.\n", outputFile);
+      exit(1);
+    }
+    rv = fprintf(file, "%i\n", numOptions);
+    if(rv < 0) {
+      printf("ERROR: Unable to write to file `%s'.\n", outputFile);
+      fclose(file);
+      exit(1);
+    }
+    for(i=0; i<numOptions; i++) {
+      rv = fprintf(file, "%.18f\n", prices[i]);
+      if(rv < 0) {
+        printf("ERROR: Unable to write to file `%s'.\n", outputFile);
+        fclose(file);
+        exit(1);
+      }
+    }
+    rv = fclose(file);
+    if(rv != 0) {
+      printf("ERROR: Unable to close file `%s'.\n", outputFile);
+      exit(1);
+    }
 
 #ifdef ERR_CHK
     printf("Num Errors: %d\n", numError);

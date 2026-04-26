@@ -2,28 +2,27 @@
 rvv_target    = bin/rvv-test_vlen$(VLEN)
 serial_target = bin/serial-test_vlen$(VLEN)
 
-APP_NAME = canneal
+start:
+	rm bin/*.*;
 
-SPIKE_OPTS = 1 100 300 input/100.nets 8
-
-include ../../scripts/runspike.mk
-
-scalar: $(serial_target)
-$(serial_target):
-	mkdir -p bin
+serial:
 	for entry in src/*.cpp ; do \
-		${LLVM}/bin/clang++  -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include  -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR)  -O2 -c -o  $$entry.scalar.o  $$entry ; \
+		${RISCV}/bin/clang++ --target=riscv64-unknown-elf -march=rv64g -O2 -fno-vectorize -c -o $$entry.o  $$entry ; \
 	done
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include  -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2  -o $(serial_target) src/*.cpp.scalar.o -lm
-	rm src/*.scalar.o
+	${RISCV}/bin/clang++ --target=riscv64-unknown-elf -march=rv64g -O2 -fno-vectorize -o bin/canneal_serial.exe src/*.cpp.o -lm ; \
+	${RISCV}/bin/llvm-objdump  --mattr=+m,+f,+d,+a,+c -ds  bin/canneal_serial.exe > bin/canneal_serial.dump ; \
+	rm src/*.o ; \
 
-vector: $(rvv_target)
-$(rvv_target):
-	mkdir -p bin
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/annealer_thread.vector.o src/annealer_thread.cpp
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/main.vector.o src/main.cpp
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/netlist.vector.o src/netlist.cpp
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/netlist_elem.vector.o src/netlist_elem.cpp
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2 -c -o src/rng.vector.o src/rng.cpp
-	${LLVM}/bin/clang++ -Wall --target=riscv64-unknown-elf -I$(SNIPER_ROOT)/include -DUSE_RISCV_VECTOR -march=rv64gcv1p0 -menable-experimental-extensions --sysroot=$(SYSROOT_DIR) --gcc-toolchain=$(GCC_TOOLCHAIN_DIR) -O2  -o $(rvv_target) src/*.vector.o -lm
-	rm src/*.vector.o
+vector:
+	${RISCV}/bin/clang++ -march=rv64gcv -DUSE_RISCV_VECTOR -O2 -fno-vectorize -c -o src/annealer_thread.o src/annealer_thread.cpp; \
+	${RISCV}/bin/clang++ -march=rv64gcv -DUSE_RISCV_VECTOR -O2 -fno-vectorize -c -o src/main.o src/main.cpp; \
+	${RISCV}/bin/clang++ -march=rv64gcv -DUSE_RISCV_VECTOR -O2 -fno-vectorize -c -o src/netlist.o src/netlist.cpp; \
+	${RISCV}/bin/clang++ -march=rv64gcv -DUSE_RISCV_VECTOR -O2 -fno-vectorize -c -o src/netlist_elem.o src/netlist_elem.cpp; \
+	${RISCV}/bin/clang++ -march=rv64gcv -DUSE_RISCV_VECTOR -O2 -fno-vectorize -c -o src/rng.o src/rng.cpp; \
+	${RISCV}/bin/clang++ -march=rv64gcv -DUSE_RISCV_VECTOR -O2 -fno-vectorize  -o bin/canneal_vector.exe src/*.o -lm; \
+	${RISCV}/bin/llvm-objdump  --mattr=+m,+f,+d,+a,+c,+v -ds  bin/canneal_vector.exe > bin/canneal_vector.dump ; \
+	rm src/*.o;
+
+clean:
+	rm bin/*.dump; \
+	rm bin/*.exe;

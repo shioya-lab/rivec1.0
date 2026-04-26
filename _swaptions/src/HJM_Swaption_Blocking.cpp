@@ -3,6 +3,13 @@
 //Authors: Mark Broadie, Jatin Dewanwala
 //Collaborator: Mikhail Smelyanskiy, Intel, Jike Chong (Berkeley)
 
+/*************************************************************************
+* RISC-V Vectorized Version
+* Author: Cristóbal Ramírez Lazo
+* email: cristobal.ramirez@bsc.es
+* Barcelona Supercomputing Center (2020)
+*************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -199,8 +206,8 @@ int HJM_Swaption_Blocking(FTYPE *pdSwaptionPrice, //Output vector that will stor
       // Simulation
       
       #ifdef USE_RISCV_VECTOR
-            //unsigned long int gvl = __builtin_epi_vsetvl(BLOCKSIZE_AUX, __epi_e64, __epi_m1);
-            unsigned long int gvl = vsetvl_e64m1(BLOCKSIZE_AUX); //PLCT
+            unsigned long int gvl = _MMR_VSETVL_E64M1(BLOCKSIZE_AUX);
+            
             _MMR_f64    xpdSwapDiscountFactors;
             _MMR_f64    xpdSwapPayoffs;
             _MMR_f64    xdFixedLegValue             = _MM_SET_f64(0.0,gvl);
@@ -233,7 +240,6 @@ int HJM_Swaption_Blocking(FTYPE *pdSwaptionPrice, //Output vector that will stor
              vsetvl_e64m1(1);
             _MM_STORE_f64(&dSumSimSwaptionPrice,xdSumSimSwaptionPrice,1);
             _MM_STORE_f64(&dSumSquareSimSwaptionPrice,xdSumSquareSimSwaptionPrice,1);
-            FENCE();
       #else
 
       for (b=0;b<BLOCKSIZE_AUX;b++){

@@ -70,10 +70,8 @@ void serialB(FTYPE **pdZ, FTYPE **randZ, int BLOCKSIZE, int iN, int iFactors)
     for(int l=0;l<=iFactors-1;++l){
         for (int j=1;j<=iN-1;++j){
             //for(int b=0; b<BLOCKSIZE; b+=BLOCKSIZE){
-          		// unsigned long int gvl = __builtin_epi_vsetvl(BLOCKSIZE, __epi_e64, __epi_m1);
-    			unsigned long int  gvl = vsetvl_e64m1(BLOCKSIZE); //PLCT
-                CumNormalInvAsm_vector(&randZ[l][BLOCKSIZE*j /*+ b*/] , &pdZ[l][BLOCKSIZE*j/* + b*/] , gvl);
-    			FENCE();
+          		unsigned long int gvl = _MMR_VSETVL_E64M1(BLOCKSIZE);
+    			CumNormalInv_vector(&randZ[l][BLOCKSIZE*j /*+ b*/] , &pdZ[l][BLOCKSIZE*j/* + b*/] , gvl);
             //}
         }
     }
@@ -130,8 +128,7 @@ int HJM_SimPath_Forward_Blocking(FTYPE **ppdHJMPath,	//Matrix that stores genera
 	// rest reset to 0
 #ifdef USE_RISCV_VECTOR
 
- //	unsigned long int gvl = __builtin_epi_vsetvl(BLOCKSIZE, __epi_e64, __epi_m1);
-   unsigned long int gvl =  gvl = vsetvl_e64m1(BLOCKSIZE); //PLCT
+	unsigned long int gvl = _MMR_VSETVL_E64M1(BLOCKSIZE);
 	_MMR_f64 xZero;
 
 	xZero = _MM_SET_f64(0.0,gvl);
@@ -236,10 +233,8 @@ int HJM_SimPath_Forward_Blocking(FTYPE **ppdHJMPath,	//Matrix that stores genera
 	FTYPE pdDriftxddelt;
  	// =====================================================
 	// Generation of HJM Path1 Vector
-	//gvl = __builtin_epi_vsetvl(BLOCKSIZE, __epi_e64, __epi_m1);
-	gvl = vsetvl_e64m1(BLOCKSIZE); //PLCT
-
-    _MMR_f64 xdTotalShock;
+	gvl = _MMR_VSETVL_E64M1(BLOCKSIZE);
+	_MMR_f64 xdTotalShock;
 
 	//for(int b=0; b<BLOCKSIZE; b++){ // b is the blocks
 	  for (j=1;j<=iN-1;++j) {// j is the timestep
